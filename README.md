@@ -14,7 +14,7 @@ https://www.figma.com/file/Av6R3v9YgAGMxV75KM2KOU/HS-Feed-Manager?node-id=0%3A1
 
 A small time laps of the design creation.
 
-[![Design Time Laps](https://www.die-technik-und-ich.at/wp-content/uploads/2019/03/HS-Feed-Manager.png)](http://www.die-technik-und-ich.at/wp-content/uploads/2019/03/HS_final.mp4)
+[![Design Time Laps](./Pictures/HS-Feed-Manager.png)](http://www.die-technik-und-ich.at/wp-content/uploads/2019/03/HS_final.mp4)
 
 Here is the link to the blog post:
 https://www.die-technik-und-ich.at/?p=543
