@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace RSS_Feed_Test.Properties
+namespace HS_Feed_Manager.Properties
 {
 
 
