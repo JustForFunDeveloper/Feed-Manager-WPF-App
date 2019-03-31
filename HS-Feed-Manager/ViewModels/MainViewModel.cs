@@ -13,6 +13,7 @@ namespace HS_Feed_Manager.ViewModels
         private Visibility _hideWindowCommands = Visibility.Hidden;
 
         private ICommand _logIn;
+        private ICommand _openMenu;
         private ICommand _closeWindow;
         private ICommand _itemClick;
         private ICommand _optionItemClick;
@@ -106,6 +107,31 @@ namespace HS_Feed_Manager.ViewModels
                 _isPaneOpened = value;
                 OnPropertyChanged();
             }
+        }
+
+        public ICommand OpenMenu
+        {
+            get
+            {
+                if (_openMenu == null)
+                {
+                    _openMenu = new RelayCommand(
+                        param => this.SaveOpenMenuCommand(),
+                        param => this.CanSaveOpenMenuCommand()
+                    );
+                }
+                return _openMenu;
+            }
+        }
+
+        private bool CanSaveOpenMenuCommand()
+        {
+            return true;
+        }
+
+        private void SaveOpenMenuCommand()
+        {
+            IsPaneOpened = !IsPaneOpened;
         }
 
         public ICommand CloseWindow

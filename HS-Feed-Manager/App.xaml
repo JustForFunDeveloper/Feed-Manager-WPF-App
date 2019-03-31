@@ -11,36 +11,8 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Dark.Blue.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            <Style BasedOn="{StaticResource MahApps.Metro.Styles.WindowButtonCommands.Win10}" TargetType="{x:Type mah:WindowButtonCommands}" />
-            <Style BasedOn="{StaticResource AccentedSquareButtonStyle}" TargetType="{x:Type Button}">
-
-                <Style.Triggers>
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="#0D6489" />
-                        <Setter Property="Foreground" Value="White" />
-                    </Trigger>
-                    <Trigger Property="IsPressed" Value="True">
-                        <Setter Property="Background" Value="#AFCA0B" />
-                        <Setter Property="Foreground" Value="White" />
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
-            <Style TargetType="{x:Type controls:DropDownButton}">
-                <Setter Property="Background" Value="{DynamicResource AccentColorBrush}" />
-                <Setter Property="BorderThickness" Value="0" />
-                <Setter Property="Foreground" Value="White" />
-                <Setter Property="FontFamily" Value="Verdana" />
-                <Setter Property="ArrowBrush" Value="White" />
-                <Style.Triggers>
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="#0D6489" />
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
