@@ -10,7 +10,13 @@ You can also play with the Wireframe capabilities. (Press the play button in the
 
 https://www.figma.com/file/Av6R3v9YgAGMxV75KM2KOU/HS-Feed-Manager?node-id=0%3A1
 
-Here is the link to the blog and a short time lapse video:
+## Time Laps Video and Blog Post
+
+A small time laps of the design creation.
+
+![https://www.die-technik-und-ich.at/wp-content/uploads/2019/03/HS-Feed-Manager.png](http://www.die-technik-und-ich.at/wp-content/uploads/2019/03/HS_final.mp4)
+
+Here is the link to the blog post:
 https://www.die-technik-und-ich.at/?p=543
 - - - -
 ## Short Description of the used libraries and techniques
