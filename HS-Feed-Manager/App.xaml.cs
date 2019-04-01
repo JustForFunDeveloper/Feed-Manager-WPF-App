@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using HS_Feed_Manager.DataModels;
 using System.Windows;
 
 namespace HS_Feed_Manager
@@ -13,5 +8,9 @@ namespace HS_Feed_Manager
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+            SampleData.Seed();
+        }
     }
 }

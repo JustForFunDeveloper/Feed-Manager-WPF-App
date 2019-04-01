@@ -7,6 +7,7 @@
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:HS_Feed_Manager.DataModels"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     d:DesignHeight="600"
     d:DesignWidth="1000"
@@ -110,11 +111,21 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <ObjectDataProvider
+            x:Key="UnderlinedEnumValues"
+            MethodName="GetValues"
+            ObjectType="{x:Type mah:UnderlinedType}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="mah:UnderlinedType" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
     </UserControl.Resources>
 
-    <Grid x:Name="TheContentGrid">
+    <Grid x:Name="TheContentGrid" Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="{StaticResource IconBarSize}" />
+            <RowDefinition Height="10" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel
@@ -127,5 +138,109 @@
             <Button Style="{DynamicResource ListMinus}" ToolTip="Remove Feed from Download" />
             <Button Style="{DynamicResource StartDownload}" ToolTip="Start Episode Download" />
         </StackPanel>
+        <Rectangle
+            Grid.Row="1"
+            Height="1"
+            Margin="8,0,8,0"
+            Fill="White" />
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <GroupBox
+                Grid.Column="0"
+                Padding="5"
+                mah:ControlsHelper.HeaderFontSize="30"
+                BorderBrush="Transparent"
+                Header="Current Downloads">
+                <ListBox
+                    x:Name="artist"
+                    BorderBrush="Transparent"
+                    ItemsSource="{x:Static models:SampleData.Artists}"
+                    Style="{DynamicResource VirtualisedMetroListBox}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type models:Artist}">
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}{0} - {1}">
+                                        <Binding Mode="OneWay" Path="ArtistId" />
+                                        <Binding Mode="OneWay" Path="Name" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </GroupBox>
+            <StackPanel
+                Grid.Column="1"
+                Height="37"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Orientation="Horizontal">
+                <ComboBox
+                    x:Name="UnderlinedComboBox"
+                    Width="100"
+                    Height="20"
+                    Margin="5,5"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    ItemsSource="{Binding Source={StaticResource UnderlinedEnumValues}}"
+                    SelectedIndex="0" />
+                <TextBox
+                    mah:TextBoxHelper.ButtonCommand="{Binding TextBoxButtonCmd, Mode=OneWay}"
+                    mah:TextBoxHelper.ClearTextButton="True"
+                    mah:TextBoxHelper.UseFloatingWatermark="True"
+                    mah:TextBoxHelper.Watermark="Search...">
+                    <TextBox.InputBindings>
+                        <KeyBinding
+                            Key="Return"
+                            Command="{Binding TextBoxButtonCmd, Mode=OneWay}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TextBox}, Path=Text, Mode=OneWay}" />
+                    </TextBox.InputBindings>
+                    <TextBox.Style>
+                        <Style BasedOn="{StaticResource SearchMetroTextBox}" TargetType="{x:Type TextBox}">
+                            <Style.Triggers>
+                                <Trigger Property="mah:TextBoxHelper.HasText" Value="True">
+                                    <Setter Property="mah:TextBoxHelper.ButtonContent" Value="r" />
+                                    <Setter Property="mah:TextBoxHelper.ButtonContentTemplate" Value="{x:Null}" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+
+            </StackPanel>
+            <mah:MetroTabControl x:Name="TC" Grid.Column="1">
+                <mah:MetroTabItem Header="artist">
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="24"
+                        Text="{Binding ElementName=artist, Path=SelectedItem.Name, TargetNullValue=''}" />
+                </mah:MetroTabItem>
+                <mah:MetroTabItem Header="albums">
+                    <ListBox
+                        x:Name="albums"
+                        ItemsSource="{Binding ElementName=artist, Path=SelectedItem.Albums}"
+                        Style="{DynamicResource VirtualisedMetroListBox}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type models:Album}">
+                                <TextBlock>
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}{0} - {1}">
+                                            <Binding Mode="OneWay" Path="Title" />
+                                            <Binding Mode="OneWay" Path="Price" />
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </mah:MetroTabItem>
+            </mah:MetroTabControl>
+        </Grid>
     </Grid>
 </UserControl>
