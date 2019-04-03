@@ -112,6 +112,7 @@
             </Style.Triggers>
         </Style>
 
+
         <ObjectDataProvider
             x:Key="UnderlinedEnumValues"
             MethodName="GetValues"
@@ -146,17 +147,20 @@
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="10" />
                 <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="10" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <GroupBox
                 Grid.Column="0"
-                Padding="5"
+                Margin="0,5,0,0"
                 mah:ControlsHelper.HeaderFontSize="30"
                 BorderBrush="Transparent"
                 Header="Current Downloads">
                 <ListBox
                     x:Name="artist"
+                    Margin="0,5,0,0"
                     BorderBrush="Transparent"
                     ItemsSource="{x:Static models:SampleData.Artists}"
                     Style="{DynamicResource VirtualisedMetroListBox}">
@@ -174,9 +178,15 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
             </GroupBox>
-            <StackPanel
+            <Rectangle
                 Grid.Column="1"
+                Width="1"
+                Margin="0,50,0,0"
+                Fill="White" />
+            <StackPanel
+                Grid.Column="2"
                 Height="37"
+                Margin="0,8,0,0"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"
                 Orientation="Horizontal">
@@ -190,9 +200,12 @@
                     ItemsSource="{Binding Source={StaticResource UnderlinedEnumValues}}"
                     SelectedIndex="0" />
                 <TextBox
+                    Height="20"
+                    MinWidth="150"
+                    MaxWidth="250"
                     mah:TextBoxHelper.ButtonCommand="{Binding TextBoxButtonCmd, Mode=OneWay}"
                     mah:TextBoxHelper.ClearTextButton="True"
-                    mah:TextBoxHelper.UseFloatingWatermark="True"
+                    mah:TextBoxHelper.UseFloatingWatermark="False"
                     mah:TextBoxHelper.Watermark="Search...">
                     <TextBox.InputBindings>
                         <KeyBinding
@@ -213,17 +226,34 @@
                 </TextBox>
 
             </StackPanel>
-            <mah:MetroTabControl x:Name="TC" Grid.Column="1">
-                <mah:MetroTabItem Header="artist">
-                    <TextBlock
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="24"
-                        Text="{Binding ElementName=artist, Path=SelectedItem.Name, TargetNullValue=''}" />
+            <mah:MetroTabControl
+                x:Name="TC"
+                Grid.Column="2"
+                Margin="0,5,0,0">
+                <mah:MetroTabItem Header="Feed List">
+                    <ListBox
+                        Margin="0,5,0,0"
+                        BorderBrush="Transparent"
+                        ItemsSource="{x:Static models:SampleData.Artists}"
+                        Style="{DynamicResource VirtualisedMetroListBox}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type models:Artist}">
+                                <TextBlock>
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}{0} - {1}">
+                                            <Binding Mode="OneWay" Path="ArtistId" />
+                                            <Binding Mode="OneWay" Path="Name" />
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </mah:MetroTabItem>
-                <mah:MetroTabItem Header="albums">
+                <mah:MetroTabItem Header="Local List">
                     <ListBox
                         x:Name="albums"
+                        Margin="0,5,0,0"
                         ItemsSource="{Binding ElementName=artist, Path=SelectedItem.Albums}"
                         Style="{DynamicResource VirtualisedMetroListBox}">
                         <ListBox.ItemTemplate>
@@ -241,6 +271,149 @@
                     </ListBox>
                 </mah:MetroTabItem>
             </mah:MetroTabControl>
+            <Rectangle
+                Grid.Column="3"
+                Width="1"
+                Margin="0,50,0,0"
+                Fill="White" />
+            <GroupBox
+                Grid.Column="4"
+                Margin="0,5,0,0"
+                mah:ControlsHelper.HeaderFontSize="30"
+                BorderBrush="Transparent"
+                Header="Feed Information">
+                <StackPanel Orientation="Vertical">
+                    <StackPanel.Resources>
+                        <Style TargetType="{x:Type Grid}">
+                            <Setter Property="Margin" Value="0,10,0,0" />
+                        </Style>
+                    </StackPanel.Resources>
+                    <Grid>
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="20"
+                            FontWeight="UltraLight"
+                            Foreground="{DynamicResource AccentColorBrush}"
+                            Text="Name:" />
+                        <TextBlock
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            FontSize="15"
+                            FontWeight="Normal"
+                            Text="Series Season Name 2" />
+                    </Grid>
+                    <Grid>
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="20"
+                            FontWeight="UltraLight"
+                            Foreground="{DynamicResource AccentColorBrush}"
+                            Text="Status:" />
+                        <TextBlock
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            FontSize="15"
+                            FontWeight="Normal"
+                            Text="On Air" />
+                    </Grid>
+                    <Grid>
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="20"
+                            FontWeight="UltraLight"
+                            Foreground="{DynamicResource AccentColorBrush}"
+                            Text="Episodes:" />
+                        <TextBlock
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            FontSize="15"
+                            FontWeight="Normal"
+                            Text="20" />
+                    </Grid>
+                    <Grid>
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="20"
+                            FontWeight="UltraLight"
+                            Foreground="{DynamicResource AccentColorBrush}"
+                            Text="Auto Download:" />
+                        <TextBlock
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            FontSize="15"
+                            FontWeight="Normal"
+                            Text="True" />
+                    </Grid>
+                    <Grid>
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="20"
+                            FontWeight="UltraLight"
+                            Foreground="{DynamicResource AccentColorBrush}"
+                            Text="Local Ep. Count:" />
+                        <TextBlock
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            FontSize="15"
+                            FontWeight="Normal"
+                            Text="20" />
+                    </Grid>
+                    <Grid VerticalAlignment="Center">
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="20"
+                            FontWeight="UltraLight"
+                            Foreground="{DynamicResource AccentColorBrush}"
+                            Text="Rating:" />
+                        <StackPanel
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                            <StackPanel.Resources>
+                                <Style TargetType="{x:Type iconPacks:PackIconMaterialDesign}">
+                                    <Setter Property="Margin" Value="6,0,0,0" />
+                                </Style>
+                            </StackPanel.Resources>
+                            <iconPacks:PackIconMaterialDesign
+                                Width="20"
+                                Height="20"
+                                VerticalAlignment="Center"
+                                Kind="{Binding Path=Icons[4]}" />
+                            <iconPacks:PackIconMaterialDesign
+                                Width="20"
+                                Height="20"
+                                VerticalAlignment="Center"
+                                Kind="{Binding Path=Icons[3]}" />
+                            <iconPacks:PackIconMaterialDesign
+                                Width="20"
+                                Height="20"
+                                VerticalAlignment="Center"
+                                Kind="{Binding Path=Icons[2]}" />
+                            <iconPacks:PackIconMaterialDesign
+                                Width="20"
+                                Height="20"
+                                VerticalAlignment="Center"
+                                Kind="{Binding Path=Icons[1]}" />
+                            <iconPacks:PackIconMaterialDesign
+                                Width="20"
+                                Height="20"
+                                VerticalAlignment="Center"
+                                Kind="{Binding Path=Icons[0]}" />
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </GroupBox>
         </Grid>
     </Grid>
 </UserControl>

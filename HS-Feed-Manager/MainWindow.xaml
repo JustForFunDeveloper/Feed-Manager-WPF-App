@@ -12,7 +12,7 @@
     Title="HS Feed Manager"
     Width="1100"
     Height="700"
-    BorderBrush="#2D2D30"
+    BorderBrush="{DynamicResource ControlBackgroundBrush}"
     ResizeMode="CanResizeWithGrip"
     Style="{DynamicResource MyCleanWindowStyle}"
     WindowStartupLocation="CenterScreen"
@@ -147,6 +147,7 @@
         <mah:HamburgerMenu
             x:Name="HamburgerMenuControl"
             Grid.Row="1"
+            BorderBrush="{DynamicResource AccentColorBrush}"
             DisplayMode="Overlay"
             HamburgerVisibility="Hidden"
             IsPaneOpen="{Binding IsPaneOpened}"
@@ -154,7 +155,7 @@
             ItemsSource="{Binding MenuItems}"
             OptionsItemTemplate="{StaticResource MenuItemTemplate}"
             OptionsItemsSource="{Binding MenuOptionItems}"
-            PaneBackground="#2D2D30"
+            PaneBackground="{DynamicResource MenuItemSelectionFill}"
             PaneHeaderMargin="0,-60,0,8"
             PaneMargin="0,0,0,0"
             SelectedIndex="{Binding SelectedIndex}">
