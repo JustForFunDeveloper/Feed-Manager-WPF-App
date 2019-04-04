@@ -162,7 +162,7 @@
                     x:Name="artist"
                     Margin="0,5,0,0"
                     BorderBrush="Transparent"
-                    ItemsSource="{x:Static models:SampleData.Artists}"
+                    ItemsSource="{Binding SortedArtistsView}"
                     Style="{DynamicResource VirtualisedMetroListBox}">
                     <ListBox.ItemTemplate>
                         <DataTemplate DataType="{x:Type models:Artist}">
@@ -197,8 +197,8 @@
                     Margin="5,5"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    ItemsSource="{Binding Source={StaticResource UnderlinedEnumValues}}"
-                    SelectedIndex="0" />
+                    ItemsSource="{Binding Source={x:Static models:SampleData.Genres}}"
+                    SelectedIndex="{Binding ComboBoxIndex}" />
                 <TextBox
                     Height="20"
                     MinWidth="150"
@@ -234,15 +234,15 @@
                     <ListBox
                         Margin="0,5,0,0"
                         BorderBrush="Transparent"
-                        ItemsSource="{x:Static models:SampleData.Artists}"
+                        ItemsSource="{Binding ElementName=artist, Path=SelectedItem.Albums}"
                         Style="{DynamicResource VirtualisedMetroListBox}">
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="{x:Type models:Artist}">
                                 <TextBlock>
                                     <TextBlock.Text>
                                         <MultiBinding StringFormat="{}{0} - {1}">
-                                            <Binding Mode="OneWay" Path="ArtistId" />
-                                            <Binding Mode="OneWay" Path="Name" />
+                                            <Binding Mode="OneWay" Path="Genre" />
+                                            <Binding Mode="OneWay" Path="Artist" />
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>

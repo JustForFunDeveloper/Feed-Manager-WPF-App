@@ -52,5 +52,10 @@ namespace HS_Feed_Manager.DataModels
             var handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }
