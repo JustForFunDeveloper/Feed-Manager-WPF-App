@@ -80,7 +80,10 @@
     <Compile Include="DataModels\Album.cs" />
     <Compile Include="DataModels\Artist.cs" />
     <Compile Include="DataModels\CustomDialogExampleContent.cs" />
+    <Compile Include="DataModels\Episode.cs" />
     <Compile Include="DataModels\Genre.cs" />
+    <Compile Include="DataModels\LocalSeries.cs" />
+    <Compile Include="DataModels\CurrenData.cs" />
     <Compile Include="DataModels\SimpleCommand.cs" />
     <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />

@@ -1,4 +1,5 @@
-﻿using MahApps.Metro.Controls;
+﻿using HS_Feed_Manager.ViewModels.Handler;
+using MahApps.Metro.Controls;
 
 namespace HS_Feed_Manager
 {
@@ -16,5 +17,10 @@ namespace HS_Feed_Manager
         }
 
         public static MetroWindow GetInstance { get => _mainView; }
+
+        private void Slider_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e)
+        {
+            Mediator.NotifyColleagues("SliderRateValueChanged", (int)e.NewValue);
+        }
     }
 }

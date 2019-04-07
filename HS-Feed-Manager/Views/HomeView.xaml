@@ -9,8 +9,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:HS_Feed_Manager.DataModels"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    d:DesignHeight="600"
-    d:DesignWidth="1000"
+    d:DesignHeight="700"
+    d:DesignWidth="1100"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -162,6 +162,7 @@
                     x:Name="artist"
                     Margin="0,5,0,0"
                     BorderBrush="Transparent"
+                    IsSynchronizedWithCurrentItem="True"
                     ItemsSource="{Binding SortedArtistsView}"
                     Style="{DynamicResource VirtualisedMetroListBox}">
                     <ListBox.ItemTemplate>
@@ -176,6 +177,21 @@
                             </TextBlock>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
+                    <ListBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Move" Icon="{iconPacks:Material Kind=FolderSearch}">
+                                <MenuItem
+                                    Command="{Binding MoveToFirst}"
+                                    Header="Move to First"
+                                    Icon="{iconPacks:Material Kind=FolderSearch}" />
+                                <MenuItem Header="Move to Last" />
+                                <MenuItem Header="Move Up" />
+                                <MenuItem Header="Move Down" />
+                            </MenuItem>
+                            <MenuItem Header="Remove From List" />
+                            <MenuItem Header="Start Download" />
+                        </ContextMenu>
+                    </ListBox.ContextMenu>
                 </ListBox>
             </GroupBox>
             <Rectangle
@@ -192,13 +208,13 @@
                 Orientation="Horizontal">
                 <ComboBox
                     x:Name="UnderlinedComboBox"
-                    Width="100"
+                    Width="145"
                     Height="20"
                     Margin="5,5"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    ItemsSource="{Binding Source={x:Static models:SampleData.Genres}}"
-                    SelectedIndex="{Binding ComboBoxIndex}" />
+                    ItemsSource="{Binding SortModes}"
+                    SelectedIndex="{Binding SortModesIndex}" />
                 <TextBox
                     Height="20"
                     MinWidth="150"
@@ -248,26 +264,40 @@
                                 </TextBlock>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
+                        <ListBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Add to Download List" />
+                                <MenuItem Header="Remove from Download List" />
+                                <MenuItem Command="{Binding EditInfo}" Header="Edit Info" />
+                            </ContextMenu>
+                        </ListBox.ContextMenu>
                     </ListBox>
                 </mah:MetroTabItem>
                 <mah:MetroTabItem Header="Local List">
                     <ListBox
-                        x:Name="albums"
+                        x:Name="localList"
                         Margin="0,5,0,0"
-                        ItemsSource="{Binding ElementName=artist, Path=SelectedItem.Albums}"
+                        IsSynchronizedWithCurrentItem="True"
+                        ItemsSource="{Binding LocalListView}"
                         Style="{DynamicResource VirtualisedMetroListBox}">
                         <ListBox.ItemTemplate>
-                            <DataTemplate DataType="{x:Type models:Album}">
+                            <DataTemplate DataType="{x:Type models:CurrenData}">
                                 <TextBlock>
                                     <TextBlock.Text>
-                                        <MultiBinding StringFormat="{}{0} - {1}">
-                                            <Binding Mode="OneWay" Path="Title" />
-                                            <Binding Mode="OneWay" Path="Price" />
+                                        <MultiBinding StringFormat="{}{0}">
+                                            <Binding Mode="OneWay" Path="Name" />
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
+                        <ListBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Add to Download List" />
+                                <MenuItem Header="Remove from Download List" />
+                                <MenuItem Command="{Binding EditInfo}" Header="Edit Info" />
+                            </ContextMenu>
+                        </ListBox.ContextMenu>
                     </ListBox>
                 </mah:MetroTabItem>
             </mah:MetroTabControl>
@@ -302,7 +332,7 @@
                             VerticalAlignment="Center"
                             FontSize="15"
                             FontWeight="Normal"
-                            Text="Series Season Name 2" />
+                            Text="{Binding ElementName=localList, Path=SelectedItem.Name}" />
                     </Grid>
                     <Grid>
                         <TextBlock
@@ -318,7 +348,7 @@
                             VerticalAlignment="Center"
                             FontSize="15"
                             FontWeight="Normal"
-                            Text="On Air" />
+                            Text="{Binding ElementName=localList, Path=SelectedItem.Status}" />
                     </Grid>
                     <Grid>
                         <TextBlock
@@ -334,7 +364,7 @@
                             VerticalAlignment="Center"
                             FontSize="15"
                             FontWeight="Normal"
-                            Text="20" />
+                            Text="{Binding ElementName=localList, Path=SelectedItem.Episodes}" />
                     </Grid>
                     <Grid>
                         <TextBlock
@@ -350,7 +380,7 @@
                             VerticalAlignment="Center"
                             FontSize="15"
                             FontWeight="Normal"
-                            Text="True" />
+                            Text="{Binding ElementName=localList, Path=SelectedItem.AutoDownloadStatus}" />
                     </Grid>
                     <Grid>
                         <TextBlock
@@ -366,7 +396,7 @@
                             VerticalAlignment="Center"
                             FontSize="15"
                             FontWeight="Normal"
-                            Text="20" />
+                            Text="{Binding ElementName=localList, Path=SelectedItem.LocalEpisodesCount}" />
                     </Grid>
                     <Grid VerticalAlignment="Center">
                         <TextBlock

@@ -1,6 +1,11 @@
-﻿using HS_Feed_Manager.ViewModels.Handler;
+﻿using HS_Feed_Manager.DataModels;
+using HS_Feed_Manager.ViewModels.Handler;
 using MahApps.Metro.Controls;
 using MahApps.Metro.IconPacks;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 
@@ -10,31 +15,47 @@ namespace HS_Feed_Manager.ViewModels
     {
         private static MainViewModel _mainViewModel;
 
-        private Visibility _hideWindowCommands = Visibility.Hidden;
+        public static MainViewModel getInstance { get => _mainViewModel; }
 
-        private ICommand _logIn;
         private ICommand _openMenu;
-        private ICommand _closeWindow;
         private ICommand _itemClick;
         private ICommand _optionItemClick;
+        private ICommand _okEdit;
+        private ICommand _cancelEdit;
 
         private HamburgerMenuItemCollection _menuItems;
         private HamburgerMenuItemCollection _menuOptionItems;
 
         private bool _isPaneOpened;
+        private bool _isFlyoutOpen;
         private int _selectedIndex = 0;
 
-        private MetroWindow _loginWindow;
+        private string _itemName = "";
+        private string _itemNameValue;
+        private int _selectedStatus;
+        private string _selectedValueStatus;
+        private string _episodes;
+        private string _episodesValue;
+        private int _selectedAutoDownload;
+        private string _selectedValueAutoDownload;
+        private double _ratingValue;
+
+        private ObservableCollection<string> _icons = new ObservableCollection<string> {
+            PackIconMaterialDesignKind.StarBorder.ToString(),
+            PackIconMaterialDesignKind.StarBorder.ToString(),
+            PackIconMaterialDesignKind.StarBorder.ToString(),
+            PackIconMaterialDesignKind.StarBorder.ToString(),
+            PackIconMaterialDesignKind.StarBorder.ToString() };
 
         public MainViewModel()
         {
             this.CreateMenuItems();
             _mainViewModel = this;
-            Mediator.Register("OnViewChange", OnViewChange);
+            Mediator.Register("UpdateFlyoutValues", UpdateFlyoutValues);
+            Mediator.Register("SliderRateValueChanged", SliderRateValueChanged);
         }
 
-        public static MainViewModel getInstance { get => _mainViewModel; }
-
+        #region Hamburger Menu
         public void CreateMenuItems()
         {
             MenuItems = new HamburgerMenuItemCollection
@@ -67,16 +88,6 @@ namespace HS_Feed_Manager.ViewModels
             };
         }
 
-        public Visibility HideWindowCommands
-        {
-            get { return _hideWindowCommands; }
-            set
-            {
-                _hideWindowCommands = value;
-                OnPropertyChanged();
-            }
-        }
-
         public HamburgerMenuItemCollection MenuItems
         {
             get { return _menuItems; }
@@ -95,6 +106,16 @@ namespace HS_Feed_Manager.ViewModels
             {
                 if (Equals(value, _menuOptionItems)) return;
                 _menuOptionItems = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int SelectedIndex
+        {
+            get { return _selectedIndex; }
+            set
+            {
+                _selectedIndex = value;
                 OnPropertyChanged();
             }
         }
@@ -134,32 +155,6 @@ namespace HS_Feed_Manager.ViewModels
             IsPaneOpened = !IsPaneOpened;
         }
 
-        public ICommand CloseWindow
-        {
-            get
-            {
-                if (_closeWindow == null)
-                {
-                    _closeWindow = new RelayCommand(
-                        param => this.SaveCloseWindowCommand(),
-                        param => this.CanSaveCloseWindowCommand()
-                    );
-                }
-                return _closeWindow;
-            }
-        }
-
-        private bool CanSaveCloseWindowCommand()
-        {
-            return true;
-        }
-
-        private void SaveCloseWindowCommand()
-        {
-            if (_loginWindow != null)
-                _loginWindow.Close();
-        }
-
         public ICommand ItemClick
         {
             get
@@ -183,17 +178,6 @@ namespace HS_Feed_Manager.ViewModels
         private void ItemClickCommand(int param)
         {
             IsPaneOpened = false;
-            switch (param)
-            {
-                case 0:
-                    Mediator.NotifyColleagues("ReloadHomeView", true);
-                    break;
-                case 1:
-                    Mediator.NotifyColleagues("ReloadSettingsView", true);
-                    break;
-                default:
-                    break;
-            }
         }
 
         public ICommand OptionItemClick
@@ -219,34 +203,226 @@ namespace HS_Feed_Manager.ViewModels
         private void OptionItemClickCommand(int param)
         {
             IsPaneOpened = false;
-            //Reload AboutView not needed at the moment
+        }
+        #endregion
 
-            //HamburgerMenu hamburgerMenu = (HamburgerMenu)sender;
-            //switch (hamburgerMenu.SelectedOptionsIndex)
-            //{
-            //    case 0:
-            //        Mediator.NotifyColleagues("ReloadAboutView", true);
-            //        break;
-            //    default:
-            //        break;
-            //}
+        #region Flyout
+        private void UpdateFlyoutValues(object value)
+        {
+            LocalSeries localSeries = value as LocalSeries;
+            ItemName = localSeries.Name;
+            int statusIndex = Array.IndexOf(Enum.GetValues(localSeries.Status.GetType()), localSeries.Status);
+            SelectedStatus = statusIndex;
+            Episodes = localSeries.Episodes.ToString();
+            int autoDownloadIndex = Array.IndexOf(Enum.GetValues(localSeries.AutoDownloadStatus.GetType()), localSeries.AutoDownloadStatus);
+            SelectedAutoDownload = autoDownloadIndex;
+            //SliderRateValueChanged(localSeries.Rating);
+            RatingValue = localSeries.Rating;
+
+            IsFlyoutOpen = true;
         }
 
-        public int SelectedIndex
+        public bool IsFlyoutOpen
         {
-            get => _selectedIndex;
+            get { return _isFlyoutOpen; }
             set
             {
-                _selectedIndex = value;
+                _isFlyoutOpen = value;
                 OnPropertyChanged();
             }
         }
 
-        private void OnViewChange(object value)
+        public string ItemName
         {
-            //KeyValuePair<int, LogLevel> keyValuePair = (KeyValuePair<int, LogLevel>)value;
-            //SelectedIndex = keyValuePair.Key;
-            //Mediator.NotifyColleagues("OnLogLevel", keyValuePair.Value);
+            get { return _itemName; }
+            set
+            {
+                _itemName = value;
+                OnPropertyChanged();
+            }
         }
+
+        public string ItemNameValue
+        {
+            get { return _itemNameValue; }
+            set
+            {
+                _itemNameValue = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int SelectedStatus
+        {
+            get { return _selectedStatus; }
+            set
+            {
+                _selectedStatus = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string SelectedValueStatus
+        {
+            get { return _selectedValueStatus; }
+            set
+            {
+                _selectedValueStatus = value;
+                OnPropertyChanged();
+            }
+        }
+
+
+        public IEnumerable<Status> StatusValues
+        {
+            get
+            {
+                return Enum.GetValues(typeof(Status)).Cast<Status>();
+            }
+        }
+
+        public string Episodes
+        {
+            get { return _episodes; }
+            set
+            {
+                _episodes = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string EpisodesValue
+        {
+            get { return _episodesValue; }
+            set
+            {
+                _episodesValue = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int SelectedAutoDownload
+        {
+            get { return _selectedAutoDownload; }
+            set
+            {
+                _selectedAutoDownload = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string SelectedValueAutoDownload
+        {
+            get { return _selectedValueAutoDownload; }
+            set
+            {
+                _selectedValueAutoDownload = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public IEnumerable<AutoDownload> AutoDownloadValues
+        {
+            get
+            {
+                return Enum.GetValues(typeof(AutoDownload)).Cast<AutoDownload>();
+            }
+        }
+
+        public ObservableCollection<string> Icons
+        {
+            get => _icons;
+            set
+            {
+                _icons = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double RatingValue
+        {
+            get { return _ratingValue; }
+            set
+            {
+                _ratingValue = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private void SliderRateValueChanged(object obj)
+        {
+            int length = (int)obj;
+            for (int i = 0; i < length; i++)
+            {
+                Icons[i] = PackIconMaterialDesignKind.Star.ToString();
+            }
+            for (int i = 4; i >= length; i--)
+            {
+                Icons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
+            }
+        }
+
+        public ICommand OkEdit
+        {
+            get
+            {
+                if (_okEdit == null)
+                {
+                    _okEdit = new RelayCommand(
+                        param => this.SaveOkEditCommand(),
+                        param => this.CanSaveOkEditCommand()
+                    );
+                }
+                return _okEdit;
+            }
+        }
+
+        private bool CanSaveOkEditCommand()
+        {
+            return true;
+        }
+
+        private void SaveOkEditCommand()
+        {
+            LocalSeries localSeries = new LocalSeries();
+            localSeries.Name = ItemNameValue;
+            localSeries.Status = (Status)Enum.Parse(typeof(Status), SelectedValueStatus);
+            localSeries.Episodes = int.Parse(EpisodesValue);
+            localSeries.AutoDownloadStatus = (AutoDownload)Enum.Parse(typeof(AutoDownload), SelectedValueAutoDownload);
+            localSeries.Rating = (int)RatingValue;
+            //TODO: Save Data
+            Mediator.NotifyColleagues("SaveEditInfo", localSeries);
+
+            IsFlyoutOpen = false;
+        }
+
+        public ICommand CancelEdit
+        {
+            get
+            {
+                if (_cancelEdit == null)
+                {
+                    _cancelEdit = new RelayCommand(
+                        param => this.SaveCancelEditCommand(),
+                        param => this.CanSaveCancelEditCommand()
+                    );
+                }
+                return _cancelEdit;
+            }
+        }
+
+        private bool CanSaveCancelEditCommand()
+        {
+            return true;
+        }
+
+        private void SaveCancelEditCommand()
+        {
+            ItemNameValue = "";
+            EpisodesValue = "";
+            IsFlyoutOpen = false;
+        }
+
+        #endregion
     }
 }

@@ -11,6 +11,7 @@ namespace HS_Feed_Manager
         public App()
         {
             SampleData.Seed();
+            CurrenData.Seed();
         }
     }
 }

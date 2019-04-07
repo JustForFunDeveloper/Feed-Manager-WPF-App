@@ -9,6 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:HS_Feed_Manager.ViewModels"
     xmlns:views="clr-namespace:HS_Feed_Manager.Views"
+    x:Name="mainWindow"
     Title="HS Feed Manager"
     Width="1100"
     Height="700"
@@ -49,8 +50,9 @@
         <mah:FlyoutsControl>
             <mah:Flyout
                 x:Name="settingsFlyout"
-                Width="500"
-                Header="Settings"
+                Width="275"
+                Header="Edit Feed Info"
+                IsOpen="{Binding IsFlyoutOpen}"
                 Position="Right">
                 <Grid Margin="10">
                     <Grid.RowDefinitions>
@@ -58,20 +60,109 @@
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0" Text="Something above the ScrollPanel" />
-
                     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                         <StackPanel Orientation="Vertical">
-                            <TextBox mah:TextBoxHelper.Watermark="TextBox 01" />
-                            <TextBox Margin="0,5,0,0" mah:TextBoxHelper.Watermark="TextBox 02" />
-                            <TextBox Margin="0,5,0,0" mah:TextBoxHelper.Watermark="TextBox 03" />
-                            <TextBox Margin="0,5,0,0" mah:TextBoxHelper.Watermark="TextBox 04" />
-                            <TextBox Margin="0,5,0,0" mah:TextBoxHelper.Watermark="TextBox 05" />
-                            <TextBox Margin="0,5,0,0" mah:TextBoxHelper.Watermark="TextBox 06" />
-                            <TextBox Margin="0,5,0,0" mah:TextBoxHelper.Watermark="TextBox 07" />
-                            <TextBox Margin="0,5,0,0" mah:TextBoxHelper.Watermark="TextBox 08" />
-                            <TextBox Margin="0,5,0,0" mah:TextBoxHelper.Watermark="TextBox 09" />
-                            <TextBox Margin="0,5,0,0" mah:TextBoxHelper.Watermark="TextBox 10" />
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                FontSize="20"
+                                FontWeight="UltraLight"
+                                Foreground="{DynamicResource AccentColorBrush}"
+                                Text="Name:" />
+                            <TextBox mah:TextBoxHelper.Watermark="{Binding ItemName}" Text="{Binding ItemNameValue}" />
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                FontSize="20"
+                                FontWeight="UltraLight"
+                                Foreground="{DynamicResource AccentColorBrush}"
+                                Text="Status:" />
+                            <ComboBox
+                                Width="255"
+                                Height="20"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                ItemsSource="{Binding StatusValues}"
+                                SelectedIndex="{Binding SelectedStatus}"
+                                SelectedValue="{Binding SelectedValueStatus}" />
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                FontSize="20"
+                                FontWeight="UltraLight"
+                                Foreground="{DynamicResource AccentColorBrush}"
+                                Text="Episodes:" />
+                            <TextBox
+                                Margin="0,5,0,0"
+                                mah:TextBoxHelper.Watermark="{Binding Episodes}"
+                                Text="{Binding EpisodesValue}" />
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                FontSize="20"
+                                FontWeight="UltraLight"
+                                Foreground="{DynamicResource AccentColorBrush}"
+                                Text="Auto Download:" />
+                            <ComboBox
+                                Width="255"
+                                Height="20"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                ItemsSource="{Binding AutoDownloadValues}"
+                                SelectedIndex="{Binding SelectedAutoDownload}"
+                                SelectedValue="{Binding SelectedValueAutoDownload}" />
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                FontSize="20"
+                                FontWeight="UltraLight"
+                                Foreground="{DynamicResource AccentColorBrush}"
+                                Text="Rating:" />
+                            <StackPanel
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Orientation="Horizontal">
+                                <StackPanel.Resources>
+                                    <Style TargetType="{x:Type iconPacks:PackIconMaterialDesign}">
+                                        <Setter Property="Margin" Value="6,0,0,0" />
+                                    </Style>
+                                </StackPanel.Resources>
+                                <iconPacks:PackIconMaterialDesign
+                                    Width="20"
+                                    Height="20"
+                                    VerticalAlignment="Center"
+                                    Kind="{Binding Path=Icons[4]}" />
+                                <iconPacks:PackIconMaterialDesign
+                                    Width="20"
+                                    Height="20"
+                                    VerticalAlignment="Center"
+                                    Kind="{Binding Path=Icons[3]}" />
+                                <iconPacks:PackIconMaterialDesign
+                                    Width="20"
+                                    Height="20"
+                                    VerticalAlignment="Center"
+                                    Kind="{Binding Path=Icons[2]}" />
+                                <iconPacks:PackIconMaterialDesign
+                                    Width="20"
+                                    Height="20"
+                                    VerticalAlignment="Center"
+                                    Kind="{Binding Path=Icons[1]}" />
+                                <iconPacks:PackIconMaterialDesign
+                                    Width="20"
+                                    Height="20"
+                                    VerticalAlignment="Center"
+                                    Kind="{Binding Path=Icons[0]}" />
+                            </StackPanel>
+                            <Slider
+                                Height="20"
+                                Margin="4"
+                                mah:SliderHelper.EnableMouseWheel="MouseHover"
+                                AutoToolTipPlacement="BottomRight"
+                                IsDirectionReversed="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="5"
+                                Minimum="0"
+                                Orientation="Horizontal"
+                                SmallChange="1"
+                                TickPlacement="TopLeft"
+                                Ticks="0 1 2 3 4 5"
+                                ValueChanged="Slider_ValueChanged"
+                                Value="{Binding RatingValue}" />
                         </StackPanel>
                     </ScrollViewer>
 
@@ -81,10 +172,12 @@
                         Columns="2">
                         <Button
                             Margin="10"
-                            Content="Create"
+                            Command="{Binding OkEdit}"
+                            Content="OK"
                             Style="{DynamicResource SquareButtonStyle}" />
                         <Button
                             Margin="10"
+                            Command="{Binding CancelEdit}"
                             Content="Cancel"
                             Style="{DynamicResource SquareButtonStyle}" />
                     </UniformGrid>
