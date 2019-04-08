@@ -250,15 +250,15 @@
                     <ListBox
                         Margin="0,5,0,0"
                         BorderBrush="Transparent"
-                        ItemsSource="{Binding ElementName=artist, Path=SelectedItem.Albums}"
+                        ItemsSource="{Binding FeedListView}"
                         Style="{DynamicResource VirtualisedMetroListBox}">
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="{x:Type models:Artist}">
                                 <TextBlock>
                                     <TextBlock.Text>
                                         <MultiBinding StringFormat="{}{0} - {1}">
-                                            <Binding Mode="OneWay" Path="Genre" />
-                                            <Binding Mode="OneWay" Path="Artist" />
+                                            <Binding Mode="OneWay" Path="EpisodeNumber" />
+                                            <Binding Mode="OneWay" Path="Name" />
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>

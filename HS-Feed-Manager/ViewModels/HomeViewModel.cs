@@ -24,7 +24,10 @@ namespace HS_Feed_Manager.ViewModels
             "Auto Download Off",
             "Status Ongoing",
             "Status New",
-            "Status Finished"
+            "Status Finished",
+            "Sort By Name Asc.",
+            "Sort By Name Desc."
+            
         };
 
         private ICommand _textBoxButtonCmd;
@@ -35,7 +38,7 @@ namespace HS_Feed_Manager.ViewModels
         private string _filterString = "";
 
         public ICollectionView LocalListView { get; private set; }
-        public ICollectionView SortedArtistsView { get; private set; }
+        public ICollectionView FeedListView { get; private set; }
 
         private ObservableCollection<string> _icons = new ObservableCollection<string> {
             PackIconMaterialDesignKind.StarBorder.ToString(),
@@ -47,7 +50,8 @@ namespace HS_Feed_Manager.ViewModels
         public HomeViewModel(PropertyChangedViewModel mainViewModel)
         {
             _mainViewModel = mainViewModel;
-            InitialiseLocalListView();
+            InitialiseListViews();
+            SortModesIndex = 1;
         }
 
         #region Search and Filter
@@ -77,7 +81,8 @@ namespace HS_Feed_Manager.ViewModels
             if (param.GetType() == typeof(string))
             {
                 _filterString = param as string;
-                SortedArtistsView.Refresh();
+                LocalListView.Filter = SearchFilter;
+                FeedListView.Filter = SearchFilter;
             }
             else if (param.GetType() == typeof(TextBox))
             {
@@ -85,7 +90,8 @@ namespace HS_Feed_Manager.ViewModels
                 if (textBox.Text.Length == 0)
                 {
                     _filterString = "";
-                    SortedArtistsView.Refresh();
+                    LocalListView.Filter = SearchFilter;
+                    FeedListView.Filter = SearchFilter;
                 }
             }
         }
@@ -111,48 +117,68 @@ namespace HS_Feed_Manager.ViewModels
             }
         }
 
-        private void InitialiseLocalListView()
+        private void InitialiseListViews()
         {
             LocalListView = CollectionViewSource.GetDefaultView(CurrenData.LocalList);
             LocalListView.CurrentChanged += LocalListViewCurrentChanged;
+
+            FeedListView = CollectionViewSource.GetDefaultView(CurrenData.FeedList);
+            FeedListView.CurrentChanged += FeedListViewCurrentChanged;
         }
 
         private void SortThisList(int value)
         {
-            using (SortedArtistsView.DeferRefresh())
+            using (LocalListView.DeferRefresh())
             {
-                LocalListView.SortDescriptions.Clear();
-                switch (value)
+                using (FeedListView.DeferRefresh())
                 {
-                    case 0:
-                        LocalListView.Filter = null;
-                        LocalListView.Refresh();
-                        break;
-                    case 1:
-                        LocalListView.Filter = null;
-                        LocalListView.SortDescriptions.Add(new SortDescription("LatestDownload", ListSortDirection.Ascending));
-                        break;
-                    case 2:
-                        LocalListView.Filter = null;
-                        LocalListView.SortDescriptions.Add(new SortDescription("LatestDownload", ListSortDirection.Descending));
-                        break;
-                    case 3:
-                        LocalListView.Filter = AutowDownloadFilterOn;
-                        break;
-                    case 4:
-                        LocalListView.Filter = AutowDownloadFilterOff;
-                        break;
-                    case 5:
-                        LocalListView.Filter = StatusFilterOngoing;
-                        break;
-                    case 6:
-                        LocalListView.Filter = StatusFilterNew;
-                        break;
-                    case 7:
-                        LocalListView.Filter = StatusFilterFinished;
-                        break;
-                    default:
-                        break;
+                    LocalListView.SortDescriptions.Clear();
+                    FeedListView.SortDescriptions.Clear();
+                    switch (value)
+                    {
+                        case 0:
+                            LocalListView.Filter = null;
+                            FeedListView.Filter = null;
+                            break;
+                        case 1:
+                            LocalListView.Filter = null;
+                            LocalListView.SortDescriptions.Add(new SortDescription("LatestDownload", ListSortDirection.Ascending));
+                            FeedListView.Filter = null;
+                            FeedListView.SortDescriptions.Add(new SortDescription("LatestDownload", ListSortDirection.Ascending));
+                            break;
+                        case 2:
+                            LocalListView.Filter = null;
+                            LocalListView.SortDescriptions.Add(new SortDescription("LatestDownload", ListSortDirection.Descending));
+                            FeedListView.Filter = null;
+                            FeedListView.SortDescriptions.Add(new SortDescription("LatestDownload", ListSortDirection.Descending));
+                            break;
+                        case 3:
+                            LocalListView.Filter = AutowDownloadFilterOn;
+                            FeedListView.Filter = AutowDownloadFilterOn;
+                            break;
+                        case 4:
+                            LocalListView.Filter = AutowDownloadFilterOff;
+                            break;
+                        case 5:
+                            LocalListView.Filter = StatusFilterOngoing;
+                            break;
+                        case 6:
+                            LocalListView.Filter = StatusFilterNew;
+                            break;
+                        case 7:
+                            LocalListView.Filter = StatusFilterFinished;
+                            break;
+                        case 8:
+                            LocalListView.Filter = null;
+                            LocalListView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+                            break;
+                        case 9:
+                            LocalListView.Filter = null;
+                            LocalListView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Descending));
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         }
@@ -186,12 +212,35 @@ namespace HS_Feed_Manager.ViewModels
             LocalSeries localSeries = item as LocalSeries;
             return localSeries.Status.Equals(Status.Finished);
         }
+
+        private bool SearchFilter(object item)
+        {
+            LocalSeries localSeries = item as LocalSeries;
+            return localSeries.Name.IndexOf(_filterString, StringComparison.OrdinalIgnoreCase) >= 0;
+        }
         #endregion
 
         #region LocalList
         private void LocalListViewCurrentChanged(object sender, EventArgs e)
         {
             LocalSeries localSeries = (LocalSeries)LocalListView.CurrentItem;
+
+            if (localSeries == null)
+                localSeries = new LocalSeries() { Rating = 0 };
+
+            for (int i = 0; i < localSeries.Rating; i++)
+            {
+                Icons[i] = PackIconMaterialDesignKind.Star.ToString();
+            }
+            for (int i = 4; i >= localSeries.Rating; i--)
+            {
+                Icons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
+            }
+        }
+
+        private void FeedListViewCurrentChanged(object sender, EventArgs e)
+        {
+            LocalSeries localSeries = (LocalSeries)FeedListView.CurrentItem;
 
             if (localSeries == null)
                 localSeries = new LocalSeries() { Rating = 0 };
@@ -269,10 +318,10 @@ namespace HS_Feed_Manager.ViewModels
 
         private void MoveToFirstCommand()
         {
-            Artist item = (Artist)SortedArtistsView.CurrentItem;
-            SampleData.Artists.Remove(item);
-            SampleData.Artists.Insert(0, item);
-            SortedArtistsView.Refresh();
+            //Artist item = (Artist)SortedArtistsView.CurrentItem;
+            //SampleData.Artists.Remove(item);
+            //SampleData.Artists.Insert(0, item);
+            //SortedArtistsView.Refresh();
         }
 
         #endregion
