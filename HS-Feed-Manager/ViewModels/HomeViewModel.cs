@@ -47,7 +47,6 @@ namespace HS_Feed_Manager.ViewModels
         public HomeViewModel(PropertyChangedViewModel mainViewModel)
         {
             _mainViewModel = mainViewModel;
-            InitialiseArtistsView();
             InitialiseLocalListView();
         }
 
@@ -59,20 +58,20 @@ namespace HS_Feed_Manager.ViewModels
                 if (_textBoxButtonCmd == null)
                 {
                     _textBoxButtonCmd = new RelayCommand<object>(
-                        param => this.ItemClickCommand(param),
-                        param => this.CanItemClickCommand(param)
+                        param => this.TextBoxButtonCommand(param),
+                        param => this.CanTextBoxButtonCommand(param)
                     );
                 }
                 return _textBoxButtonCmd;
             }
         }
 
-        private bool CanItemClickCommand(object param)
+        private bool CanTextBoxButtonCommand(object param)
         {
             return true;
         }
 
-        private void ItemClickCommand(object param)
+        private void TextBoxButtonCommand(object param)
         {
 
             if (param.GetType() == typeof(string))
@@ -112,13 +111,6 @@ namespace HS_Feed_Manager.ViewModels
             }
         }
 
-        private void InitialiseArtistsView()
-        {
-            SortedArtistsView = CollectionViewSource.GetDefaultView(SampleData.Artists);
-            //SortedArtistsView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
-            SortedArtistsView.Filter = CustomFilter;
-        }
-
         private void InitialiseLocalListView()
         {
             LocalListView = CollectionViewSource.GetDefaultView(CurrenData.LocalList);
@@ -129,26 +121,81 @@ namespace HS_Feed_Manager.ViewModels
         {
             using (SortedArtistsView.DeferRefresh())
             {
-                SortedArtistsView.SortDescriptions.Clear();
-                if (value == 0)
-                    SortedArtistsView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
-                if (value == 1)
-                    SortedArtistsView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Descending));
+                LocalListView.SortDescriptions.Clear();
+                switch (value)
+                {
+                    case 0:
+                        LocalListView.Filter = null;
+                        LocalListView.Refresh();
+                        break;
+                    case 1:
+                        LocalListView.Filter = null;
+                        LocalListView.SortDescriptions.Add(new SortDescription("LatestDownload", ListSortDirection.Ascending));
+                        break;
+                    case 2:
+                        LocalListView.Filter = null;
+                        LocalListView.SortDescriptions.Add(new SortDescription("LatestDownload", ListSortDirection.Descending));
+                        break;
+                    case 3:
+                        LocalListView.Filter = AutowDownloadFilterOn;
+                        break;
+                    case 4:
+                        LocalListView.Filter = AutowDownloadFilterOff;
+                        break;
+                    case 5:
+                        LocalListView.Filter = StatusFilterOngoing;
+                        break;
+                    case 6:
+                        LocalListView.Filter = StatusFilterNew;
+                        break;
+                    case 7:
+                        LocalListView.Filter = StatusFilterFinished;
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
-        private bool CustomFilter(object item)
+        private bool AutowDownloadFilterOn(object item)
         {
-            Artist artist = item as Artist;
-            return artist.Name.IndexOf(_filterString, StringComparison.OrdinalIgnoreCase) >= 0;
+            LocalSeries localSeries = item as LocalSeries;
+            return localSeries.AutoDownloadStatus.Equals(AutoDownload.On);
         }
 
+        private bool AutowDownloadFilterOff(object item)
+        {
+            LocalSeries localSeries = item as LocalSeries;
+            return localSeries.AutoDownloadStatus.Equals(AutoDownload.Off);
+        }
+
+        private bool StatusFilterOngoing(object item)
+        {
+            LocalSeries localSeries = item as LocalSeries;
+            return localSeries.Status.Equals(Status.Ongoing);
+        }
+
+        private bool StatusFilterNew(object item)
+        {
+            LocalSeries localSeries = item as LocalSeries;
+            return localSeries.Status.Equals(Status.New);
+        }
+
+        private bool StatusFilterFinished(object item)
+        {
+            LocalSeries localSeries = item as LocalSeries;
+            return localSeries.Status.Equals(Status.Finished);
+        }
         #endregion
 
         #region LocalList
         private void LocalListViewCurrentChanged(object sender, EventArgs e)
         {
             LocalSeries localSeries = (LocalSeries)LocalListView.CurrentItem;
+
+            if (localSeries == null)
+                localSeries = new LocalSeries() { Rating = 0 };
+
             for (int i = 0; i < localSeries.Rating; i++)
             {
                 Icons[i] = PackIconMaterialDesignKind.Star.ToString();

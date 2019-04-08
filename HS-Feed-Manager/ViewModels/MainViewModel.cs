@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows;
 using System.Windows.Input;
 
 namespace HS_Feed_Manager.ViewModels
@@ -387,7 +386,10 @@ namespace HS_Feed_Manager.ViewModels
             LocalSeries localSeries = new LocalSeries();
             localSeries.Name = ItemNameValue;
             localSeries.Status = (Status)Enum.Parse(typeof(Status), SelectedValueStatus);
-            localSeries.Episodes = int.Parse(EpisodesValue);
+            if (int.TryParse(EpisodesValue, out int result))
+                localSeries.Episodes = result;
+            else
+                localSeries.Episodes = 0;
             localSeries.AutoDownloadStatus = (AutoDownload)Enum.Parse(typeof(AutoDownload), SelectedValueAutoDownload);
             localSeries.Rating = (int)RatingValue;
             //TODO: Save Data
