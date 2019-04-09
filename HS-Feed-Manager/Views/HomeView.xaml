@@ -3,7 +3,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -222,7 +221,8 @@
                     mah:TextBoxHelper.ButtonCommand="{Binding TextBoxButtonCmd, Mode=OneWay}"
                     mah:TextBoxHelper.ClearTextButton="True"
                     mah:TextBoxHelper.UseFloatingWatermark="False"
-                    mah:TextBoxHelper.Watermark="Search...">
+                    mah:TextBoxHelper.Watermark="Search..."
+                    Text="{Binding ClearSearch}">
                     <TextBox.InputBindings>
                         <KeyBinding
                             Key="Return"
@@ -245,11 +245,14 @@
             <mah:MetroTabControl
                 x:Name="TC"
                 Grid.Column="2"
-                Margin="0,5,0,0">
+                Margin="0,5,0,0"
+                SelectedIndex="{Binding TabIndex}"
+                SelectionChanged="TC_SelectionChanged">
                 <mah:MetroTabItem Header="Feed List">
                     <ListBox
                         Margin="0,5,0,0"
                         BorderBrush="Transparent"
+                        IsSynchronizedWithCurrentItem="True"
                         ItemsSource="{Binding FeedListView}"
                         Style="{DynamicResource VirtualisedMetroListBox}">
                         <ListBox.ItemTemplate>

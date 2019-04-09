@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -15,7 +16,21 @@ namespace HS_Feed_Manager.ViewModels
     {
         private readonly PropertyChangedViewModel _mainViewModel;
 
-        private List<string> _sortModes = new List<string>
+        private List<string> _feedSortModes = new List<string>
+        {
+            "Not sorted",
+            "Auto Download On",
+            "Auto Download Off",
+            "Exists locally",
+            "Don't exists locally",
+            "Status Ongoing",
+            "Status New",
+            "Status Finished",
+            "Sort By Name Asc.",
+            "Sort By Name Desc."
+        };
+
+        private List<string> _localSortModes = new List<string>
         {
             "Not sorted",
             "Sort Date Newest",
@@ -27,8 +42,12 @@ namespace HS_Feed_Manager.ViewModels
             "Status Finished",
             "Sort By Name Asc.",
             "Sort By Name Desc."
-            
         };
+
+        private List<string> _sortModes;
+
+        private int _lastFeedSortMode = 0;
+        private int _lastLocalSortMode = 0;
 
         private ICommand _textBoxButtonCmd;
         private ICommand _moveToFirst;
@@ -36,6 +55,8 @@ namespace HS_Feed_Manager.ViewModels
 
         private int _sortModesIndex;
         private string _filterString = "";
+        private int _tabIndex;
+        private string _clearSearch;
 
         public ICollectionView LocalListView { get; private set; }
         public ICollectionView FeedListView { get; private set; }
@@ -51,7 +72,8 @@ namespace HS_Feed_Manager.ViewModels
         {
             _mainViewModel = mainViewModel;
             InitialiseListViews();
-            SortModesIndex = 1;
+            SortModes = _feedSortModes;
+            Mediator.Register("TabControlSelectionChanged", TabControlSelectionChanged);
         }
 
         #region Search and Filter
@@ -112,6 +134,10 @@ namespace HS_Feed_Manager.ViewModels
             set
             {
                 _sortModesIndex = value;
+                if (TabIndex == 0)
+                    _lastFeedSortMode = value;
+                else if (TabIndex == 1)
+                    _lastLocalSortMode = value;
                 SortThisList(value);
                 OnPropertyChanged();
             }
@@ -132,52 +158,91 @@ namespace HS_Feed_Manager.ViewModels
             {
                 using (FeedListView.DeferRefresh())
                 {
-                    LocalListView.SortDescriptions.Clear();
-                    FeedListView.SortDescriptions.Clear();
-                    switch (value)
+                    if (TabIndex == 0)
                     {
-                        case 0:
-                            LocalListView.Filter = null;
-                            FeedListView.Filter = null;
-                            break;
-                        case 1:
-                            LocalListView.Filter = null;
-                            LocalListView.SortDescriptions.Add(new SortDescription("LatestDownload", ListSortDirection.Ascending));
-                            FeedListView.Filter = null;
-                            FeedListView.SortDescriptions.Add(new SortDescription("LatestDownload", ListSortDirection.Ascending));
-                            break;
-                        case 2:
-                            LocalListView.Filter = null;
-                            LocalListView.SortDescriptions.Add(new SortDescription("LatestDownload", ListSortDirection.Descending));
-                            FeedListView.Filter = null;
-                            FeedListView.SortDescriptions.Add(new SortDescription("LatestDownload", ListSortDirection.Descending));
-                            break;
-                        case 3:
-                            LocalListView.Filter = AutowDownloadFilterOn;
-                            FeedListView.Filter = AutowDownloadFilterOn;
-                            break;
-                        case 4:
-                            LocalListView.Filter = AutowDownloadFilterOff;
-                            break;
-                        case 5:
-                            LocalListView.Filter = StatusFilterOngoing;
-                            break;
-                        case 6:
-                            LocalListView.Filter = StatusFilterNew;
-                            break;
-                        case 7:
-                            LocalListView.Filter = StatusFilterFinished;
-                            break;
-                        case 8:
-                            LocalListView.Filter = null;
-                            LocalListView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
-                            break;
-                        case 9:
-                            LocalListView.Filter = null;
-                            LocalListView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Descending));
-                            break;
-                        default:
-                            break;
+                        FeedListView.SortDescriptions.Clear();
+                        switch (value)
+                        {
+                            case 0:
+                                FeedListView.Filter = null;
+                                break;
+                            case 1:
+                                FeedListView.Filter = AutowDownloadFilterOn;
+                                break;
+                            case 2:
+                                FeedListView.Filter = AutowDownloadFilterOff;
+                                break;
+                            case 3:
+                                FeedListView.Filter = ExistsLocally;
+                                break;
+                            case 4:
+                                FeedListView.Filter = DoesntExistsLocally;
+                                break;
+                            case 5:
+                                FeedListView.Filter = StatusFilterOngoing;
+                                break;
+                            case 6:
+                                FeedListView.Filter = StatusFilterNew;
+                                break;
+                            case 7:
+                                FeedListView.Filter = StatusFilterFinished;
+                                break;
+                            case 8:
+                                FeedListView.Filter = null;
+                                FeedListView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+                                break;
+                            case 9:
+                                FeedListView.Filter = null;
+                                FeedListView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Descending));
+                                break;
+                            default:
+                                break;
+                        }
+
+                    }
+                    else if (TabIndex == 1)
+                    {
+                        LocalListView.SortDescriptions.Clear();
+                        LocalListView.Filter = null;
+                        switch (value)
+                        {
+                            case 0:
+                                LocalListView.Filter = null;
+                                break;
+                            case 1:
+                                LocalListView.Filter = null;
+                                LocalListView.SortDescriptions.Add(new SortDescription("LatestDownload", ListSortDirection.Ascending));
+                                break;
+                            case 2:
+                                LocalListView.Filter = null;
+                                LocalListView.SortDescriptions.Add(new SortDescription("LatestDownload", ListSortDirection.Descending));
+                                break;
+                            case 3:
+                                LocalListView.Filter = AutowDownloadFilterOn;
+                                break;
+                            case 4:
+                                LocalListView.Filter = AutowDownloadFilterOff;
+                                break;
+                            case 5:
+                                LocalListView.Filter = StatusFilterOngoing;
+                                break;
+                            case 6:
+                                LocalListView.Filter = StatusFilterNew;
+                                break;
+                            case 7:
+                                LocalListView.Filter = StatusFilterFinished;
+                                break;
+                            case 8:
+                                LocalListView.Filter = null;
+                                LocalListView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+                                break;
+                            case 9:
+                                LocalListView.Filter = null;
+                                LocalListView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Descending));
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 }
             }
@@ -185,42 +250,105 @@ namespace HS_Feed_Manager.ViewModels
 
         private bool AutowDownloadFilterOn(object item)
         {
-            LocalSeries localSeries = item as LocalSeries;
-            return localSeries.AutoDownloadStatus.Equals(AutoDownload.On);
+            if (item.GetType() == typeof(Episode))
+            {
+                // TODO: Replace with proper DB method
+                return CurrenData.LocalList.Any(x => (x.AutoDownloadStatus == AutoDownload.On) && (x.Name == ((Episode)item).Name));
+
+            }
+            else if (item.GetType() == typeof(LocalSeries))
+            {
+                LocalSeries localSeries = item as LocalSeries;
+                return localSeries.AutoDownloadStatus.Equals(AutoDownload.On);
+            }
+            return false;
         }
 
         private bool AutowDownloadFilterOff(object item)
         {
-            LocalSeries localSeries = item as LocalSeries;
-            return localSeries.AutoDownloadStatus.Equals(AutoDownload.Off);
+            if (item.GetType() == typeof(Episode))
+            {
+                // TODO: Replace with proper DB method
+                return CurrenData.LocalList.Any(x => (x.AutoDownloadStatus == AutoDownload.Off) && (x.Name == ((Episode)item).Name));
+            }
+            else if (item.GetType() == typeof(LocalSeries))
+            {
+                LocalSeries localSeries = item as LocalSeries;
+                return localSeries.AutoDownloadStatus.Equals(AutoDownload.Off);
+            }
+            return false;
+        }
+
+        private bool ExistsLocally(object item)
+        {
+            return CurrenData.LocalList.Any(x => x.Name == ((Episode)item).Name);
+        }
+
+        private bool DoesntExistsLocally(object item)
+        {
+            return !CurrenData.LocalList.Any(x => x.Name == ((Episode)item).Name);
         }
 
         private bool StatusFilterOngoing(object item)
         {
-            LocalSeries localSeries = item as LocalSeries;
-            return localSeries.Status.Equals(Status.Ongoing);
+            if (item.GetType() == typeof(Episode))
+            {
+                // TODO: Replace with proper DB method
+                return CurrenData.LocalList.Any(x => (x.Status == Status.Ongoing) && (x.Name == ((Episode)item).Name));
+            }
+            else if (item.GetType() == typeof(LocalSeries))
+            {
+                LocalSeries localSeries = item as LocalSeries;
+                return localSeries.Status.Equals(Status.Ongoing);
+            }
+            return false;
         }
 
         private bool StatusFilterNew(object item)
         {
-            LocalSeries localSeries = item as LocalSeries;
-            return localSeries.Status.Equals(Status.New);
+            if (item.GetType() == typeof(Episode))
+            {
+                // TODO: Replace with proper DB method
+                return CurrenData.LocalList.Any(x => (x.Status == Status.New) && (x.Name == ((Episode)item).Name));
+            }
+            else if (item.GetType() == typeof(LocalSeries))
+            {
+                LocalSeries localSeries = item as LocalSeries;
+                return localSeries.Status.Equals(Status.New);
+            }
+            return false;
         }
 
         private bool StatusFilterFinished(object item)
         {
-            LocalSeries localSeries = item as LocalSeries;
-            return localSeries.Status.Equals(Status.Finished);
+            if (item.GetType() == typeof(Episode))
+            {
+                // TODO: Replace with proper DB method
+                return CurrenData.LocalList.Any(x => (x.Status == Status.Finished) && (x.Name == ((Episode)item).Name));
+            }
+            else if (item.GetType() == typeof(LocalSeries))
+            {
+                LocalSeries localSeries = item as LocalSeries;
+                return localSeries.Status.Equals(Status.Finished);
+            }
+            return false;
         }
 
         private bool SearchFilter(object item)
         {
-            LocalSeries localSeries = item as LocalSeries;
-            return localSeries.Name.IndexOf(_filterString, StringComparison.OrdinalIgnoreCase) >= 0;
+            if (item.GetType() == typeof(Episode))
+            {
+                Episode episode = item as Episode;
+                return episode.Name.IndexOf(_filterString, StringComparison.OrdinalIgnoreCase) >= 0;
+            }
+            else if (item.GetType() == typeof(LocalSeries))
+            {
+                LocalSeries localSeries = item as LocalSeries;
+                return localSeries.Name.IndexOf(_filterString, StringComparison.OrdinalIgnoreCase) >= 0;
+            }
+            return false;
         }
-        #endregion
 
-        #region LocalList
         private void LocalListViewCurrentChanged(object sender, EventArgs e)
         {
             LocalSeries localSeries = (LocalSeries)LocalListView.CurrentItem;
@@ -240,21 +368,51 @@ namespace HS_Feed_Manager.ViewModels
 
         private void FeedListViewCurrentChanged(object sender, EventArgs e)
         {
-            LocalSeries localSeries = (LocalSeries)FeedListView.CurrentItem;
+            Episode feedEpisode = (Episode)FeedListView.CurrentItem;
 
-            if (localSeries == null)
-                localSeries = new LocalSeries() { Rating = 0 };
-
-            for (int i = 0; i < localSeries.Rating; i++)
-            {
-                Icons[i] = PackIconMaterialDesignKind.Star.ToString();
-            }
-            for (int i = 4; i >= localSeries.Rating; i--)
+            for (int i = 4; i >= 0; i--)
             {
                 Icons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
             }
         }
 
+        public int TabIndex
+        {
+            get => _tabIndex;
+            set
+            {
+                _tabIndex = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region Tab
+        public string ClearSearch
+        {
+            get => _clearSearch;
+            set
+            {
+                _clearSearch = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private void TabControlSelectionChanged(object obj)
+        {
+            if (TabIndex == 0)
+            {
+                SortModes = _feedSortModes;
+                SortModesIndex = 0;
+                ClearSearch = "";
+            }
+            else if (TabIndex == 1)
+            {
+                SortModes = _localSortModes;
+                SortModesIndex = 1;
+                ClearSearch = "";
+            }
+        }
         #endregion
 
         #region Feed Info
