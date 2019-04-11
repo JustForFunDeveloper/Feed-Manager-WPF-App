@@ -9,6 +9,7 @@ namespace HS_Feed_Manager.Views
     public partial class HomeView : UserControl
     {
         private int _currentTabIndex = 0;
+        private int _currentEpisodeIndex = 0;
 
         public HomeView()
         {
@@ -25,6 +26,16 @@ namespace HS_Feed_Manager.Views
                     Mediator.NotifyColleagues("TabControlSelectionChanged", null);
                     _currentTabIndex = tabControl.SelectedIndex;
                 }
+            }
+        }
+
+        private void EpisodeList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender != null)
+            {
+                ListBox listBox = (ListBox)sender;
+                Mediator.NotifyColleagues("ListBoxSelectionChanged", listBox.SelectedItem);
+                _currentEpisodeIndex = listBox.SelectedIndex;
             }
         }
     }

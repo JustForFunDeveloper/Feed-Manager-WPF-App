@@ -9,7 +9,7 @@
     xmlns:models="clr-namespace:HS_Feed_Manager.DataModels"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     d:DesignHeight="700"
-    d:DesignWidth="1100"
+    d:DesignWidth="1200"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -156,14 +156,16 @@
                 Margin="0,5,0,0"
                 mah:ControlsHelper.HeaderFontSize="30"
                 BorderBrush="Transparent"
-                Header="Current Downloads">
+                Header="Current Downloads"
+                Visibility="{Binding DownloadListVisibility}">
                 <ListBox
-                    x:Name="artist"
+                    x:Name="downloadList"
                     Margin="0,5,0,0"
                     BorderBrush="Transparent"
                     IsSynchronizedWithCurrentItem="True"
                     ItemsSource="{Binding SortedArtistsView}"
-                    Style="{DynamicResource VirtualisedMetroListBox}">
+                    Style="{DynamicResource VirtualisedMetroListBox}"
+                    Visibility="Visible">
                     <ListBox.ItemTemplate>
                         <DataTemplate DataType="{x:Type models:Artist}">
                             <TextBlock>
@@ -192,6 +194,94 @@
                         </ContextMenu>
                     </ListBox.ContextMenu>
                 </ListBox>
+            </GroupBox>
+            <GroupBox
+                Grid.Column="0"
+                Margin="0,5,0,0"
+                mah:ControlsHelper.HeaderFontSize="30"
+                BorderBrush="Transparent"
+                Header="Episode List"
+                Visibility="{Binding EpisodeListVisibility}">
+                <StackPanel Orientation="Vertical">
+                    <StackPanel
+                        Grid.Column="2"
+                        Height="37"
+                        Margin="0,8,0,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Orientation="Horizontal">
+                        <ComboBox
+                            Width="145"
+                            Height="20"
+                            Margin="5,5"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            ItemsSource="{Binding SortModes}"
+                            SelectedIndex="{Binding SortModesIndex}" />
+                        <TextBox
+                            Width="140"
+                            Height="20"
+                            mah:TextBoxHelper.ButtonCommand="{Binding TextBoxButtonCmd, Mode=OneWay}"
+                            mah:TextBoxHelper.ClearTextButton="True"
+                            mah:TextBoxHelper.UseFloatingWatermark="False"
+                            mah:TextBoxHelper.Watermark="Search..."
+                            Text="{Binding ClearSearch}">
+                            <TextBox.InputBindings>
+                                <KeyBinding
+                                    Key="Return"
+                                    Command="{Binding TextBoxButtonCmd, Mode=OneWay}"
+                                    CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TextBox}, Path=Text, Mode=OneWay}" />
+                            </TextBox.InputBindings>
+                            <TextBox.Style>
+                                <Style BasedOn="{StaticResource SearchMetroTextBox}" TargetType="{x:Type TextBox}">
+                                    <Style.Triggers>
+                                        <Trigger Property="mah:TextBoxHelper.HasText" Value="True">
+                                            <Setter Property="mah:TextBoxHelper.ButtonContent" Value="r" />
+                                            <Setter Property="mah:TextBoxHelper.ButtonContentTemplate" Value="{x:Null}" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+
+                    </StackPanel>
+                    <ListBox
+                        x:Name="episodeList"
+                        Margin="0,5,0,0"
+                        BorderBrush="Transparent"
+                        IsSynchronizedWithCurrentItem="True"
+                        ItemsSource="{Binding EpisodeList}"
+                        SelectionChanged="EpisodeList_SelectionChanged"
+                        Style="{DynamicResource VirtualisedMetroListBox}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type models:Artist}">
+                                <TextBlock>
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}{0}&#x9;-    {1}">
+                                            <Binding Mode="OneWay" Path="EpisodeNumber" />
+                                            <Binding Mode="OneWay" Path="Name" />
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                        <ListBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Move" Icon="{iconPacks:Material Kind=FolderSearch}">
+                                    <MenuItem
+                                        Command="{Binding MoveToFirst}"
+                                        Header="Move to First"
+                                        Icon="{iconPacks:Material Kind=FolderSearch}" />
+                                    <MenuItem Header="Move to Last" />
+                                    <MenuItem Header="Move Up" />
+                                    <MenuItem Header="Move Down" />
+                                </MenuItem>
+                                <MenuItem Header="Remove From List" />
+                                <MenuItem Header="Start Download" />
+                            </ContextMenu>
+                        </ListBox.ContextMenu>
+                    </ListBox>
+                </StackPanel>
             </GroupBox>
             <Rectangle
                 Grid.Column="1"
@@ -259,7 +349,7 @@
                             <DataTemplate DataType="{x:Type models:Artist}">
                                 <TextBlock>
                                     <TextBlock.Text>
-                                        <MultiBinding StringFormat="{}{0} - {1}">
+                                        <MultiBinding StringFormat="{}{0}&#x9;-    {1}">
                                             <Binding Mode="OneWay" Path="EpisodeNumber" />
                                             <Binding Mode="OneWay" Path="Name" />
                                         </MultiBinding>
@@ -314,7 +404,8 @@
                 Margin="0,5,0,0"
                 mah:ControlsHelper.HeaderFontSize="30"
                 BorderBrush="Transparent"
-                Header="Feed Information">
+                Header="Feed Information"
+                Visibility="{Binding FeedInfoVisibility}">
                 <StackPanel Orientation="Vertical">
                     <StackPanel.Resources>
                         <Style TargetType="{x:Type Grid}">
@@ -335,7 +426,7 @@
                             VerticalAlignment="Center"
                             FontSize="15"
                             FontWeight="Normal"
-                            Text="{Binding ElementName=localList, Path=SelectedItem.Name}" />
+                            Text="{Binding FeedInfoName}" />
                     </Grid>
                     <Grid>
                         <TextBlock
@@ -344,30 +435,14 @@
                             FontSize="20"
                             FontWeight="UltraLight"
                             Foreground="{DynamicResource AccentColorBrush}"
-                            Text="Status:" />
+                            Text="Episode:" />
                         <TextBlock
                             Grid.Column="1"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             FontSize="15"
                             FontWeight="Normal"
-                            Text="{Binding ElementName=localList, Path=SelectedItem.Status}" />
-                    </Grid>
-                    <Grid>
-                        <TextBlock
-                            Grid.Column="0"
-                            VerticalAlignment="Center"
-                            FontSize="20"
-                            FontWeight="UltraLight"
-                            Foreground="{DynamicResource AccentColorBrush}"
-                            Text="Episodes:" />
-                        <TextBlock
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            FontSize="15"
-                            FontWeight="Normal"
-                            Text="{Binding ElementName=localList, Path=SelectedItem.Episodes}" />
+                            Text="{Binding FeedInfoEpisode}" />
                     </Grid>
                     <Grid>
                         <TextBlock
@@ -383,7 +458,7 @@
                             VerticalAlignment="Center"
                             FontSize="15"
                             FontWeight="Normal"
-                            Text="{Binding ElementName=localList, Path=SelectedItem.AutoDownloadStatus}" />
+                            Text="{Binding FeedInfoAutoDownload}" />
                     </Grid>
                     <Grid>
                         <TextBlock
@@ -399,7 +474,7 @@
                             VerticalAlignment="Center"
                             FontSize="15"
                             FontWeight="Normal"
-                            Text="{Binding ElementName=localList, Path=SelectedItem.LocalEpisodesCount}" />
+                            Text="{Binding FeedInfoLocalEpisodeCount}" />
                     </Grid>
                     <Grid VerticalAlignment="Center">
                         <TextBlock
@@ -422,27 +497,321 @@
                                 Width="20"
                                 Height="20"
                                 VerticalAlignment="Center"
-                                Kind="{Binding Path=Icons[4]}" />
+                                Kind="{Binding Path=FeedIcons[4]}" />
                             <iconPacks:PackIconMaterialDesign
                                 Width="20"
                                 Height="20"
                                 VerticalAlignment="Center"
-                                Kind="{Binding Path=Icons[3]}" />
+                                Kind="{Binding Path=FeedIcons[3]}" />
                             <iconPacks:PackIconMaterialDesign
                                 Width="20"
                                 Height="20"
                                 VerticalAlignment="Center"
-                                Kind="{Binding Path=Icons[2]}" />
+                                Kind="{Binding Path=FeedIcons[2]}" />
                             <iconPacks:PackIconMaterialDesign
                                 Width="20"
                                 Height="20"
                                 VerticalAlignment="Center"
-                                Kind="{Binding Path=Icons[1]}" />
+                                Kind="{Binding Path=FeedIcons[1]}" />
                             <iconPacks:PackIconMaterialDesign
                                 Width="20"
                                 Height="20"
                                 VerticalAlignment="Center"
-                                Kind="{Binding Path=Icons[0]}" />
+                                Kind="{Binding Path=FeedIcons[0]}" />
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox
+                Grid.Column="4"
+                Margin="0,5,0,0"
+                mah:ControlsHelper.HeaderFontSize="30"
+                BorderBrush="Transparent"
+                Header="Local Information"
+                Visibility="{Binding LocalInfoVisibility}">
+                <StackPanel Orientation="Vertical">
+                    <StackPanel.Resources>
+                        <Style TargetType="{x:Type Grid}">
+                            <Setter Property="Margin" Value="0,10,0,0" />
+                        </Style>
+                    </StackPanel.Resources>
+                    <Grid>
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="20"
+                            FontWeight="UltraLight"
+                            Foreground="{DynamicResource AccentColorBrush}"
+                            Text="Name:" />
+                        <TextBlock
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            FontSize="15"
+                            FontWeight="Normal"
+                            Text="{Binding LocalInfoName}" />
+                    </Grid>
+                    <Grid>
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="20"
+                            FontWeight="UltraLight"
+                            Foreground="{DynamicResource AccentColorBrush}"
+                            Text="Status:" />
+                        <TextBlock
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            FontSize="15"
+                            FontWeight="Normal"
+                            Text="{Binding LocalInfoStatus}" />
+                    </Grid>
+                    <Grid>
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="20"
+                            FontWeight="UltraLight"
+                            Foreground="{DynamicResource AccentColorBrush}"
+                            Text="Episodes:" />
+                        <TextBlock
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            FontSize="15"
+                            FontWeight="Normal"
+                            Text="{Binding LocalInfoEpisodes}" />
+                    </Grid>
+                    <Grid>
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="20"
+                            FontWeight="UltraLight"
+                            Foreground="{DynamicResource AccentColorBrush}"
+                            Text="Auto Download:" />
+                        <TextBlock
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            FontSize="15"
+                            FontWeight="Normal"
+                            Text="{Binding LocalInfoAutoDownload}" />
+                    </Grid>
+                    <Grid>
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="20"
+                            FontWeight="UltraLight"
+                            Foreground="{DynamicResource AccentColorBrush}"
+                            Text="Local Ep. Count:" />
+                        <TextBlock
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            FontSize="15"
+                            FontWeight="Normal"
+                            Text="{Binding LocalInfoLocalEpisodeCount}" />
+                    </Grid>
+                    <Grid VerticalAlignment="Center">
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="20"
+                            FontWeight="UltraLight"
+                            Foreground="{DynamicResource AccentColorBrush}"
+                            Text="Rating:" />
+                        <StackPanel
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                            <StackPanel.Resources>
+                                <Style TargetType="{x:Type iconPacks:PackIconMaterialDesign}">
+                                    <Setter Property="Margin" Value="6,0,0,0" />
+                                </Style>
+                            </StackPanel.Resources>
+                            <iconPacks:PackIconMaterialDesign
+                                Width="20"
+                                Height="20"
+                                VerticalAlignment="Center"
+                                Kind="{Binding Path=LocalIcons[4]}" />
+                            <iconPacks:PackIconMaterialDesign
+                                Width="20"
+                                Height="20"
+                                VerticalAlignment="Center"
+                                Kind="{Binding Path=LocalIcons[3]}" />
+                            <iconPacks:PackIconMaterialDesign
+                                Width="20"
+                                Height="20"
+                                VerticalAlignment="Center"
+                                Kind="{Binding Path=LocalIcons[2]}" />
+                            <iconPacks:PackIconMaterialDesign
+                                Width="20"
+                                Height="20"
+                                VerticalAlignment="Center"
+                                Kind="{Binding Path=LocalIcons[1]}" />
+                            <iconPacks:PackIconMaterialDesign
+                                Width="20"
+                                Height="20"
+                                VerticalAlignment="Center"
+                                Kind="{Binding Path=LocalIcons[0]}" />
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox
+                Grid.Column="4"
+                Margin="0,5,0,0"
+                mah:ControlsHelper.HeaderFontSize="30"
+                BorderBrush="Transparent"
+                Header="Episode Information"
+                Visibility="{Binding EpisodeInfoVisibility}">
+                <StackPanel Orientation="Vertical">
+                    <StackPanel.Resources>
+                        <Style TargetType="{x:Type Grid}">
+                            <Setter Property="Margin" Value="0,10,0,0" />
+                        </Style>
+                    </StackPanel.Resources>
+                    <Grid>
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="20"
+                            FontWeight="UltraLight"
+                            Foreground="{DynamicResource AccentColorBrush}"
+                            Text="Name:" />
+                        <TextBlock
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            FontSize="15"
+                            FontWeight="Normal"
+                            Text="{Binding EpisodeInfoName}" />
+                    </Grid>
+                    <Grid>
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="20"
+                            FontWeight="UltraLight"
+                            Foreground="{DynamicResource AccentColorBrush}"
+                            Text="Status:" />
+                        <TextBlock
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            FontSize="15"
+                            FontWeight="Normal"
+                            Text="{Binding EpisodeInfoStatus}" />
+                    </Grid>
+                    <Grid>
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="20"
+                            FontWeight="UltraLight"
+                            Foreground="{DynamicResource AccentColorBrush}"
+                            Text="Episode:" />
+                        <TextBlock
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            FontSize="15"
+                            FontWeight="Normal"
+                            Text="{Binding EpisodeInfoEpisode}" />
+                    </Grid>
+                    <Grid>
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="20"
+                            FontWeight="UltraLight"
+                            Foreground="{DynamicResource AccentColorBrush}"
+                            Text="Auto Download:" />
+                        <TextBlock
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            FontSize="15"
+                            FontWeight="Normal"
+                            Text="{Binding EpisodeInfoAutoDownload}" />
+                    </Grid>
+                    <Grid>
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="20"
+                            FontWeight="UltraLight"
+                            Foreground="{DynamicResource AccentColorBrush}"
+                            Text="Local Ep. Count:" />
+                        <TextBlock
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            FontSize="15"
+                            FontWeight="Normal"
+                            Text="{Binding EpisodeInfoLocalEpisodeCount}" />
+                    </Grid>
+                    <Grid>
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="20"
+                            FontWeight="UltraLight"
+                            Foreground="{DynamicResource AccentColorBrush}"
+                            Text="Download Date:" />
+                        <TextBlock
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            FontSize="15"
+                            FontWeight="Normal"
+                            Text="{Binding EpisodeInfoDownloadDate}" />
+                    </Grid>
+                    <Grid VerticalAlignment="Center">
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="20"
+                            FontWeight="UltraLight"
+                            Foreground="{DynamicResource AccentColorBrush}"
+                            Text="Rating:" />
+                        <StackPanel
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                            <StackPanel.Resources>
+                                <Style TargetType="{x:Type iconPacks:PackIconMaterialDesign}">
+                                    <Setter Property="Margin" Value="6,0,0,0" />
+                                </Style>
+                            </StackPanel.Resources>
+                            <iconPacks:PackIconMaterialDesign
+                                Width="20"
+                                Height="20"
+                                VerticalAlignment="Center"
+                                Kind="{Binding Path=EpisodeIcons[4]}" />
+                            <iconPacks:PackIconMaterialDesign
+                                Width="20"
+                                Height="20"
+                                VerticalAlignment="Center"
+                                Kind="{Binding Path=EpisodeIcons[3]}" />
+                            <iconPacks:PackIconMaterialDesign
+                                Width="20"
+                                Height="20"
+                                VerticalAlignment="Center"
+                                Kind="{Binding Path=EpisodeIcons[2]}" />
+                            <iconPacks:PackIconMaterialDesign
+                                Width="20"
+                                Height="20"
+                                VerticalAlignment="Center"
+                                Kind="{Binding Path=EpisodeIcons[1]}" />
+                            <iconPacks:PackIconMaterialDesign
+                                Width="20"
+                                Height="20"
+                                VerticalAlignment="Center"
+                                Kind="{Binding Path=EpisodeIcons[0]}" />
                         </StackPanel>
                     </Grid>
                 </StackPanel>

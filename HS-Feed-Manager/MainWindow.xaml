@@ -11,7 +11,7 @@
     xmlns:views="clr-namespace:HS_Feed_Manager.Views"
     x:Name="mainWindow"
     Title="HS Feed Manager"
-    Width="1100"
+    Width="1200"
     Height="700"
     BorderBrush="{DynamicResource ControlBackgroundBrush}"
     ResizeMode="CanResizeWithGrip"

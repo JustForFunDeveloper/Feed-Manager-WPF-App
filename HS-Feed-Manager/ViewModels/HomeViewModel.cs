@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -58,15 +59,52 @@ namespace HS_Feed_Manager.ViewModels
         private int _tabIndex;
         private string _clearSearch;
 
-        public ICollectionView LocalListView { get; private set; }
-        public ICollectionView FeedListView { get; private set; }
+        Visibility _downloadListVisibility = Visibility.Visible;
+        Visibility _episodeListVisibility = Visibility.Hidden;
 
-        private ObservableCollection<string> _icons = new ObservableCollection<string> {
+        Visibility _feedInfoVisibility = Visibility.Visible;
+        private string _feedInfoName;
+        private string _feedInfoEpisode;
+        private string _feedInfoAutoDownload;
+        private string _feedInfoLocalEpisodeCount;
+        private ObservableCollection<string> _feedIcons = new ObservableCollection<string> {
             PackIconMaterialDesignKind.StarBorder.ToString(),
             PackIconMaterialDesignKind.StarBorder.ToString(),
             PackIconMaterialDesignKind.StarBorder.ToString(),
             PackIconMaterialDesignKind.StarBorder.ToString(),
             PackIconMaterialDesignKind.StarBorder.ToString() };
+
+        Visibility _localInfoVisibility = Visibility.Hidden;
+        private string _localInfoName;
+        private string _localInfoStatus;
+        private string _localInfoEpisodes;
+        private string _localInfoAutoDownload;
+        private string _localInfoLocalEpisodeCount;
+        private ObservableCollection<string> _localIcons = new ObservableCollection<string> {
+            PackIconMaterialDesignKind.StarBorder.ToString(),
+            PackIconMaterialDesignKind.StarBorder.ToString(),
+            PackIconMaterialDesignKind.StarBorder.ToString(),
+            PackIconMaterialDesignKind.StarBorder.ToString(),
+            PackIconMaterialDesignKind.StarBorder.ToString() };
+
+        Visibility _episodeInfoVisibility = Visibility.Hidden;
+        private string _episodeInfoName;
+        private string _episodeInfoStatus;
+        private string _episodeInfoEpisode;
+        private string _episodeInfoAutoDownload;
+        private string _episodeInfoLocalEpisodeCount;
+        private string _episodeInfoDownloadDate;
+        private ObservableCollection<string> _episodeIcons = new ObservableCollection<string> {
+            PackIconMaterialDesignKind.StarBorder.ToString(),
+            PackIconMaterialDesignKind.StarBorder.ToString(),
+            PackIconMaterialDesignKind.StarBorder.ToString(),
+            PackIconMaterialDesignKind.StarBorder.ToString(),
+            PackIconMaterialDesignKind.StarBorder.ToString() };
+
+
+        public ICollectionView LocalListView { get; private set; }
+        public ICollectionView FeedListView { get; private set; }
+        private ObservableCollection<Episode> _episodeList;
 
         public HomeViewModel(PropertyChangedViewModel mainViewModel)
         {
@@ -74,9 +112,12 @@ namespace HS_Feed_Manager.ViewModels
             InitialiseListViews();
             SortModes = _feedSortModes;
             Mediator.Register("TabControlSelectionChanged", TabControlSelectionChanged);
+            Mediator.Register("ListBoxSelectionChanged", ListBoxSelectionChanged);
         }
 
         #region Search and Filter
+
+        #region SearchBox and ComboBox
         public ICommand TextBoxButtonCmd
         {
             get
@@ -142,18 +183,22 @@ namespace HS_Feed_Manager.ViewModels
                 OnPropertyChanged();
             }
         }
+        #endregion
 
+        #region Views, Filter and SOrting
         private void InitialiseListViews()
         {
-            LocalListView = CollectionViewSource.GetDefaultView(CurrenData.LocalList);
-            LocalListView.CurrentChanged += LocalListViewCurrentChanged;
-
             FeedListView = CollectionViewSource.GetDefaultView(CurrenData.FeedList);
             FeedListView.CurrentChanged += FeedListViewCurrentChanged;
+
+            LocalListView = CollectionViewSource.GetDefaultView(CurrenData.LocalList);
+            LocalListView.CurrentChanged += LocalListViewCurrentChanged;
         }
 
         private void SortThisList(int value)
         {
+            if (value == -1)
+                return;
             using (LocalListView.DeferRefresh())
             {
                 using (FeedListView.DeferRefresh())
@@ -203,7 +248,6 @@ namespace HS_Feed_Manager.ViewModels
                     else if (TabIndex == 1)
                     {
                         LocalListView.SortDescriptions.Clear();
-                        LocalListView.Filter = null;
                         switch (value)
                         {
                             case 0:
@@ -348,43 +392,152 @@ namespace HS_Feed_Manager.ViewModels
             }
             return false;
         }
+        #endregion
+
+        #region CurrentChangedEvents
+        private void FeedListViewCurrentChanged(object sender, EventArgs e)
+        {
+            if (sender == null)
+                return;
+
+            if (TabIndex == 0)
+            {
+                FeedInfoVisibility = Visibility.Visible;
+                LocalInfoVisibility = Visibility.Hidden;
+                EpisodeInfoVisibility = Visibility.Hidden;
+                DownloadListVisibility = Visibility.Visible;
+                EpisodeListVisibility = Visibility.Hidden;
+            }
+
+            Episode feedEpisode = (Episode)FeedListView.CurrentItem;
+
+            if (feedEpisode == null)
+                return;
+
+            FeedInfoName = feedEpisode.Name;
+            FeedInfoEpisode = feedEpisode.EpisodeNumber.ToString();
+
+            LocalSeries localSeries = (LocalSeries)CurrenData.LocalList.Where(x => (x.Name == feedEpisode.Name)).SingleOrDefault();
+
+            if (localSeries != null)
+            {
+                FeedInfoAutoDownload = localSeries.AutoDownloadStatus.ToString();
+                FeedInfoLocalEpisodeCount = localSeries.LocalEpisodesCount.ToString();
+
+                for (int i = 0; i < localSeries.Rating; i++)
+                {
+                    FeedIcons[i] = PackIconMaterialDesignKind.Star.ToString();
+                }
+                for (int i = 4; i >= localSeries.Rating; i--)
+                {
+                    FeedIcons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
+                }
+            }
+            else
+            {
+                FeedInfoAutoDownload = "None";
+                FeedInfoLocalEpisodeCount = "None";
+
+                for (int i = 4; i >= 0; i--)
+                {
+                    FeedIcons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
+                }
+            }
+        }
 
         private void LocalListViewCurrentChanged(object sender, EventArgs e)
         {
+            if (sender == null)
+                return;
+            if (TabIndex == 1)
+            {
+                FeedInfoVisibility = Visibility.Hidden;
+                LocalInfoVisibility = Visibility.Visible;
+                EpisodeInfoVisibility = Visibility.Hidden;
+                DownloadListVisibility = Visibility.Hidden;
+                EpisodeListVisibility = Visibility.Visible;
+            }
+
             LocalSeries localSeries = (LocalSeries)LocalListView.CurrentItem;
 
-            if (localSeries == null)
-                localSeries = new LocalSeries() { Rating = 0 };
+            if (localSeries != null)
+            {
+                EpisodeList = new ObservableCollection<Episode>(localSeries.EpisodeList);
 
-            for (int i = 0; i < localSeries.Rating; i++)
-            {
-                Icons[i] = PackIconMaterialDesignKind.Star.ToString();
+                LocalInfoName = localSeries.Name;
+                LocalInfoStatus = localSeries.Status.ToString();
+                LocalInfoEpisodes = localSeries.Episodes.ToString();
+                LocalInfoAutoDownload = localSeries.AutoDownloadStatus.ToString();
+                LocalInfoLocalEpisodeCount = localSeries.LocalEpisodesCount.ToString();
+
+                for (int i = 0; i < localSeries.Rating; i++)
+                {
+                    LocalIcons[i] = PackIconMaterialDesignKind.Star.ToString();
+                }
+                for (int i = 4; i >= localSeries.Rating; i--)
+                {
+                    LocalIcons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
+                }
             }
-            for (int i = 4; i >= localSeries.Rating; i--)
+            else
             {
-                Icons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
+                for (int i = 4; i >= 0; i--)
+                {
+                    LocalIcons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
+                }
             }
         }
 
-        private void FeedListViewCurrentChanged(object sender, EventArgs e)
+        private void ListBoxSelectionChanged(object obj)
         {
-            Episode feedEpisode = (Episode)FeedListView.CurrentItem;
+            if (obj == null)
+                return;
 
-            for (int i = 4; i >= 0; i--)
+            if (TabIndex == 1)
             {
-                Icons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
+                FeedInfoVisibility = Visibility.Hidden;
+                LocalInfoVisibility = Visibility.Hidden;
+                EpisodeInfoVisibility = Visibility.Visible;
+            }
+
+            Episode listEpisode = (Episode)obj;
+
+            if (listEpisode == null)
+                return;
+
+            EpisodeInfoName = listEpisode.Name;
+            EpisodeInfoEpisode = listEpisode.EpisodeNumber.ToString();
+            EpisodeInfoDownloadDate = listEpisode.DownloadDate.ToString("dd.MM.yyyy HH:mm:ss");
+
+            LocalSeries localSeries = (LocalSeries)CurrenData.LocalList.Where(x => (x.Name == listEpisode.Name)).SingleOrDefault();
+
+            if (localSeries != null)
+            {
+                EpisodeInfoStatus = localSeries.Status.ToString();
+                EpisodeInfoAutoDownload = localSeries.AutoDownloadStatus.ToString();
+                EpisodeInfoLocalEpisodeCount = localSeries.LocalEpisodesCount.ToString();
+
+                for (int i = 0; i < localSeries.Rating; i++)
+                {
+                    EpisodeIcons[i] = PackIconMaterialDesignKind.Star.ToString();
+                }
+                for (int i = 4; i >= localSeries.Rating; i--)
+                {
+                    EpisodeIcons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
+                }
+            }
+            else
+            {
+                for (int i = 4; i >= 0; i--)
+                {
+                    EpisodeIcons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
+                }
             }
         }
 
-        public int TabIndex
-        {
-            get => _tabIndex;
-            set
-            {
-                _tabIndex = value;
-                OnPropertyChanged();
-            }
-        }
+        
+        #endregion
+
         #endregion
 
         #region Tab
@@ -394,6 +547,16 @@ namespace HS_Feed_Manager.ViewModels
             set
             {
                 _clearSearch = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int TabIndex
+        {
+            get => _tabIndex;
+            set
+            {
+                _tabIndex = value;
                 OnPropertyChanged();
             }
         }
@@ -416,12 +579,62 @@ namespace HS_Feed_Manager.ViewModels
         #endregion
 
         #region Feed Info
-        public ObservableCollection<string> Icons
+        public Visibility FeedInfoVisibility
         {
-            get => _icons;
+            get => _feedInfoVisibility;
             set
             {
-                _icons = value;
+                _feedInfoVisibility = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string FeedInfoName
+        {
+            get => _feedInfoName;
+            set
+            {
+                _feedInfoName = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string FeedInfoEpisode
+        {
+            get => _feedInfoEpisode;
+            set
+            {
+                _feedInfoEpisode = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string FeedInfoAutoDownload
+        {
+            get => _feedInfoAutoDownload;
+            set
+            {
+                _feedInfoAutoDownload = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string FeedInfoLocalEpisodeCount
+        {
+            get => _feedInfoLocalEpisodeCount;
+            set
+            {
+                _feedInfoLocalEpisodeCount = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<string> FeedIcons
+        {
+            get => _feedIcons;
+            set
+            {
+                _feedIcons = value;
                 OnPropertyChanged();
             }
         }
@@ -453,7 +666,192 @@ namespace HS_Feed_Manager.ViewModels
         }
         #endregion
 
-        #region Download List
+        #region Local Info
+        public Visibility LocalInfoVisibility
+        {
+            get => _localInfoVisibility;
+            set
+            {
+                _localInfoVisibility = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string LocalInfoName
+        {
+            get => _localInfoName;
+            set
+            {
+                _localInfoName = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string LocalInfoStatus
+        {
+            get => _localInfoStatus;
+            set
+            {
+                _localInfoStatus = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string LocalInfoEpisodes
+        {
+            get => _localInfoEpisodes;
+            set
+            {
+                _localInfoEpisodes = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string LocalInfoAutoDownload
+        {
+            get => _localInfoAutoDownload;
+            set
+            {
+                _localInfoAutoDownload = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string LocalInfoLocalEpisodeCount
+        {
+            get => _localInfoLocalEpisodeCount;
+            set
+            {
+                _localInfoLocalEpisodeCount = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<string> LocalIcons
+        {
+            get => _localIcons;
+            set
+            {
+                _localIcons = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region Episode Info
+        public Visibility EpisodeInfoVisibility
+        {
+            get => _episodeInfoVisibility;
+            set
+            {
+                _episodeInfoVisibility = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string EpisodeInfoName
+        {
+            get => _episodeInfoName;
+            set
+            {
+                _episodeInfoName = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string EpisodeInfoStatus
+        {
+            get => _episodeInfoStatus;
+            set
+            {
+                _episodeInfoStatus = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string EpisodeInfoEpisode
+        {
+            get => _episodeInfoEpisode;
+            set
+            {
+                _episodeInfoEpisode = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string EpisodeInfoAutoDownload
+        {
+            get => _episodeInfoAutoDownload;
+            set
+            {
+                _episodeInfoAutoDownload = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string EpisodeInfoLocalEpisodeCount
+        {
+            get => _episodeInfoLocalEpisodeCount;
+            set
+            {
+                _episodeInfoLocalEpisodeCount = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string EpisodeInfoDownloadDate
+        {
+            get => _episodeInfoDownloadDate;
+            set
+            {
+                _episodeInfoDownloadDate = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<string> EpisodeIcons
+        {
+            get => _episodeIcons;
+            set
+            {
+                _episodeIcons = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region Left List
+
+        public ObservableCollection<Episode> EpisodeList
+        {
+            get => _episodeList;
+            set
+            {
+                _episodeList = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Visibility DownloadListVisibility
+        {
+            get => _downloadListVisibility;
+            set
+            {
+                _downloadListVisibility = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Visibility EpisodeListVisibility
+        {
+            get => _episodeListVisibility;
+            set
+            {
+                _episodeListVisibility = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ICommand MoveToFirst
         {
             get

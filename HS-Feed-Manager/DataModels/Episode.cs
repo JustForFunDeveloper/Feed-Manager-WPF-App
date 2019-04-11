@@ -8,7 +8,7 @@ namespace HS_Feed_Manager.DataModels
     public class Episode : INotifyPropertyChanged
     {
         private string _name;
-        private int _episodeNumber;
+        private double _episodeNumber;
         private string _link;
         private DateTime _downloadDate;
 
@@ -23,7 +23,7 @@ namespace HS_Feed_Manager.DataModels
             }
         }
 
-        public int EpisodeNumber
+        public double EpisodeNumber
         {
             get { return _episodeNumber; }
             set
