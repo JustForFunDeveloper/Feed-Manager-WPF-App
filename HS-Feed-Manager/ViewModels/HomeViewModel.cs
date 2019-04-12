@@ -45,6 +45,17 @@ namespace HS_Feed_Manager.ViewModels
             "Sort By Name Desc."
         };
 
+        private List<string> _episodeSortModes = new List<string>
+        {
+            "Not sorted",
+            "By Numer Asc.",
+            "By Numer Desc.",
+            "By Rating Asc.",
+            "By Rating Desc.",
+            "By Date Asc.",
+            "By Date Desc."
+        };
+
         private List<string> _sortModes;
 
         private int _lastFeedSortMode = 0;
@@ -53,11 +64,14 @@ namespace HS_Feed_Manager.ViewModels
         private ICommand _textBoxButtonCmd;
         private ICommand _moveToFirst;
         private ICommand _editInfo;
+        private ICommand _episodetextBoxButtonCmd;
 
         private int _sortModesIndex;
         private string _filterString = "";
         private int _tabIndex;
         private string _clearSearch;
+        private int _episodeSortModesIndex;
+        private string _episodeClearSearch;
 
         Visibility _downloadListVisibility = Visibility.Visible;
         Visibility _episodeListVisibility = Visibility.Hidden;
@@ -462,7 +476,8 @@ namespace HS_Feed_Manager.ViewModels
 
             if (localSeries != null)
             {
-                EpisodeList = new ObservableCollection<Episode>(localSeries.EpisodeList);
+                EpisodeSortModesIndex = 2;
+                EpisodeClearSearch = "";
 
                 LocalInfoName = localSeries.Name;
                 LocalInfoStatus = localSeries.Status.ToString();
@@ -503,11 +518,27 @@ namespace HS_Feed_Manager.ViewModels
             Episode listEpisode = (Episode)obj;
 
             if (listEpisode == null)
+            {
+                for (int i = 4; i >= 0; i--)
+                {
+                    EpisodeIcons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
+                }
                 return;
+            }
+
 
             EpisodeInfoName = listEpisode.Name;
             EpisodeInfoEpisode = listEpisode.EpisodeNumber.ToString();
             EpisodeInfoDownloadDate = listEpisode.DownloadDate.ToString("dd.MM.yyyy HH:mm:ss");
+
+            for (int i = 0; i < listEpisode.Rating; i++)
+            {
+                EpisodeIcons[i] = PackIconMaterialDesignKind.Star.ToString();
+            }
+            for (int i = 4; i >= listEpisode.Rating; i--)
+            {
+                EpisodeIcons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
+            }
 
             LocalSeries localSeries = (LocalSeries)CurrenData.LocalList.Where(x => (x.Name == listEpisode.Name)).SingleOrDefault();
 
@@ -516,26 +547,10 @@ namespace HS_Feed_Manager.ViewModels
                 EpisodeInfoStatus = localSeries.Status.ToString();
                 EpisodeInfoAutoDownload = localSeries.AutoDownloadStatus.ToString();
                 EpisodeInfoLocalEpisodeCount = localSeries.LocalEpisodesCount.ToString();
-
-                for (int i = 0; i < localSeries.Rating; i++)
-                {
-                    EpisodeIcons[i] = PackIconMaterialDesignKind.Star.ToString();
-                }
-                for (int i = 4; i >= localSeries.Rating; i--)
-                {
-                    EpisodeIcons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
-                }
-            }
-            else
-            {
-                for (int i = 4; i >= 0; i--)
-                {
-                    EpisodeIcons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
-                }
             }
         }
 
-        
+
         #endregion
 
         #endregion
@@ -821,6 +836,114 @@ namespace HS_Feed_Manager.ViewModels
         #endregion
 
         #region Left List
+        public string EpisodeClearSearch
+        {
+            get => _episodeClearSearch;
+            set
+            {
+                _episodeClearSearch = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ICommand EpisodeTextBoxButtonCmd
+        {
+            get
+            {
+                if (_episodetextBoxButtonCmd == null)
+                {
+                    _episodetextBoxButtonCmd = new RelayCommand<object>(
+                        param => this.EpisodeTextBoxButtonCommand(param),
+                        param => this.CanEpisodeTextBoxButtonCommand(param)
+                    );
+                }
+                return _episodetextBoxButtonCmd;
+            }
+        }
+
+        private bool CanEpisodeTextBoxButtonCommand(object param)
+        {
+            return true;
+        }
+
+        private void EpisodeTextBoxButtonCommand(object param)
+        {
+            string value = param as string;
+            LocalSeries localSeries = (LocalSeries)LocalListView.CurrentItem;
+            List<Episode> episodes = new List<Episode>(localSeries.EpisodeList);
+
+            if (value.Equals(""))
+            {
+                EpisodeList = new ObservableCollection<Episode>(episodes);
+                return;
+            }
+
+            if (param.GetType() == typeof(string))
+            {
+                var episodeFiltered = (List<Episode>)episodes.Where(item => item.EpisodeNumber.ToString() == value).ToList();
+                EpisodeList = new ObservableCollection<Episode>(episodeFiltered);
+            }
+        }
+
+        public List<string> EpisodeSortModes
+        {
+            get => _episodeSortModes;
+            set
+            {
+                _episodeSortModes = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int EpisodeSortModesIndex
+        {
+            get => _episodeSortModesIndex;
+            set
+            {
+                _episodeSortModesIndex = value;
+                SortEpisodeList(value);
+                OnPropertyChanged();
+            }
+        }
+
+        private void SortEpisodeList(int value)
+        {
+            LocalSeries localSeries = (LocalSeries)LocalListView.CurrentItem;
+            List<Episode> episodes = new List<Episode>(localSeries.EpisodeList);
+            switch (value)
+            {
+                case 0:
+                    if (localSeries != null)
+                        EpisodeList = new ObservableCollection<Episode>(localSeries.EpisodeList);
+                    break;
+                case 1:
+                    episodes.Sort((ep1, ep2) => ep1.EpisodeNumber.CompareTo(ep2.EpisodeNumber));
+                    EpisodeList = new ObservableCollection<Episode>(episodes);
+                    break;
+                case 2:
+                    episodes.Sort((ep1, ep2) => ep2.EpisodeNumber.CompareTo(ep1.EpisodeNumber));
+                    EpisodeList = new ObservableCollection<Episode>(episodes);
+                    break;
+                case 3:
+                    episodes.Sort((ep1, ep2) => ep1.Rating.CompareTo(ep2.Rating));
+                    EpisodeList = new ObservableCollection<Episode>(episodes);
+                    break;
+                case 4:
+                    episodes.Sort((ep1, ep2) => ep2.Rating.CompareTo(ep1.Rating));
+                    EpisodeList = new ObservableCollection<Episode>(episodes);
+                    break;
+                case 5:
+                    episodes.Sort((ep1, ep2) => ep1.DownloadDate.CompareTo(ep2.DownloadDate));
+                    EpisodeList = new ObservableCollection<Episode>(episodes);
+                    break;
+                case 6:
+                    episodes.Sort((ep1, ep2) => ep2.DownloadDate.CompareTo(ep1.DownloadDate));
+                    EpisodeList = new ObservableCollection<Episode>(episodes);
+                    break;
+                default:
+                    break;
+            }
+        }
 
         public ObservableCollection<Episode> EpisodeList
         {

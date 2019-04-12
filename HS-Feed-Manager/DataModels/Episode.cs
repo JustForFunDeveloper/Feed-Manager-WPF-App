@@ -11,6 +11,8 @@ namespace HS_Feed_Manager.DataModels
         private double _episodeNumber;
         private string _link;
         private DateTime _downloadDate;
+        private int _rating;
+        private string _localPath;
 
         public string Name
         {
@@ -52,6 +54,28 @@ namespace HS_Feed_Manager.DataModels
             {
                 if (value == _downloadDate) return;
                 _downloadDate = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int Rating
+        {
+            get { return _rating; }
+            set
+            {
+                if (value == _rating) return;
+                _rating = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string LocalPath
+        {
+            get { return _localPath; }
+            set
+            {
+                if (value == _localPath) return;
+                _localPath = value;
                 OnPropertyChanged();
             }
         }

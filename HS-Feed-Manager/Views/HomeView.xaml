@@ -216,20 +216,20 @@
                             Margin="5,5"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
-                            ItemsSource="{Binding SortModes}"
-                            SelectedIndex="{Binding SortModesIndex}" />
+                            ItemsSource="{Binding EpisodeSortModes}"
+                            SelectedIndex="{Binding EpisodeSortModesIndex}" />
                         <TextBox
                             Width="140"
                             Height="20"
                             mah:TextBoxHelper.ButtonCommand="{Binding TextBoxButtonCmd, Mode=OneWay}"
                             mah:TextBoxHelper.ClearTextButton="True"
                             mah:TextBoxHelper.UseFloatingWatermark="False"
-                            mah:TextBoxHelper.Watermark="Search..."
-                            Text="{Binding ClearSearch}">
+                            mah:TextBoxHelper.Watermark="Ep. Number..."
+                            Text="{Binding EpisodeClearSearch}">
                             <TextBox.InputBindings>
                                 <KeyBinding
                                     Key="Return"
-                                    Command="{Binding TextBoxButtonCmd, Mode=OneWay}"
+                                    Command="{Binding EpisodeTextBoxButtonCmd, Mode=OneWay}"
                                     CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TextBox}, Path=Text, Mode=OneWay}" />
                             </TextBox.InputBindings>
                             <TextBox.Style>
@@ -249,7 +249,6 @@
                         x:Name="episodeList"
                         Margin="0,5,0,0"
                         BorderBrush="Transparent"
-                        IsSynchronizedWithCurrentItem="True"
                         ItemsSource="{Binding EpisodeList}"
                         SelectionChanged="EpisodeList_SelectionChanged"
                         Style="{DynamicResource VirtualisedMetroListBox}">
@@ -681,7 +680,7 @@
                             FontSize="20"
                             FontWeight="UltraLight"
                             Foreground="{DynamicResource AccentColorBrush}"
-                            Text="Name:" />
+                            Text="Filename:" />
                         <TextBlock
                             Grid.Column="1"
                             HorizontalAlignment="Right"
@@ -777,7 +776,7 @@
                             FontSize="20"
                             FontWeight="UltraLight"
                             Foreground="{DynamicResource AccentColorBrush}"
-                            Text="Rating:" />
+                            Text="Ep. Rating:" />
                         <StackPanel
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
