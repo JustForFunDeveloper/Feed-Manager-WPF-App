@@ -9,6 +9,7 @@ namespace HS_Feed_Manager.ViewModels
 {
     public class SettingsViewModel : PropertyChangedViewModel
     {
+        // ReSharper disable once NotAccessedField.Local
         private readonly PropertyChangedViewModel _mainViewModel;
 
         public SettingsViewModel(PropertyChangedViewModel mainViewModel)

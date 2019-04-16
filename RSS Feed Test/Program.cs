@@ -9,7 +9,7 @@ namespace RSS_Feed_Test
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             XmlTextReader reader = new XmlTextReader("http://www.horriblesubs.info/rss.php?res=720");
             SyndicationFeed feed = SyndicationFeed.Load(reader);

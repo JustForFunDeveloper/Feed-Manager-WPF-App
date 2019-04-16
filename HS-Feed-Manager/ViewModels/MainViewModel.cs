@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using HS_Feed_Manager.DataModels.DbModels;
 using HS_Feed_Manager.ViewModels.Common;
 
 namespace HS_Feed_Manager.ViewModels
@@ -14,6 +15,8 @@ namespace HS_Feed_Manager.ViewModels
     public class MainViewModel : PropertyChangedViewModel
     {
         private static MainViewModel _mainViewModel;
+        private TvShow _currentTvShow;
+        private Episode _currentEpisode;
 
         public static MainViewModel getInstance { get => _mainViewModel; }
 
@@ -23,6 +26,8 @@ namespace HS_Feed_Manager.ViewModels
         private ICommand _optionItemClick;
         private ICommand _okEdit;
         private ICommand _cancelEdit;
+        private ICommand _episodeOkEdit;
+        private ICommand _episodeCancelEdit;
 
         private HamburgerMenuItemCollection _menuItems;
         private HamburgerMenuItemCollection _menuOptionItems;
@@ -30,7 +35,7 @@ namespace HS_Feed_Manager.ViewModels
         private bool _isPaneOpened;
         private bool _isFlyoutOpen;
         private bool _isEpisodeFlyoutOpen;
-        private int _selectedIndex = 0;
+        private int _selectedIndex;
 
         private int _selectedStatus;
         private string _selectedValueStatus;
@@ -54,11 +59,12 @@ namespace HS_Feed_Manager.ViewModels
             PackIconMaterialDesignKind.StarBorder.ToString(),
             PackIconMaterialDesignKind.StarBorder.ToString(),
             PackIconMaterialDesignKind.StarBorder.ToString() };
+
         #endregion
 
         public MainViewModel()
         {
-            this.CreateMenuItems();
+            CreateMenuItems();
             _mainViewModel = this;
             Mediator.Register(MediatorGlobal.UpdateFlyoutValues, UpdateFlyoutValues);
             Mediator.Register(MediatorGlobal.UpdateEpisodeFlyoutValues, UpdateEpisodeFlyoutValues);
@@ -149,8 +155,8 @@ namespace HS_Feed_Manager.ViewModels
                 if (_openMenu == null)
                 {
                     _openMenu = new RelayCommand(
-                        param => this.SaveOpenMenuCommand(),
-                        param => this.CanSaveOpenMenuCommand()
+                        param => SaveOpenMenuCommand(),
+                        param => CanSaveOpenMenuCommand()
                     );
                 }
                 return _openMenu;
@@ -174,20 +180,20 @@ namespace HS_Feed_Manager.ViewModels
                 if (_itemClick == null)
                 {
                     _itemClick = new RelayCommand<int>(
-                        param => this.ItemClickCommand(param),
-                        param => this.CanItemClickCommand(param)
+                        param => ItemClickCommand(),
+                        param => CanItemClickCommand()
                     );
                 }
                 return _itemClick;
             }
         }
 
-        private bool CanItemClickCommand(int param)
+        private bool CanItemClickCommand()
         {
             return true;
         }
 
-        private void ItemClickCommand(int param)
+        private void ItemClickCommand()
         {
             IsPaneOpened = false;
         }
@@ -199,20 +205,20 @@ namespace HS_Feed_Manager.ViewModels
                 if (_optionItemClick == null)
                 {
                     _optionItemClick = new RelayCommand<int>(
-                        param => this.OptionItemClickCommand(param),
-                        param => this.CanOptionItemClickCommand(param)
+                        param => OptionItemClickCommand(),
+                        param => CanOptionItemClickCommand()
                     );
                 }
                 return _optionItemClick;
             }
         }
 
-        private bool CanOptionItemClickCommand(int param)
+        private bool CanOptionItemClickCommand()
         {
             return true;
         }
 
-        private void OptionItemClickCommand(int param)
+        private void OptionItemClickCommand()
         {
             IsPaneOpened = false;
         }
@@ -224,13 +230,18 @@ namespace HS_Feed_Manager.ViewModels
             if (value == null)
                 return;
 
-            LocalSeries localSeries = value as LocalSeries;
-            int statusIndex = Array.IndexOf(Enum.GetValues(localSeries.Status.GetType()), localSeries.Status);
-            SelectedStatus = statusIndex;
-            Episodes = localSeries.Episodes.ToString();
-            int autoDownloadIndex = Array.IndexOf(Enum.GetValues(localSeries.AutoDownloadStatus.GetType()), localSeries.AutoDownloadStatus);
-            SelectedAutoDownload = autoDownloadIndex;
-            RatingValue = localSeries.Rating;
+            TvShow localSeries = value as TvShow;
+            if (localSeries != null)
+            {
+                _currentTvShow = localSeries;
+                int statusIndex = Array.IndexOf(Enum.GetValues(localSeries.Status.GetType()), localSeries.Status);
+                SelectedStatus = statusIndex;
+                Episodes = localSeries.EpisodeCount.ToString();
+                int autoDownloadIndex = Array.IndexOf(Enum.GetValues(localSeries.AutoDownloadStatus.GetType()),
+                    localSeries.AutoDownloadStatus);
+                SelectedAutoDownload = autoDownloadIndex;
+                RatingValue = localSeries.Rating;
+            }
 
             IsFlyoutOpen = true;
         }
@@ -362,8 +373,8 @@ namespace HS_Feed_Manager.ViewModels
                 if (_okEdit == null)
                 {
                     _okEdit = new RelayCommand(
-                        param => this.SaveOkEditCommand(),
-                        param => this.CanSaveOkEditCommand()
+                        param => SaveOkEditCommand(),
+                        param => CanSaveOkEditCommand()
                     );
                 }
                 return _okEdit;
@@ -377,18 +388,16 @@ namespace HS_Feed_Manager.ViewModels
 
         private void SaveOkEditCommand()
         {
-            LocalSeries localSeries = new LocalSeries();
-            localSeries.Status = (Status)Enum.Parse(typeof(Status), SelectedValueStatus);
+            TvShow localTvShow = _currentTvShow;
+            localTvShow.Status = (Status) Enum.Parse(typeof(Status), SelectedValueStatus);
             if (int.TryParse(EpisodesValue, out int result))
-                localSeries.Episodes = result;
-            else
-                localSeries.Episodes = 0;
-            localSeries.AutoDownloadStatus = (AutoDownload)Enum.Parse(typeof(AutoDownload), SelectedValueAutoDownload);
-            localSeries.Rating = (int)RatingValue;
-            //TODO: Save Data
-            Mediator.NotifyColleagues(MediatorGlobal.SaveEditInfo, localSeries);
+                localTvShow.EpisodeCount = result;
+            localTvShow.AutoDownloadStatus = (AutoDownload)Enum.Parse(typeof(AutoDownload), SelectedValueAutoDownload);
+            localTvShow.Rating = (int)RatingValue;
+            Mediator.NotifyColleagues(MediatorGlobal.SaveEditInfo, localTvShow);
 
             IsFlyoutOpen = false;
+            Mediator.NotifyColleagues(MediatorGlobal.OnRefreshListView, null);
         }
 
         public ICommand CancelEdit
@@ -398,8 +407,8 @@ namespace HS_Feed_Manager.ViewModels
                 if (_cancelEdit == null)
                 {
                     _cancelEdit = new RelayCommand(
-                        param => this.SaveCancelEditCommand(),
-                        param => this.CanSaveCancelEditCommand()
+                        param => SaveCancelEditCommand(),
+                        param => CanSaveCancelEditCommand()
                     );
                 }
                 return _cancelEdit;
@@ -425,7 +434,8 @@ namespace HS_Feed_Manager.ViewModels
             if (value == null)
                 return;
 
-            Episode episode = value as Episode;
+            Episode episode = (Episode) value;
+            _currentEpisode = episode;
             EpisodeRatingValue = episode.Rating;
 
             IsEpisodeFlyoutOpen = true;
@@ -478,14 +488,14 @@ namespace HS_Feed_Manager.ViewModels
         {
             get
             {
-                if (_okEdit == null)
+                if (_episodeOkEdit == null)
                 {
-                    _okEdit = new RelayCommand(
-                        param => this.EpisodeOkEditCommand(),
-                        param => this.CanEpisodeOkEditCommand()
+                    _episodeOkEdit = new RelayCommand(
+                        param => EpisodeOkEditCommand(),
+                        param => CanEpisodeOkEditCommand()
                     );
                 }
-                return _okEdit;
+                return _episodeOkEdit;
             }
         }
 
@@ -496,25 +506,25 @@ namespace HS_Feed_Manager.ViewModels
 
         private void EpisodeOkEditCommand()
         {
-            Episode episode = new Episode { Rating = (int)EpisodeRatingValue };
-            //TODO: Save Data
-            Mediator.NotifyColleagues(MediatorGlobal.SaveEpisodeEditInfo, episode);
+            _currentEpisode.Rating = (int) EpisodeRatingValue;
+            Mediator.NotifyColleagues(MediatorGlobal.SaveEpisodeEditInfo, _currentEpisode);
 
             IsEpisodeFlyoutOpen = false;
+            Mediator.NotifyColleagues(MediatorGlobal.OnRefreshListView, null);
         }
 
         public ICommand EpisodeCancelEdit
         {
             get
             {
-                if (_cancelEdit == null)
+                if (_episodeCancelEdit == null)
                 {
-                    _cancelEdit = new RelayCommand(
-                        param => this.EpisodeCancelEditCommand(),
-                        param => this.CanEpisodeCancelEditCommand()
+                    _episodeCancelEdit = new RelayCommand(
+                        param => EpisodeCancelEditCommand(),
+                        param => CanEpisodeCancelEditCommand()
                     );
                 }
-                return _cancelEdit;
+                return _episodeCancelEdit;
             }
         }
 

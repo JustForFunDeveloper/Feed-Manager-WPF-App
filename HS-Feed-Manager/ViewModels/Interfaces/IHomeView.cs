@@ -12,7 +12,7 @@ namespace HS_Feed_Manager.ViewModels.Interfaces
         event EventHandler DeleteEpisode;
         event EventHandler DeleteSeries;
         event EventHandler<object> SaveEpisodeData;
-        event EventHandler<object> SaveLocalSeriesData;
+        event EventHandler<object> SaveTvShowData;
         void RefreshData();
     }
 }

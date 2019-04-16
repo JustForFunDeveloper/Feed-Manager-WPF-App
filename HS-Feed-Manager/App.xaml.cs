@@ -1,5 +1,5 @@
 ﻿using System.Windows;
-using HS_Feed_Manager.DataModels;
+using HS_Feed_Manager.Core;
 
 namespace HS_Feed_Manager
 {
@@ -11,7 +11,7 @@ namespace HS_Feed_Manager
     {
         public App()
         {
-            CurrentData.Seed();
+            new Logic();
         }
     }
 }

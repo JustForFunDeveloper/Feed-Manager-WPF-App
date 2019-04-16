@@ -7,8 +7,9 @@
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="clr-namespace:HS_Feed_Manager.DataModels"
+    xmlns:models="clr-namespace:HS_Feed_Manager.DataModels.DbModels"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:dbModels="clr-namespace:HS_Feed_Manager.DataModels.DbModels"
     d:DesignHeight="700"
     d:DesignWidth="1200"
     mc:Ignorable="d">
@@ -112,15 +113,6 @@
             </Style.Triggers>
         </Style>
 
-        <ObjectDataProvider
-            x:Key="UnderlinedEnumValues"
-            MethodName="GetValues"
-            ObjectType="{x:Type mah:UnderlinedType}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="mah:UnderlinedType" />
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
-
         <ValueConverter:FirstEpisodeConverter x:Key="FirstEpisodeConverter" />
     </UserControl.Resources>
     <UserControl.InputBindings>
@@ -207,7 +199,7 @@
                     Style="{DynamicResource VirtualisedMetroListBox}"
                     Visibility="Visible">
                     <ListBox.ItemTemplate>
-                        <DataTemplate DataType="{x:Type models:Episode}">
+                        <DataTemplate DataType="{x:Type dbModels:Episode}">
                             <TextBlock>
                                 <TextBlock.Text>
                                     <MultiBinding StringFormat="{}{0}&#x9;-    {1}">
@@ -278,7 +270,6 @@
                 Visibility="{Binding EpisodeListVisibility}">
                 <StackPanel Orientation="Vertical">
                     <StackPanel
-                        Grid.Column="2"
                         Height="37"
                         Margin="0,8,0,0"
                         HorizontalAlignment="Right"
@@ -327,7 +318,7 @@
                         SelectionChanged="EpisodeList_SelectionChanged"
                         Style="{DynamicResource VirtualisedMetroListBox}">
                         <ListBox.ItemTemplate>
-                            <DataTemplate DataType="{x:Type models:Episode}">
+                            <DataTemplate DataType="{x:Type dbModels:Episode}">
                                 <TextBlock>
                                     <TextBlock.Text>
                                         <MultiBinding StringFormat="{}{0}&#x9;-    {1}">
@@ -428,7 +419,7 @@
                         ItemsSource="{Binding FeedListView}"
                         Style="{DynamicResource VirtualisedMetroListBox}">
                         <ListBox.ItemTemplate>
-                            <DataTemplate DataType="{x:Type models:Episode}">
+                            <DataTemplate DataType="{x:Type dbModels:Episode}">
                                 <TextBlock x:Name="txtBlock">
                                     <TextBlock.Text>
                                         <MultiBinding StringFormat="{}{0}&#x9;-    {1}">
@@ -473,7 +464,7 @@
                         ItemsSource="{Binding LocalListView}"
                         Style="{DynamicResource VirtualisedMetroListBox}">
                         <ListBox.ItemTemplate>
-                            <DataTemplate DataType="{x:Type models:CurrentData}">
+                            <DataTemplate DataType="{x:Type models:TvShow}">
                                 <TextBlock>
                                     <TextBlock.Text>
                                         <MultiBinding StringFormat="{}{0}">
@@ -523,14 +514,12 @@
                     </StackPanel.Resources>
                     <Grid>
                         <TextBlock
-                            Grid.Column="0"
                             VerticalAlignment="Center"
                             FontSize="20"
                             FontWeight="UltraLight"
                             Foreground="{DynamicResource AccentColorBrush}"
                             Text="Name:" />
                         <TextBlock
-                            Grid.Column="1"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             FontSize="15"
@@ -539,14 +528,12 @@
                     </Grid>
                     <Grid>
                         <TextBlock
-                            Grid.Column="0"
                             VerticalAlignment="Center"
                             FontSize="20"
                             FontWeight="UltraLight"
                             Foreground="{DynamicResource AccentColorBrush}"
                             Text="Episode:" />
                         <TextBlock
-                            Grid.Column="1"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             FontSize="15"
@@ -555,14 +542,12 @@
                     </Grid>
                     <Grid>
                         <TextBlock
-                            Grid.Column="0"
                             VerticalAlignment="Center"
                             FontSize="20"
                             FontWeight="UltraLight"
                             Foreground="{DynamicResource AccentColorBrush}"
                             Text="Auto Download:" />
                         <TextBlock
-                            Grid.Column="1"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             FontSize="15"
@@ -571,14 +556,12 @@
                     </Grid>
                     <Grid>
                         <TextBlock
-                            Grid.Column="0"
                             VerticalAlignment="Center"
                             FontSize="20"
                             FontWeight="UltraLight"
                             Foreground="{DynamicResource AccentColorBrush}"
                             Text="Local Ep. Count:" />
                         <TextBlock
-                            Grid.Column="1"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             FontSize="15"
@@ -587,7 +570,6 @@
                     </Grid>
                     <Grid VerticalAlignment="Center">
                         <TextBlock
-                            Grid.Column="0"
                             VerticalAlignment="Center"
                             FontSize="20"
                             FontWeight="UltraLight"
@@ -646,14 +628,12 @@
                     </StackPanel.Resources>
                     <Grid>
                         <TextBlock
-                            Grid.Column="0"
                             VerticalAlignment="Center"
                             FontSize="20"
                             FontWeight="UltraLight"
                             Foreground="{DynamicResource AccentColorBrush}"
                             Text="Name:" />
                         <TextBlock
-                            Grid.Column="1"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             FontSize="15"
@@ -662,14 +642,12 @@
                     </Grid>
                     <Grid>
                         <TextBlock
-                            Grid.Column="0"
                             VerticalAlignment="Center"
                             FontSize="20"
                             FontWeight="UltraLight"
                             Foreground="{DynamicResource AccentColorBrush}"
                             Text="Status:" />
                         <TextBlock
-                            Grid.Column="1"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             FontSize="15"
@@ -678,14 +656,12 @@
                     </Grid>
                     <Grid>
                         <TextBlock
-                            Grid.Column="0"
                             VerticalAlignment="Center"
                             FontSize="20"
                             FontWeight="UltraLight"
                             Foreground="{DynamicResource AccentColorBrush}"
                             Text="Episodes:" />
                         <TextBlock
-                            Grid.Column="1"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             FontSize="15"
@@ -694,14 +670,12 @@
                     </Grid>
                     <Grid>
                         <TextBlock
-                            Grid.Column="0"
                             VerticalAlignment="Center"
                             FontSize="20"
                             FontWeight="UltraLight"
                             Foreground="{DynamicResource AccentColorBrush}"
                             Text="Auto Download:" />
                         <TextBlock
-                            Grid.Column="1"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             FontSize="15"
@@ -710,14 +684,12 @@
                     </Grid>
                     <Grid>
                         <TextBlock
-                            Grid.Column="0"
                             VerticalAlignment="Center"
                             FontSize="20"
                             FontWeight="UltraLight"
                             Foreground="{DynamicResource AccentColorBrush}"
                             Text="Local Ep. Count:" />
                         <TextBlock
-                            Grid.Column="1"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             FontSize="15"
@@ -726,7 +698,6 @@
                     </Grid>
                     <Grid VerticalAlignment="Center">
                         <TextBlock
-                            Grid.Column="0"
                             VerticalAlignment="Center"
                             FontSize="20"
                             FontWeight="UltraLight"
@@ -785,14 +756,12 @@
                     </StackPanel.Resources>
                     <Grid>
                         <TextBlock
-                            Grid.Column="0"
                             VerticalAlignment="Center"
                             FontSize="20"
                             FontWeight="UltraLight"
                             Foreground="{DynamicResource AccentColorBrush}"
                             Text="Filename:" />
                         <TextBlock
-                            Grid.Column="1"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             FontSize="15"
@@ -801,14 +770,12 @@
                     </Grid>
                     <Grid>
                         <TextBlock
-                            Grid.Column="0"
                             VerticalAlignment="Center"
                             FontSize="20"
                             FontWeight="UltraLight"
                             Foreground="{DynamicResource AccentColorBrush}"
                             Text="Status:" />
                         <TextBlock
-                            Grid.Column="1"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             FontSize="15"
@@ -817,14 +784,12 @@
                     </Grid>
                     <Grid>
                         <TextBlock
-                            Grid.Column="0"
                             VerticalAlignment="Center"
                             FontSize="20"
                             FontWeight="UltraLight"
                             Foreground="{DynamicResource AccentColorBrush}"
                             Text="Episode:" />
                         <TextBlock
-                            Grid.Column="1"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             FontSize="15"
@@ -833,14 +798,12 @@
                     </Grid>
                     <Grid>
                         <TextBlock
-                            Grid.Column="0"
                             VerticalAlignment="Center"
                             FontSize="20"
                             FontWeight="UltraLight"
                             Foreground="{DynamicResource AccentColorBrush}"
                             Text="Auto Download:" />
                         <TextBlock
-                            Grid.Column="1"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             FontSize="15"
@@ -849,14 +812,12 @@
                     </Grid>
                     <Grid>
                         <TextBlock
-                            Grid.Column="0"
                             VerticalAlignment="Center"
                             FontSize="20"
                             FontWeight="UltraLight"
                             Foreground="{DynamicResource AccentColorBrush}"
                             Text="Local Ep. Count:" />
                         <TextBlock
-                            Grid.Column="1"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             FontSize="15"
@@ -865,14 +826,12 @@
                     </Grid>
                     <Grid>
                         <TextBlock
-                            Grid.Column="0"
                             VerticalAlignment="Center"
                             FontSize="20"
                             FontWeight="UltraLight"
                             Foreground="{DynamicResource AccentColorBrush}"
                             Text="Download Date:" />
                         <TextBlock
-                            Grid.Column="1"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             FontSize="15"

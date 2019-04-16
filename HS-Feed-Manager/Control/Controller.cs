@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using HS_Feed_Manager.ViewModels.Handler;
 using HS_Feed_Manager.ViewModels.Interfaces;
 
@@ -19,13 +16,20 @@ namespace HS_Feed_Manager.Control
         public event EventHandler DeleteEpisode;
         public event EventHandler DeleteSeries;
         public event EventHandler<object> SaveEpisodeData;
-        public event EventHandler<object> SaveLocalSeriesData;
+        public event EventHandler<object> SaveTvShowData;
 
         #endregion
 
-        public void RefreshData()
+        public Controller()
         {
             Mediator.Register(MediatorGlobal.DownloadFeed, OnDownloadFeed);
+            Mediator.Register(MediatorGlobal.SaveEpisodeEditInfo, OnSaveEpisodeData);
+            Mediator.Register(MediatorGlobal.SaveEditInfo, OnSaveTvShowData);
+        }
+
+        public void RefreshData()
+        {
+            
         }
 
         #region Event Invocations
@@ -63,6 +67,11 @@ namespace HS_Feed_Manager.Control
         protected virtual void OnSaveEpisodeData(object e)
         {
             SaveEpisodeData?.Invoke(this, e);
+        }
+
+        protected virtual void OnSaveTvShowData(object e)
+        {
+            SaveTvShowData?.Invoke(this, e);
         }
 
         #endregion

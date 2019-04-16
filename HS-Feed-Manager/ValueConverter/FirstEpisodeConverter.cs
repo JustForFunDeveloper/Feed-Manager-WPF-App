@@ -7,11 +7,13 @@ namespace HS_Feed_Manager.ValueConverter
 {
     public class FirstEpisodeConverter : IValueConverter
     {
+        private const double Tolerance = double.Epsilon;
+
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null) return false;
             var number = (double) value;
-            return number == 1;
+            return Math.Abs(number - 1) < Tolerance;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

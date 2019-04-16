@@ -11,5 +11,6 @@
         public static string SaveEditInfo = "SaveEditInfo";
         public static string SaveEpisodeEditInfo = "SaveEpisodeEditInfo";
         public static string DownloadFeed = "DownloadFeed";
+        public static string OnRefreshListView = "OnRefreshListView";
     }
 }

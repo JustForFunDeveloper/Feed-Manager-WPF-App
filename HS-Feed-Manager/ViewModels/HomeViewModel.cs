@@ -7,25 +7,20 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using HS_Feed_Manager.Core;
 using HS_Feed_Manager.DataModels;
+using HS_Feed_Manager.DataModels.DbModels;
 using HS_Feed_Manager.ViewModels.Common;
 using HS_Feed_Manager.ViewModels.Handler;
+using JetBrains.Annotations;
 using MahApps.Metro.IconPacks;
 
 namespace HS_Feed_Manager.ViewModels
 {
     public class HomeViewModel : PropertyChangedViewModel
     {
+        // ReSharper disable once NotAccessedField.Local
         private readonly PropertyChangedViewModel _mainViewModel;
-
-        public HomeViewModel(PropertyChangedViewModel mainViewModel)
-        {
-            _mainViewModel = mainViewModel;
-            InitialiseListViews();
-            SortModes = _feedSortModes;
-            Mediator.Register(MediatorGlobal.TabControlSelectionChanged, TabControlSelectionChanged);
-            Mediator.Register(MediatorGlobal.ListBoxSelectionChanged, ListBoxSelectionChanged);
-        }
 
         #region private Member
 
@@ -78,7 +73,7 @@ namespace HS_Feed_Manager.ViewModels
         private ICommand _autoDownloadOn;
         private ICommand _deleteFeedFromList;
 
-        private ICommand _episodetextBoxButtonCmd;
+        private ICommand _episodeTextBoxButtonCmd;
         private ICommand _playEpisode;
         private ICommand _openFolder;
         private ICommand _editEpisodeInfo;
@@ -163,6 +158,17 @@ namespace HS_Feed_Manager.ViewModels
 
         #endregion
 
+        public HomeViewModel(PropertyChangedViewModel mainViewModel)
+        {
+            _mainViewModel = mainViewModel;
+            InitialiseListViews();
+
+            SortModes = _feedSortModes;
+            Mediator.Register(MediatorGlobal.TabControlSelectionChanged, TabControlSelectionChanged);
+            Mediator.Register(MediatorGlobal.ListBoxSelectionChanged, ListBoxSelectionChanged);
+            Mediator.Register(MediatorGlobal.OnRefreshListView, OnRefreshListViews);
+        }
+
         #region IconBar
 
         public ICommand DownloadFeed
@@ -240,7 +246,7 @@ namespace HS_Feed_Manager.ViewModels
             if (param == null)
                 return;
 
-            if (param.GetType() == typeof(string))
+            if (param is string)
             {
                 _filterString = param as string;
                 LocalListView.Filter = SearchFilter;
@@ -249,7 +255,7 @@ namespace HS_Feed_Manager.ViewModels
             else if (param.GetType() == typeof(TextBox))
             {
                 var textBox = param as TextBox;
-                if (textBox.Text.Length == 0)
+                if (textBox != null && textBox.Text.Length == 0)
                 {
                     _filterString = "";
                     LocalListView.Filter = SearchFilter;
@@ -277,18 +283,24 @@ namespace HS_Feed_Manager.ViewModels
                 SortThisList(value);
                 OnPropertyChanged();
             }
-        } 
+        }
 
         #endregion
 
         #region Views, Filter and Sorting
 
+        private void OnRefreshListViews(object obj)
+        {
+            FeedListView.Refresh();
+            LocalListView.Refresh();
+        }
+
         private void InitialiseListViews()
         {
-            FeedListView = CollectionViewSource.GetDefaultView(CurrentData.FeedList);
+            FeedListView = CollectionViewSource.GetDefaultView(Logic.FeedEpisodes);
             FeedListView.CurrentChanged += FeedListViewCurrentChanged;
 
-            LocalListView = CollectionViewSource.GetDefaultView(CurrentData.LocalList);
+            LocalListView = CollectionViewSource.GetDefaultView(Logic.LocalTvShows);
             LocalListView.CurrentChanged += LocalListViewCurrentChanged;
         }
 
@@ -393,12 +405,12 @@ namespace HS_Feed_Manager.ViewModels
         private bool AutowDownloadFilterOn(object item)
         {
             if (item.GetType() == typeof(Episode))
-                return CurrentData.LocalList.Any(x =>
+                return Logic.LocalTvShows.Any(x =>
                     x.AutoDownloadStatus == AutoDownload.On && x.Name == ((Episode) item).Name);
 
-            if (item.GetType() == typeof(LocalSeries))
+            if (item.GetType() == typeof(TvShow))
             {
-                var localSeries = item as LocalSeries;
+                var localSeries = item as TvShow;
                 if (localSeries == null) throw new ArgumentNullException(nameof(localSeries));
                 return localSeries.AutoDownloadStatus.Equals(AutoDownload.On);
             }
@@ -409,12 +421,12 @@ namespace HS_Feed_Manager.ViewModels
         private bool AutowDownloadFilterOff(object item)
         {
             if (item.GetType() == typeof(Episode))
-                return CurrentData.LocalList.Any(x =>
+                return Logic.LocalTvShows.Any(x =>
                     x.AutoDownloadStatus == AutoDownload.Off && x.Name == ((Episode) item).Name);
 
-            if (item.GetType() == typeof(LocalSeries))
+            if (item.GetType() == typeof(TvShow))
             {
-                var localSeries = item as LocalSeries;
+                var localSeries = item as TvShow;
                 if (localSeries == null) throw new ArgumentNullException(nameof(localSeries));
                 return localSeries.AutoDownloadStatus.Equals(AutoDownload.Off);
             }
@@ -424,22 +436,22 @@ namespace HS_Feed_Manager.ViewModels
 
         private bool ExistsLocally(object item)
         {
-            return CurrentData.LocalList.Any(x => x.Name == ((Episode) item).Name);
+            return Logic.LocalTvShows.Any(x => x.Name == ((Episode) item).Name);
         }
 
         private bool DoesntExistsLocally(object item)
         {
-            return !CurrentData.LocalList.Any(x => x.Name == ((Episode) item).Name);
+            return !Logic.LocalTvShows.Any(x => x.Name == ((Episode) item).Name);
         }
 
         private bool StatusFilterOngoing(object item)
         {
             if (item.GetType() == typeof(Episode))
-                return CurrentData.LocalList.Any(x => x.Status == Status.Ongoing && x.Name == ((Episode) item).Name);
+                return Logic.LocalTvShows.Any(x => x.Status == Status.Ongoing && x.Name == ((Episode) item).Name);
 
-            if (item.GetType() == typeof(LocalSeries))
+            if (item.GetType() == typeof(TvShow))
             {
-                var localSeries = item as LocalSeries;
+                var localSeries = item as TvShow;
                 if (localSeries == null) throw new ArgumentNullException(nameof(localSeries));
                 return localSeries.Status.Equals(Status.Ongoing);
             }
@@ -450,11 +462,11 @@ namespace HS_Feed_Manager.ViewModels
         private bool StatusFilterNew(object item)
         {
             if (item.GetType() == typeof(Episode))
-                return CurrentData.LocalList.Any(x => x.Status == Status.New && x.Name == ((Episode) item).Name);
+                return Logic.LocalTvShows.Any(x => x.Status == Status.New && x.Name == ((Episode) item).Name);
 
-            if (item.GetType() == typeof(LocalSeries))
+            if (item.GetType() == typeof(TvShow))
             {
-                var localSeries = item as LocalSeries;
+                var localSeries = item as TvShow;
                 if (localSeries == null) throw new ArgumentNullException(nameof(localSeries));
                 return localSeries.Status.Equals(Status.New);
             }
@@ -465,11 +477,11 @@ namespace HS_Feed_Manager.ViewModels
         private bool StatusFilterFinished(object item)
         {
             if (item.GetType() == typeof(Episode))
-                return CurrentData.LocalList.Any(x => x.Status == Status.Finished && x.Name == ((Episode) item).Name);
+                return Logic.LocalTvShows.Any(x => x.Status == Status.Finished && x.Name == ((Episode) item).Name);
 
-            if (item.GetType() == typeof(LocalSeries))
+            if (item.GetType() == typeof(TvShow))
             {
-                var localSeries = item as LocalSeries;
+                var localSeries = item as TvShow;
                 if (localSeries == null) throw new ArgumentNullException(nameof(localSeries));
                 return localSeries.Status.Equals(Status.Finished);
             }
@@ -486,9 +498,9 @@ namespace HS_Feed_Manager.ViewModels
                 return episode.Name.IndexOf(_filterString, StringComparison.OrdinalIgnoreCase) >= 0;
             }
 
-            if (item.GetType() == typeof(LocalSeries))
+            if (item.GetType() == typeof(TvShow))
             {
-                var localSeries = item as LocalSeries;
+                var localSeries = item as TvShow;
                 if (localSeries == null) throw new ArgumentNullException(nameof(localSeries));
                 return localSeries.Name.IndexOf(_filterString, StringComparison.OrdinalIgnoreCase) >= 0;
             }
@@ -522,7 +534,7 @@ namespace HS_Feed_Manager.ViewModels
             FeedInfoName = feedEpisode.Name;
             FeedInfoEpisode = feedEpisode.EpisodeNumber.ToString();
 
-            var localSeries = CurrentData.LocalList.Where(x => x.Name == feedEpisode.Name).SingleOrDefault();
+            var localSeries = Logic.LocalTvShows.SingleOrDefault(x => x.Name == feedEpisode.Name);
 
             if (localSeries != null)
             {
@@ -555,7 +567,7 @@ namespace HS_Feed_Manager.ViewModels
                 EpisodeListVisibility = Visibility.Visible;
             }
 
-            var localSeries = (LocalSeries) LocalListView.CurrentItem;
+            var localSeries = (TvShow) LocalListView.CurrentItem;
 
             if (localSeries != null)
             {
@@ -564,7 +576,7 @@ namespace HS_Feed_Manager.ViewModels
 
                 LocalInfoName = localSeries.Name;
                 LocalInfoStatus = localSeries.Status.ToString();
-                LocalInfoEpisodes = localSeries.Episodes.ToString();
+                LocalInfoEpisodes = localSeries.EpisodeCount.ToString();
                 LocalInfoAutoDownload = localSeries.AutoDownloadStatus.ToString();
                 LocalInfoLocalEpisodeCount = localSeries.LocalEpisodesCount.ToString();
 
@@ -604,7 +616,7 @@ namespace HS_Feed_Manager.ViewModels
             for (var i = 4; i >= listEpisode.Rating; i--)
                 EpisodeIcons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
 
-            var localSeries = CurrentData.LocalList.Where(x => x.Name == listEpisode.Name).SingleOrDefault();
+            var localSeries = Logic.LocalTvShows.Where(x => x.Name == listEpisode.Name).SingleOrDefault();
 
             if (localSeries != null)
             {
@@ -817,7 +829,7 @@ namespace HS_Feed_Manager.ViewModels
             if (LocalListView.CurrentItem == null)
                 return;
 
-            var localSeries = (LocalSeries) LocalListView.CurrentItem;
+            var localSeries = (TvShow) LocalListView.CurrentItem;
             Mediator.NotifyColleagues(MediatorGlobal.UpdateFlyoutValues, localSeries);
         }
 
@@ -1197,8 +1209,8 @@ namespace HS_Feed_Manager.ViewModels
 
         private void DownloadThisCommand()
         {
-            if (SelectedDownloadIndex < 0)
-                return;
+            //if (SelectedDownloadIndex < 0)
+            //    return;
 
             //TODO Start Download This
         }
@@ -1274,12 +1286,12 @@ namespace HS_Feed_Manager.ViewModels
         {
             get
             {
-                if (_episodetextBoxButtonCmd == null)
-                    _episodetextBoxButtonCmd = new RelayCommand<object>(
+                if (_episodeTextBoxButtonCmd == null)
+                    _episodeTextBoxButtonCmd = new RelayCommand<object>(
                         param => EpisodeTextBoxButtonCommand(param),
                         param => CanEpisodeTextBoxButtonCommand()
                     );
-                return _episodetextBoxButtonCmd;
+                return _episodeTextBoxButtonCmd;
             }
         }
 
@@ -1294,16 +1306,16 @@ namespace HS_Feed_Manager.ViewModels
                 return;
 
             var value = param as string;
-            var localSeries = (LocalSeries) LocalListView.CurrentItem;
-            var episodes = new List<Episode>(localSeries.EpisodeList);
+            var localSeries = (TvShow) LocalListView.CurrentItem;
+            var episodes = new List<Episode>(localSeries.Episodes);
 
-            if (value.Equals(""))
+            if (value != null && value.Equals(""))
             {
                 EpisodeList = new ObservableCollection<Episode>(episodes);
                 return;
             }
 
-            if (param.GetType() == typeof(string))
+            if (param is string)
             {
                 var episodeFiltered = episodes.Where(item => item.EpisodeNumber.ToString() == value).ToList();
                 EpisodeList = new ObservableCollection<Episode>(episodeFiltered);
@@ -1328,10 +1340,9 @@ namespace HS_Feed_Manager.ViewModels
             return true;
         }
 
-        private void PlayEpisodeCommand(object param)
+        private void PlayEpisodeCommand([NotNull] object param)
         {
-            if (param == null)
-                return;
+            throw new NotImplementedException(param.ToString());
 
             // TODO: Play File
         }
@@ -1356,8 +1367,7 @@ namespace HS_Feed_Manager.ViewModels
 
         private void OpenFolderCommand(object param)
         {
-            if (param == null)
-                return;
+            throw new NotImplementedException(param.ToString());
         }
 
         public ICommand EditEpisodeInfo
@@ -1403,8 +1413,7 @@ namespace HS_Feed_Manager.ViewModels
 
         private void DeleteEpisodeCommand(object param)
         {
-            if (param == null)
-                return;
+            throw new NotImplementedException(param.ToString());
         }
 
         public List<string> EpisodeSortModes
@@ -1430,13 +1439,12 @@ namespace HS_Feed_Manager.ViewModels
 
         private void SortEpisodeList(int value)
         {
-            var localSeries = (LocalSeries) LocalListView.CurrentItem;
-            var episodes = new List<Episode>(localSeries.EpisodeList);
+            var localSeries = (TvShow) LocalListView.CurrentItem;
+            var episodes = new List<Episode>(localSeries.Episodes);
             switch (value)
             {
                 case 0:
-                    if (localSeries != null)
-                        EpisodeList = new ObservableCollection<Episode>(localSeries.EpisodeList);
+                    EpisodeList = new ObservableCollection<Episode>(localSeries.Episodes);
                     break;
                 case 1:
                     episodes.Sort((ep1, ep2) => ep1.EpisodeNumber.CompareTo(ep2.EpisodeNumber));

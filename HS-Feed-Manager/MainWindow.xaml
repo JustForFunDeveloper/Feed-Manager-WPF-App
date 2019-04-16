@@ -30,14 +30,6 @@
                 x:Key="MyCleanWindowStyle"
                 BasedOn="{StaticResource CleanWindowStyleKey}"
                 TargetType="{x:Type mah:MetroWindow}" />
-            <ObjectDataProvider
-                x:Key="HorizontalAlignmentEnumValues"
-                MethodName="GetValues"
-                ObjectType="{x:Type HorizontalAlignment}">
-                <ObjectDataProvider.MethodParameters>
-                    <x:Type TypeName="HorizontalAlignment" />
-                </ObjectDataProvider.MethodParameters>
-            </ObjectDataProvider>
         </ResourceDictionary>
     </Window.Resources>
 

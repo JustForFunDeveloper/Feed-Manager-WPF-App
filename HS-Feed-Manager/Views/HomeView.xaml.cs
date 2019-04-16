@@ -8,8 +8,8 @@ namespace HS_Feed_Manager.Views
     /// </summary>
     public partial class HomeView : UserControl
     {
-        private int _currentTabIndex = 0;
-        private int _currentEpisodeIndex = 0;
+        private int _currentTabIndex;
+        private int _currentEpisodeIndex;
 
         public HomeView()
         {
