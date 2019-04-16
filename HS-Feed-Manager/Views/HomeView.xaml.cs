@@ -23,7 +23,7 @@ namespace HS_Feed_Manager.Views
                 TabControl tabControl = (TabControl)sender;
                 if (tabControl.SelectedIndex != _currentTabIndex)
                 {
-                    Mediator.NotifyColleagues("TabControlSelectionChanged", null);
+                    Mediator.NotifyColleagues(MediatorGlobal.TabControlSelectionChanged, null);
                     _currentTabIndex = tabControl.SelectedIndex;
                 }
             }
@@ -34,7 +34,7 @@ namespace HS_Feed_Manager.Views
             if (sender != null)
             {
                 ListBox listBox = (ListBox)sender;
-                Mediator.NotifyColleagues("ListBoxSelectionChanged", listBox.SelectedItem);
+                Mediator.NotifyColleagues(MediatorGlobal.ListBoxSelectionChanged, listBox.SelectedItem);
                 _currentEpisodeIndex = listBox.SelectedIndex;
             }
         }

@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 
-namespace HS_Feed_Manager.ViewModels
+namespace HS_Feed_Manager.ViewModels.Common
 {
     public class PropertyChangedViewModel : INotifyPropertyChanged
     {

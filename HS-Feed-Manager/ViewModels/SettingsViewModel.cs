@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HS_Feed_Manager.ViewModels.Common;
 
 namespace HS_Feed_Manager.ViewModels
 {

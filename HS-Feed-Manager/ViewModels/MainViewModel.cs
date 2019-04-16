@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using HS_Feed_Manager.ViewModels.Common;
 
 namespace HS_Feed_Manager.ViewModels
 {
@@ -16,6 +17,7 @@ namespace HS_Feed_Manager.ViewModels
 
         public static MainViewModel getInstance { get => _mainViewModel; }
 
+        #region private Member
         private ICommand _openMenu;
         private ICommand _itemClick;
         private ICommand _optionItemClick;
@@ -27,10 +29,9 @@ namespace HS_Feed_Manager.ViewModels
 
         private bool _isPaneOpened;
         private bool _isFlyoutOpen;
+        private bool _isEpisodeFlyoutOpen;
         private int _selectedIndex = 0;
 
-        private string _itemName = "";
-        private string _itemNameValue;
         private int _selectedStatus;
         private string _selectedValueStatus;
         private string _episodes;
@@ -38,6 +39,7 @@ namespace HS_Feed_Manager.ViewModels
         private int _selectedAutoDownload;
         private string _selectedValueAutoDownload;
         private double _ratingValue;
+        private double _episodeRatingValue;
 
         private ObservableCollection<string> _icons = new ObservableCollection<string> {
             PackIconMaterialDesignKind.StarBorder.ToString(),
@@ -46,16 +48,27 @@ namespace HS_Feed_Manager.ViewModels
             PackIconMaterialDesignKind.StarBorder.ToString(),
             PackIconMaterialDesignKind.StarBorder.ToString() };
 
+        private ObservableCollection<string> _episodeIcons = new ObservableCollection<string> {
+            PackIconMaterialDesignKind.StarBorder.ToString(),
+            PackIconMaterialDesignKind.StarBorder.ToString(),
+            PackIconMaterialDesignKind.StarBorder.ToString(),
+            PackIconMaterialDesignKind.StarBorder.ToString(),
+            PackIconMaterialDesignKind.StarBorder.ToString() };
+        #endregion
+
         public MainViewModel()
         {
             this.CreateMenuItems();
             _mainViewModel = this;
-            Mediator.Register("UpdateFlyoutValues", UpdateFlyoutValues);
-            Mediator.Register("SliderRateValueChanged", SliderRateValueChanged);
+            Mediator.Register(MediatorGlobal.UpdateFlyoutValues, UpdateFlyoutValues);
+            Mediator.Register(MediatorGlobal.UpdateEpisodeFlyoutValues, UpdateEpisodeFlyoutValues);
+            Mediator.Register(MediatorGlobal.SliderRateValueChanged, SliderRateValueChanged);
+            Mediator.Register(MediatorGlobal.EpisodeSliderRateValueChanged, EpisodeSliderRateValueChanged);
         }
 
         #region Hamburger Menu
-        public void CreateMenuItems()
+
+        private void CreateMenuItems()
         {
             MenuItems = new HamburgerMenuItemCollection
             {
@@ -89,7 +102,7 @@ namespace HS_Feed_Manager.ViewModels
 
         public HamburgerMenuItemCollection MenuItems
         {
-            get { return _menuItems; }
+            get => _menuItems;
             set
             {
                 if (Equals(value, _menuItems)) return;
@@ -205,17 +218,18 @@ namespace HS_Feed_Manager.ViewModels
         }
         #endregion
 
-        #region Flyout
+        #region Flyout EditLocalInfo
         private void UpdateFlyoutValues(object value)
         {
+            if (value == null)
+                return;
+
             LocalSeries localSeries = value as LocalSeries;
-            ItemName = localSeries.Name;
             int statusIndex = Array.IndexOf(Enum.GetValues(localSeries.Status.GetType()), localSeries.Status);
             SelectedStatus = statusIndex;
             Episodes = localSeries.Episodes.ToString();
             int autoDownloadIndex = Array.IndexOf(Enum.GetValues(localSeries.AutoDownloadStatus.GetType()), localSeries.AutoDownloadStatus);
             SelectedAutoDownload = autoDownloadIndex;
-            //SliderRateValueChanged(localSeries.Rating);
             RatingValue = localSeries.Rating;
 
             IsFlyoutOpen = true;
@@ -227,26 +241,6 @@ namespace HS_Feed_Manager.ViewModels
             set
             {
                 _isFlyoutOpen = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string ItemName
-        {
-            get { return _itemName; }
-            set
-            {
-                _itemName = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string ItemNameValue
-        {
-            get { return _itemNameValue; }
-            set
-            {
-                _itemNameValue = value;
                 OnPropertyChanged();
             }
         }
@@ -384,7 +378,6 @@ namespace HS_Feed_Manager.ViewModels
         private void SaveOkEditCommand()
         {
             LocalSeries localSeries = new LocalSeries();
-            localSeries.Name = ItemNameValue;
             localSeries.Status = (Status)Enum.Parse(typeof(Status), SelectedValueStatus);
             if (int.TryParse(EpisodesValue, out int result))
                 localSeries.Episodes = result;
@@ -393,7 +386,7 @@ namespace HS_Feed_Manager.ViewModels
             localSeries.AutoDownloadStatus = (AutoDownload)Enum.Parse(typeof(AutoDownload), SelectedValueAutoDownload);
             localSeries.Rating = (int)RatingValue;
             //TODO: Save Data
-            Mediator.NotifyColleagues("SaveEditInfo", localSeries);
+            Mediator.NotifyColleagues(MediatorGlobal.SaveEditInfo, localSeries);
 
             IsFlyoutOpen = false;
         }
@@ -420,7 +413,118 @@ namespace HS_Feed_Manager.ViewModels
 
         private void SaveCancelEditCommand()
         {
-            ItemNameValue = "";
+            EpisodesValue = "";
+            IsFlyoutOpen = false;
+        }
+
+        #endregion
+
+        #region Flyout EditEpisodeInfo
+        private void UpdateEpisodeFlyoutValues(object value)
+        {
+            if (value == null)
+                return;
+
+            Episode episode = value as Episode;
+            EpisodeRatingValue = episode.Rating;
+
+            IsEpisodeFlyoutOpen = true;
+        }
+
+        public bool IsEpisodeFlyoutOpen
+        {
+            get { return _isEpisodeFlyoutOpen; }
+            set
+            {
+                _isEpisodeFlyoutOpen = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<string> EpisodeIcons
+        {
+            get => _episodeIcons;
+            set
+            {
+                _episodeIcons = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double EpisodeRatingValue
+        {
+            get { return _episodeRatingValue; }
+            set
+            {
+                _episodeRatingValue = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private void EpisodeSliderRateValueChanged(object obj)
+        {
+            int length = (int)obj;
+            for (int i = 0; i < length; i++)
+            {
+                EpisodeIcons[i] = PackIconMaterialDesignKind.Star.ToString();
+            }
+            for (int i = 4; i >= length; i--)
+            {
+                EpisodeIcons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
+            }
+        }
+
+        public ICommand EpisodeOkEdit
+        {
+            get
+            {
+                if (_okEdit == null)
+                {
+                    _okEdit = new RelayCommand(
+                        param => this.EpisodeOkEditCommand(),
+                        param => this.CanEpisodeOkEditCommand()
+                    );
+                }
+                return _okEdit;
+            }
+        }
+
+        private bool CanEpisodeOkEditCommand()
+        {
+            return true;
+        }
+
+        private void EpisodeOkEditCommand()
+        {
+            Episode episode = new Episode { Rating = (int)EpisodeRatingValue };
+            //TODO: Save Data
+            Mediator.NotifyColleagues(MediatorGlobal.SaveEpisodeEditInfo, episode);
+
+            IsEpisodeFlyoutOpen = false;
+        }
+
+        public ICommand EpisodeCancelEdit
+        {
+            get
+            {
+                if (_cancelEdit == null)
+                {
+                    _cancelEdit = new RelayCommand(
+                        param => this.EpisodeCancelEditCommand(),
+                        param => this.CanEpisodeCancelEditCommand()
+                    );
+                }
+                return _cancelEdit;
+            }
+        }
+
+        private bool CanEpisodeCancelEditCommand()
+        {
+            return true;
+        }
+
+        private void EpisodeCancelEditCommand()
+        {
             EpisodesValue = "";
             IsFlyoutOpen = false;
         }

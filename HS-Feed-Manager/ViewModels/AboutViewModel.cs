@@ -1,4 +1,6 @@
-﻿namespace HS_Feed_Manager.ViewModels
+﻿using HS_Feed_Manager.ViewModels.Common;
+
+namespace HS_Feed_Manager.ViewModels
 {
     public class AboutViewModel : PropertyChangedViewModel
     {

@@ -1,8 +1,9 @@
-﻿using HS_Feed_Manager.DataModels;
-using System.Windows;
+﻿using System.Windows;
+using HS_Feed_Manager.DataModels;
 
 namespace HS_Feed_Manager
 {
+    /// <inheritdoc />
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
@@ -10,8 +11,7 @@ namespace HS_Feed_Manager
     {
         public App()
         {
-            SampleData.Seed();
-            CurrenData.Seed();
+            CurrentData.Seed();
         }
     }
 }

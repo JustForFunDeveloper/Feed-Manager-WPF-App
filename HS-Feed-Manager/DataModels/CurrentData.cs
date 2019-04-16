@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace HS_Feed_Manager.DataModels
 {
-    public static class CurrenData
+    public static class CurrentData
     {
         public static List<Episode> FeedList { get; set; }
         public static List<LocalSeries> LocalList { get; set; }

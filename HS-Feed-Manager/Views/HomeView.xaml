@@ -2,6 +2,7 @@
     x:Class="HS_Feed_Manager.Views.HomeView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ValueConverter="clr-namespace:HS_Feed_Manager.ValueConverter"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
@@ -111,7 +112,6 @@
             </Style.Triggers>
         </Style>
 
-
         <ObjectDataProvider
             x:Key="UnderlinedEnumValues"
             MethodName="GetValues"
@@ -120,7 +120,31 @@
                 <x:Type TypeName="mah:UnderlinedType" />
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
+
+        <ValueConverter:FirstEpisodeConverter x:Key="FirstEpisodeConverter" />
     </UserControl.Resources>
+    <UserControl.InputBindings>
+        <KeyBinding
+            Key="PageUp"
+            Command="{Binding MoveToFirst}"
+            Modifiers="Alt" />
+        <KeyBinding
+            Key="PageDown"
+            Command="{Binding MoveToLast}"
+            Modifiers="Alt" />
+        <KeyBinding
+            Key="Up"
+            Command="{Binding MoveUp}"
+            Modifiers="Alt" />
+        <KeyBinding
+            Key="Down"
+            Command="{Binding MoveDown}"
+            Modifiers="Alt" />
+        <KeyBinding
+            Key="Delete"
+            Command="{Binding DeleteFromList}"
+            Modifiers="Alt" />
+    </UserControl.InputBindings>
 
     <Grid x:Name="TheContentGrid" Margin="5">
         <Grid.RowDefinitions>
@@ -132,11 +156,26 @@
             Grid.Row="0"
             Margin="8,0,0,0"
             Orientation="Horizontal">
-            <Button Style="{DynamicResource DownloadFeedIcon}" ToolTip="Download Feed" />
-            <Button Style="{DynamicResource SearchFolder}" ToolTip="Search Local Folders" />
-            <Button Style="{DynamicResource ListPlus}" ToolTip="Add Feed to Download" />
-            <Button Style="{DynamicResource ListMinus}" ToolTip="Remove Feed from Download" />
-            <Button Style="{DynamicResource StartDownload}" ToolTip="Start Episode Download" />
+            <Button
+                Command="{Binding DownloadFeed}"
+                Style="{DynamicResource DownloadFeedIcon}"
+                ToolTip="Download Feed" />
+            <Button
+                Command="{Binding SearchLocalFolder}"
+                Style="{DynamicResource SearchFolder}"
+                ToolTip="Search Local Folders" />
+            <Button
+                Command="{Binding AddToList}"
+                Style="{DynamicResource ListPlus}"
+                ToolTip="Add Feed to Download" />
+            <Button
+                Command="{Binding DeleteFromList}"
+                Style="{DynamicResource ListMinus}"
+                ToolTip="Remove Feed from Download" />
+            <Button
+                Command="{Binding DownloadAll}"
+                Style="{DynamicResource StartDownload}"
+                ToolTip="Start Episode Download" />
         </StackPanel>
         <Rectangle
             Grid.Row="1"
@@ -163,15 +202,16 @@
                     Margin="0,5,0,0"
                     BorderBrush="Transparent"
                     IsSynchronizedWithCurrentItem="True"
-                    ItemsSource="{Binding SortedArtistsView}"
+                    ItemsSource="{Binding DownloadList}"
+                    SelectedIndex="{Binding SelectedDownloadIndex}"
                     Style="{DynamicResource VirtualisedMetroListBox}"
                     Visibility="Visible">
                     <ListBox.ItemTemplate>
-                        <DataTemplate DataType="{x:Type models:Artist}">
+                        <DataTemplate DataType="{x:Type models:Episode}">
                             <TextBlock>
                                 <TextBlock.Text>
-                                    <MultiBinding StringFormat="{}{0} - {1}">
-                                        <Binding Mode="OneWay" Path="ArtistId" />
+                                    <MultiBinding StringFormat="{}{0}&#x9;-    {1}">
+                                        <Binding Mode="OneWay" Path="EpisodeNumber" />
                                         <Binding Mode="OneWay" Path="Name" />
                                     </MultiBinding>
                                 </TextBlock.Text>
@@ -180,17 +220,51 @@
                     </ListBox.ItemTemplate>
                     <ListBox.ContextMenu>
                         <ContextMenu>
-                            <MenuItem Header="Move" Icon="{iconPacks:Material Kind=FolderSearch}">
+                            <MenuItem
+                                Margin="3,0,0,0"
+                                Header="Move"
+                                Icon="{iconPacks:Material Kind=Sort}">
                                 <MenuItem
+                                    Margin="3,0,0,0"
                                     Command="{Binding MoveToFirst}"
                                     Header="Move to First"
-                                    Icon="{iconPacks:Material Kind=FolderSearch}" />
-                                <MenuItem Header="Move to Last" />
-                                <MenuItem Header="Move Up" />
-                                <MenuItem Header="Move Down" />
+                                    Icon="{iconPacks:Material Kind=ArrowCollapseUp}"
+                                    ToolTip="Alt+PageUp" />
+                                <MenuItem
+                                    Margin="3,0,0,0"
+                                    Command="{Binding MoveToLast}"
+                                    Header="Move to Last"
+                                    Icon="{iconPacks:Material Kind=ArrowCollapseDown}"
+                                    ToolTip="Alt+PageDown" />
+                                <MenuItem
+                                    Margin="3,0,0,0"
+                                    Command="{Binding MoveUp}"
+                                    Header="Move Up"
+                                    Icon="{iconPacks:Material Kind=ArrowUp}"
+                                    ToolTip="Alt+Up" />
+                                <MenuItem
+                                    Margin="3,0,0,0"
+                                    Command="{Binding MoveDown}"
+                                    Header="Move Down"
+                                    Icon="{iconPacks:Material Kind=ArrowDown}"
+                                    ToolTip="Alt+Down" />
                             </MenuItem>
-                            <MenuItem Header="Remove From List" />
-                            <MenuItem Header="Start Download" />
+                            <MenuItem
+                                Margin="3,0,0,0"
+                                Command="{Binding DeleteFromList}"
+                                Header="Delete from Download List"
+                                Icon="{iconPacks:Material Kind=PlaylistMinus}"
+                                ToolTip="Alt+Delete" />
+                            <MenuItem
+                                Margin="3,0,0,0"
+                                Command="{Binding DownloadThis}"
+                                Header="Download this"
+                                Icon="{iconPacks:Material Kind=Download}" />
+                            <MenuItem
+                                Margin="3,0,0,0"
+                                Command="{Binding DownloadAll}"
+                                Header="Download All"
+                                Icon="{iconPacks:Material Kind=FileDownload}" />
                         </ContextMenu>
                     </ListBox.ContextMenu>
                 </ListBox>
@@ -221,7 +295,6 @@
                         <TextBox
                             Width="140"
                             Height="20"
-                            mah:TextBoxHelper.ButtonCommand="{Binding TextBoxButtonCmd, Mode=OneWay}"
                             mah:TextBoxHelper.ClearTextButton="True"
                             mah:TextBoxHelper.UseFloatingWatermark="False"
                             mah:TextBoxHelper.Watermark="Ep. Number..."
@@ -250,10 +323,11 @@
                         Margin="0,5,0,0"
                         BorderBrush="Transparent"
                         ItemsSource="{Binding EpisodeList}"
+                        SelectedItem="{Binding SelectedEpisode}"
                         SelectionChanged="EpisodeList_SelectionChanged"
                         Style="{DynamicResource VirtualisedMetroListBox}">
                         <ListBox.ItemTemplate>
-                            <DataTemplate DataType="{x:Type models:Artist}">
+                            <DataTemplate DataType="{x:Type models:Episode}">
                                 <TextBlock>
                                     <TextBlock.Text>
                                         <MultiBinding StringFormat="{}{0}&#x9;-    {1}">
@@ -266,17 +340,26 @@
                         </ListBox.ItemTemplate>
                         <ListBox.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="Move" Icon="{iconPacks:Material Kind=FolderSearch}">
-                                    <MenuItem
-                                        Command="{Binding MoveToFirst}"
-                                        Header="Move to First"
-                                        Icon="{iconPacks:Material Kind=FolderSearch}" />
-                                    <MenuItem Header="Move to Last" />
-                                    <MenuItem Header="Move Up" />
-                                    <MenuItem Header="Move Down" />
-                                </MenuItem>
-                                <MenuItem Header="Remove From List" />
-                                <MenuItem Header="Start Download" />
+                                <MenuItem
+                                    Margin="3,0,0,0"
+                                    Command="{Binding PlayEpisode}"
+                                    Header="Play Episode"
+                                    Icon="{iconPacks:Material Kind=PlayBoxOutline}" />
+                                <MenuItem
+                                    Margin="3,0,0,0"
+                                    Command="{Binding OpenFolder}"
+                                    Header="Open Folder"
+                                    Icon="{iconPacks:Material Kind=FolderOpen}" />
+                                <MenuItem
+                                    Margin="3,0,0,0"
+                                    Command="{Binding EditEpisodeInfo}"
+                                    Header="Edit Episode Info"
+                                    Icon="{iconPacks:Material Kind=FileDocumentEdit}" />
+                                <MenuItem
+                                    Margin="3,0,0,0"
+                                    Command="{Binding DeleteEpisode}"
+                                    Header="Delete Episode"
+                                    Icon="{iconPacks:Material Kind=Delete}" />
                             </ContextMenu>
                         </ListBox.ContextMenu>
                     </ListBox>
@@ -345,8 +428,8 @@
                         ItemsSource="{Binding FeedListView}"
                         Style="{DynamicResource VirtualisedMetroListBox}">
                         <ListBox.ItemTemplate>
-                            <DataTemplate DataType="{x:Type models:Artist}">
-                                <TextBlock>
+                            <DataTemplate DataType="{x:Type models:Episode}">
+                                <TextBlock x:Name="txtBlock">
                                     <TextBlock.Text>
                                         <MultiBinding StringFormat="{}{0}&#x9;-    {1}">
                                             <Binding Mode="OneWay" Path="EpisodeNumber" />
@@ -354,13 +437,30 @@
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding EpisodeNumber, Mode=OneWay, Converter={StaticResource FirstEpisodeConverter}}" Value="true">
+                                        <Setter TargetName="txtBlock" Property="TextBlock.Foreground" Value="#00c853" />
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                         <ListBox.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="Add to Download List" />
-                                <MenuItem Header="Remove from Download List" />
-                                <MenuItem Command="{Binding EditInfo}" Header="Edit Info" />
+                                <MenuItem
+                                    Margin="3,0,0,0"
+                                    Command="{Binding AutoDownloadOn}"
+                                    Header="Auto Download On"
+                                    Icon="{iconPacks:Material Kind=FlashAuto}" />
+                                <MenuItem
+                                    Margin="3,0,0,0"
+                                    Command="{Binding AddToList}"
+                                    Header="Add to Download List"
+                                    Icon="{iconPacks:Material Kind=PlaylistPlus}" />
+                                <MenuItem
+                                    Margin="3,0,0,0"
+                                    Command="{Binding DeleteFeedFromList}"
+                                    Header="Delete from Download List"
+                                    Icon="{iconPacks:Material Kind=PlaylistMinus}" />
                             </ContextMenu>
                         </ListBox.ContextMenu>
                     </ListBox>
@@ -373,7 +473,7 @@
                         ItemsSource="{Binding LocalListView}"
                         Style="{DynamicResource VirtualisedMetroListBox}">
                         <ListBox.ItemTemplate>
-                            <DataTemplate DataType="{x:Type models:CurrenData}">
+                            <DataTemplate DataType="{x:Type models:CurrentData}">
                                 <TextBlock>
                                     <TextBlock.Text>
                                         <MultiBinding StringFormat="{}{0}">
@@ -385,9 +485,19 @@
                         </ListBox.ItemTemplate>
                         <ListBox.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="Add to Download List" />
-                                <MenuItem Header="Remove from Download List" />
-                                <MenuItem Command="{Binding EditInfo}" Header="Edit Info" />
+                                <MenuItem
+                                    Margin="3,0,0,0"
+                                    Header="Toggle Auto Download"
+                                    Icon="{iconPacks:Material Kind=FlashAuto}" />
+                                <MenuItem
+                                    Margin="3,0,0,0"
+                                    Command="{Binding EditLocalInfo}"
+                                    Header="Edit Local Info"
+                                    Icon="{iconPacks:Material Kind=FileDocumentEdit}" />
+                                <MenuItem
+                                    Margin="3,0,0,0"
+                                    Header="Delete Series"
+                                    Icon="{iconPacks:Material Kind=Delete}" />
                             </ContextMenu>
                         </ListBox.ContextMenu>
                     </ListBox>

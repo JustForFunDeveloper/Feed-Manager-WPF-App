@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Data;
 
-namespace HS_Feed_Manager.ViewModels
+namespace HS_Feed_Manager.ViewModels.Common
 {
     class SelectedItemToContentConverter : IMultiValueConverter
     {

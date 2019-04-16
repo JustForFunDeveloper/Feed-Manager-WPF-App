@@ -77,16 +77,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="DataModels\Album.cs" />
-    <Compile Include="DataModels\Artist.cs" />
-    <Compile Include="DataModels\CustomDialogExampleContent.cs" />
+    <Compile Include="Control\Controller.cs" />
+    <Compile Include="Core\Logic.cs" />
     <Compile Include="DataModels\Episode.cs" />
-    <Compile Include="DataModels\Genre.cs" />
     <Compile Include="DataModels\LocalSeries.cs" />
-    <Compile Include="DataModels\CurrenData.cs" />
-    <Compile Include="DataModels\SimpleCommand.cs" />
+    <Compile Include="DataModels\CurrentData.cs" />
+    <Compile Include="ValueConverter\FirstEpisodeConverter.cs" />
     <Compile Include="ViewModels\AboutViewModel.cs" />
+    <Compile Include="ViewModels\Handler\MediatorGlobal.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
+    <Compile Include="ViewModels\Interfaces\IHomeView.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\Common\PropertyChangedViewModel.cs" />
     <Compile Include="ViewModels\Common\SelectedItemToContentConverter.cs" />

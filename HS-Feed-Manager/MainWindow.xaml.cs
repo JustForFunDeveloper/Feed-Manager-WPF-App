@@ -20,7 +20,11 @@ namespace HS_Feed_Manager
 
         private void Slider_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e)
         {
-            Mediator.NotifyColleagues("SliderRateValueChanged", (int)e.NewValue);
+            Mediator.NotifyColleagues(MediatorGlobal.SliderRateValueChanged, (int)e.NewValue);
+        }
+        private void EpisodeSlider_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e)
+        {
+            Mediator.NotifyColleagues(MediatorGlobal.EpisodeSliderRateValueChanged, (int)e.NewValue);
         }
     }
 }
