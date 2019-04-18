@@ -166,6 +166,7 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -188,6 +189,9 @@
     <Compile Include="Control\Controller.cs" />
     <Compile Include="Core\Data\ApplicationDbContext.cs" />
     <Compile Include="Core\Handler\DbHandler.cs" />
+    <Compile Include="Core\Handler\FeedHandler.cs" />
+    <Compile Include="Core\Handler\FileHandler.cs" />
+    <Compile Include="Core\Handler\FileNameParser.cs" />
     <Compile Include="Core\Logic.cs" />
     <Compile Include="DataModels\DbModels\Episode.cs" />
     <Compile Include="DataModels\DbModels\TvShow.cs" />
@@ -195,6 +199,10 @@
     <Compile Include="Migrations\20190416111323_second.cs" />
     <Compile Include="Migrations\20190416111323_second.designer.cs">
       <DependentUpon>20190416111323_second.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\20190417190210_AddNewStatusUndefined.cs" />
+    <Compile Include="Migrations\20190417190210_AddNewStatusUndefined.designer.cs">
+      <DependentUpon>20190417190210_AddNewStatusUndefined.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\ApplicationDbContextModelSnapshot.cs" />
     <Compile Include="ValueConverter\FirstEpisodeConverter.cs" />

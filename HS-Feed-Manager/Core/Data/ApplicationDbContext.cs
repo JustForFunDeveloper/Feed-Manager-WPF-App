@@ -10,7 +10,7 @@ namespace HS_Feed_Manager.Core.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("Data Source=Test.db");
+            optionsBuilder.UseSqlite("Data Source=local.db");
             base.OnConfiguring(optionsBuilder);
         }
     }

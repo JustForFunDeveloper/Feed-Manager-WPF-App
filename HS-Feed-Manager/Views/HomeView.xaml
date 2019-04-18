@@ -4,12 +4,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ValueConverter="clr-namespace:HS_Feed_Manager.ValueConverter"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dbModels="clr-namespace:HS_Feed_Manager.DataModels.DbModels"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:HS_Feed_Manager.DataModels.DbModels"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    xmlns:dbModels="clr-namespace:HS_Feed_Manager.DataModels.DbModels"
     d:DesignHeight="700"
     d:DesignWidth="1200"
     mc:Ignorable="d">
@@ -26,7 +26,23 @@
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderBrush" Value="Transparent" />
             <Setter Property="Margin" Value="0,0,20,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid Background="Transparent">
+                            <ContentPresenter
+                                x:Name="MyContentPresenter"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Content="{TemplateBinding Content}" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
             <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="DarkRed" />
+                </Trigger>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="Transparent" />
                     <Setter Property="Foreground" Value="{DynamicResource AccentColorBrush}" />
@@ -154,6 +170,7 @@
                 ToolTip="Download Feed" />
             <Button
                 Command="{Binding SearchLocalFolder}"
+                IsEnabled="{Binding IsSearchLocalEnabled}"
                 Style="{DynamicResource SearchFolder}"
                 ToolTip="Search Local Folders" />
             <Button
@@ -168,7 +185,15 @@
                 Command="{Binding DownloadAll}"
                 Style="{DynamicResource StartDownload}"
                 ToolTip="Start Episode Download" />
+
         </StackPanel>
+        <mah:ProgressRing
+            Grid.Row="0"
+            Width="10"
+            Height="10"
+            HorizontalAlignment="Right"
+            IsActive="{Binding IsProgressActive}"
+            ToolTip="{Binding ProgressToolTip}" />
         <Rectangle
             Grid.Row="1"
             Height="1"
@@ -190,7 +215,6 @@
                 Header="Current Downloads"
                 Visibility="{Binding DownloadListVisibility}">
                 <ListBox
-                    x:Name="downloadList"
                     Margin="0,5,0,0"
                     BorderBrush="Transparent"
                     IsSynchronizedWithCurrentItem="True"
@@ -268,8 +292,13 @@
                 BorderBrush="Transparent"
                 Header="Episode List"
                 Visibility="{Binding EpisodeListVisibility}">
-                <StackPanel Orientation="Vertical">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
                     <StackPanel
+                        Grid.Row="0"
                         Height="37"
                         Margin="0,8,0,0"
                         HorizontalAlignment="Right"
@@ -310,7 +339,7 @@
 
                     </StackPanel>
                     <ListBox
-                        x:Name="episodeList"
+                        Grid.Row="1"
                         Margin="0,5,0,0"
                         BorderBrush="Transparent"
                         ItemsSource="{Binding EpisodeList}"
@@ -354,7 +383,7 @@
                             </ContextMenu>
                         </ListBox.ContextMenu>
                     </ListBox>
-                </StackPanel>
+                </Grid>
             </GroupBox>
             <Rectangle
                 Grid.Column="1"
@@ -406,7 +435,6 @@
 
             </StackPanel>
             <mah:MetroTabControl
-                x:Name="TC"
                 Grid.Column="2"
                 Margin="0,5,0,0"
                 SelectedIndex="{Binding TabIndex}"
@@ -439,8 +467,9 @@
                             <ContextMenu>
                                 <MenuItem
                                     Margin="3,0,0,0"
-                                    Command="{Binding AutoDownloadOn}"
-                                    Header="Auto Download On"
+                                    Command="{Binding ToggleAutoDownload}"
+                                    CommandParameter="FeedList"
+                                    Header="Toggle Auto Download"
                                     Icon="{iconPacks:Material Kind=FlashAuto}" />
                                 <MenuItem
                                     Margin="3,0,0,0"
@@ -458,7 +487,6 @@
                 </mah:MetroTabItem>
                 <mah:MetroTabItem Header="Local List">
                     <ListBox
-                        x:Name="localList"
                         Margin="0,5,0,0"
                         IsSynchronizedWithCurrentItem="True"
                         ItemsSource="{Binding LocalListView}"
@@ -478,6 +506,8 @@
                             <ContextMenu>
                                 <MenuItem
                                     Margin="3,0,0,0"
+                                    Command="{Binding ToggleAutoDownload}"
+                                    CommandParameter="LocalList"
                                     Header="Toggle Auto Download"
                                     Icon="{iconPacks:Material Kind=FlashAuto}" />
                                 <MenuItem
@@ -487,6 +517,7 @@
                                     Icon="{iconPacks:Material Kind=FileDocumentEdit}" />
                                 <MenuItem
                                     Margin="3,0,0,0"
+                                    Command="{Binding DeleteTvShow}"
                                     Header="Delete Series"
                                     Icon="{iconPacks:Material Kind=Delete}" />
                             </ContextMenu>

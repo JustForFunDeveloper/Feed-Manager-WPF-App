@@ -2,6 +2,7 @@
 {
     public enum Status
     {
+        Undefined,
         New,
         Ongoing,
         Finished
@@ -9,8 +10,8 @@
 
     public enum AutoDownload
     {
-        On,
-        Off
+        Off,
+        On
     }
 
     class Enums

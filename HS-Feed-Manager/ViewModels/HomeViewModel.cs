@@ -19,6 +19,7 @@ namespace HS_Feed_Manager.ViewModels
 {
     public class HomeViewModel : PropertyChangedViewModel
     {
+        // TODO: Logging and Exception-handling!
         // ReSharper disable once NotAccessedField.Local
         private readonly PropertyChangedViewModel _mainViewModel;
 
@@ -45,6 +46,7 @@ namespace HS_Feed_Manager.ViewModels
             "Sort Date Oldest",
             "Auto Download On",
             "Auto Download Off",
+            "Status Undefined",
             "Status Ongoing",
             "Status New",
             "Status Finished",
@@ -70,7 +72,7 @@ namespace HS_Feed_Manager.ViewModels
 
         private ICommand _textBoxButtonCmd;
         private ICommand _editLocalInfo;
-        private ICommand _autoDownloadOn;
+        private ICommand _toggleAutoDownload;
         private ICommand _deleteFeedFromList;
 
         private ICommand _episodeTextBoxButtonCmd;
@@ -88,6 +90,7 @@ namespace HS_Feed_Manager.ViewModels
         private ICommand _deleteFromList;
         private ICommand _downloadThis;
         private ICommand _downloadAll;
+        private ICommand _deleteTvShow;
 
         private int _sortModesIndex;
         private string _filterString = "";
@@ -103,6 +106,10 @@ namespace HS_Feed_Manager.ViewModels
         private ObservableCollection<Episode> _episodeList;
         private Visibility _episodeListVisibility = Visibility.Hidden;
         private object _selectedEpisode;
+
+        private bool _isProgressActive;
+        private string _progressToolTip;
+        private bool _isSearchLocalEnabled = true;
 
         private Visibility _feedInfoVisibility = Visibility.Visible;
         public ICollectionView FeedListView { get; private set; }
@@ -167,6 +174,8 @@ namespace HS_Feed_Manager.ViewModels
             Mediator.Register(MediatorGlobal.TabControlSelectionChanged, TabControlSelectionChanged);
             Mediator.Register(MediatorGlobal.ListBoxSelectionChanged, ListBoxSelectionChanged);
             Mediator.Register(MediatorGlobal.OnRefreshListView, OnRefreshListViews);
+            Mediator.Register(MediatorGlobal.FinishedSearchLocalFolder, OnFinishedSearchLocalFolder);
+            Mediator.Register(MediatorGlobal.UpdateDownloadList, OnUpdateDownloadList);
         }
 
         #region IconBar
@@ -191,7 +200,7 @@ namespace HS_Feed_Manager.ViewModels
 
         private void DownloadFeedCommand()
         {
-            // TODO: Download Feed
+            Mediator.NotifyColleagues(MediatorGlobal.DownloadFeed, null);
         }
 
         public ICommand SearchLocalFolder
@@ -214,7 +223,47 @@ namespace HS_Feed_Manager.ViewModels
 
         private void SearchLocalFolderCommand()
         {
-            // TODO: Search local folder.
+            Mediator.NotifyColleagues(MediatorGlobal.SearchLocalFolder, null);
+            IsProgressActive = true;
+            IsSearchLocalEnabled = false;
+            ProgressToolTip = "Searching local folders!";
+        }
+
+        private void OnFinishedSearchLocalFolder(object obj)
+        {
+            IsProgressActive = false;
+            IsSearchLocalEnabled = true;
+            ProgressToolTip = "";
+        }
+
+        public bool IsProgressActive
+        {
+            get => _isProgressActive;
+            set
+            {
+                _isProgressActive = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string ProgressToolTip
+        {
+            get => _progressToolTip;
+            set
+            {
+                _progressToolTip = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsSearchLocalEnabled
+        {
+            get => _isSearchLocalEnabled;
+            set
+            {
+                _isSearchLocalEnabled = value;
+                OnPropertyChanged();
+            }
         }
 
         #endregion
@@ -333,20 +382,23 @@ namespace HS_Feed_Manager.ViewModels
                                 FeedListView.Filter = DoesntExistsLocally;
                                 break;
                             case 5:
-                                FeedListView.Filter = StatusFilterOngoing;
+                                FeedListView.Filter = StatusFilterUndefined;
                                 break;
                             case 6:
-                                FeedListView.Filter = StatusFilterNew;
+                                FeedListView.Filter = StatusFilterOngoing;
                                 break;
                             case 7:
-                                FeedListView.Filter = StatusFilterFinished;
+                                FeedListView.Filter = StatusFilterNew;
                                 break;
                             case 8:
+                                FeedListView.Filter = StatusFilterFinished;
+                                break;
+                            case 9:
                                 FeedListView.Filter = null;
                                 FeedListView.SortDescriptions.Add(new SortDescription("Name",
                                     ListSortDirection.Ascending));
                                 break;
-                            case 9:
+                            case 10:
                                 FeedListView.Filter = null;
                                 FeedListView.SortDescriptions.Add(new SortDescription("Name",
                                     ListSortDirection.Descending));
@@ -378,20 +430,23 @@ namespace HS_Feed_Manager.ViewModels
                                 LocalListView.Filter = AutowDownloadFilterOff;
                                 break;
                             case 5:
-                                LocalListView.Filter = StatusFilterOngoing;
+                                LocalListView.Filter = StatusFilterUndefined;
                                 break;
                             case 6:
-                                LocalListView.Filter = StatusFilterNew;
+                                LocalListView.Filter = StatusFilterOngoing;
                                 break;
                             case 7:
-                                LocalListView.Filter = StatusFilterFinished;
+                                LocalListView.Filter = StatusFilterNew;
                                 break;
                             case 8:
+                                LocalListView.Filter = StatusFilterFinished;
+                                break;
+                            case 9:
                                 LocalListView.Filter = null;
                                 LocalListView.SortDescriptions.Add(new SortDescription("Name",
                                     ListSortDirection.Ascending));
                                 break;
-                            case 9:
+                            case 10:
                                 LocalListView.Filter = null;
                                 LocalListView.SortDescriptions.Add(new SortDescription("Name",
                                     ListSortDirection.Descending));
@@ -442,6 +497,21 @@ namespace HS_Feed_Manager.ViewModels
         private bool DoesntExistsLocally(object item)
         {
             return !Logic.LocalTvShows.Any(x => x.Name == ((Episode) item).Name);
+        }
+
+        private bool StatusFilterUndefined(object item)
+        {
+            if (item.GetType() == typeof(Episode))
+                return Logic.LocalTvShows.Any(x => x.Status == Status.Undefined && x.Name == ((Episode) item).Name);
+
+            if (item.GetType() == typeof(TvShow))
+            {
+                var localSeries = item as TvShow;
+                if (localSeries == null) throw new ArgumentNullException(nameof(localSeries));
+                return localSeries.Status.Equals(Status.Undefined);
+            }
+
+            return false;
         }
 
         private bool StatusFilterOngoing(object item)
@@ -806,33 +876,6 @@ namespace HS_Feed_Manager.ViewModels
             }
         }
 
-        public ICommand EditLocalInfo
-        {
-            get
-            {
-                if (_editLocalInfo == null)
-                    _editLocalInfo = new RelayCommand(
-                        param => EditLocalInfoCommand(),
-                        param => CanEditLocalInfoCommand()
-                    );
-                return _editLocalInfo;
-            }
-        }
-
-        private bool CanEditLocalInfoCommand()
-        {
-            return true;
-        }
-
-        private void EditLocalInfoCommand()
-        {
-            if (LocalListView.CurrentItem == null)
-                return;
-
-            var localSeries = (TvShow) LocalListView.CurrentItem;
-            Mediator.NotifyColleagues(MediatorGlobal.UpdateFlyoutValues, localSeries);
-        }
-
         #endregion
 
         #region Episode Info
@@ -921,27 +964,63 @@ namespace HS_Feed_Manager.ViewModels
 
         #region Feed List
 
-        public ICommand AutoDownloadOn
+        public ICommand ToggleAutoDownload
         {
             get
             {
-                if (_autoDownloadOn == null)
-                    _autoDownloadOn = new RelayCommand(
-                        param => AutoDownloadOnCommand(),
-                        param => CanAutoDownloadOnCommand()
+                if (_toggleAutoDownload == null)
+                    _toggleAutoDownload = new RelayCommand<object>(
+                        param => ToggleAutoDownloadCommand(param),
+                        param => CanToggleAutoDownloadCommand()
                     );
-                return _autoDownloadOn;
+                return _toggleAutoDownload;
             }
         }
 
-        private bool CanAutoDownloadOnCommand()
+        private bool CanToggleAutoDownloadCommand()
         {
             return true;
         }
 
-        private void AutoDownloadOnCommand()
+        private void ToggleAutoDownloadCommand(object param)
         {
-            // TODO: Auto download on
+            TvShow currentTvShow = null;
+            string listName = param as string;
+            if (listName != null && listName.Equals("LocalList"))
+            {
+                currentTvShow = (TvShow) LocalListView.CurrentItem;
+                currentTvShow.AutoDownloadStatus = currentTvShow.AutoDownloadStatus.Equals(AutoDownload.On)
+                    ? AutoDownload.Off
+                    : AutoDownload.On;
+                Mediator.NotifyColleagues(MediatorGlobal.ToggleAutoDownload, currentTvShow);
+            }
+            else if (listName != null && listName.Equals("FeedList"))
+            {
+                Episode currentEpisode = (Episode) FeedListView.CurrentItem;
+                currentTvShow = Logic.LocalTvShows.SingleOrDefault(tvShow => tvShow.Name.Equals(currentEpisode.Name));
+                if (currentTvShow == null)
+                {
+                    currentTvShow = new TvShow()
+                    {
+                        AutoDownloadStatus = AutoDownload.On,
+                        Name = currentEpisode.Name
+                    };
+                    DownloadList.Add(currentEpisode);
+                }
+                else
+                {
+                    currentTvShow.AutoDownloadStatus = currentTvShow.AutoDownloadStatus.Equals(AutoDownload.On)
+                        ? AutoDownload.Off
+                        : AutoDownload.On;
+                    if (currentTvShow.AutoDownloadStatus.Equals(AutoDownload.On))
+                        DownloadList.Add(currentEpisode);
+                }
+            }
+
+            if (currentTvShow != null)
+                Mediator.NotifyColleagues(MediatorGlobal.ToggleAutoDownload, currentTvShow);
+
+            OnRefreshListViews(null);
         }
 
         public ICommand DeleteFeedFromList
@@ -968,6 +1047,64 @@ namespace HS_Feed_Manager.ViewModels
                 return;
 
             DownloadList.Remove((Episode) FeedListView.CurrentItem);
+        }
+
+        #endregion
+
+        #region Local List
+
+        public ICommand EditLocalInfo
+        {
+            get
+            {
+                if (_editLocalInfo == null)
+                    _editLocalInfo = new RelayCommand(
+                        param => EditLocalInfoCommand(),
+                        param => CanEditLocalInfoCommand()
+                    );
+                return _editLocalInfo;
+            }
+        }
+
+        private bool CanEditLocalInfoCommand()
+        {
+            return true;
+        }
+
+        private void EditLocalInfoCommand()
+        {
+            if (LocalListView.CurrentItem == null)
+                return;
+
+            var localSeries = (TvShow) LocalListView.CurrentItem;
+            Mediator.NotifyColleagues(MediatorGlobal.UpdateFlyoutValues, localSeries);
+        }
+
+        public ICommand DeleteTvShow
+        {
+            get
+            {
+                if (_deleteTvShow == null)
+                    _deleteTvShow = new RelayCommand(
+                        param => DeleteTvShowCommand(),
+                        param => CanDeleteTvShowCommand()
+                    );
+                return _deleteTvShow;
+            }
+        }
+
+        private bool CanDeleteTvShowCommand()
+        {
+            return true;
+        }
+
+        private void DeleteTvShowCommand()
+        {
+            if (LocalListView.CurrentItem == null)
+                return;
+
+            var localTvShow = (TvShow) LocalListView.CurrentItem;
+            Mediator.NotifyColleagues(MediatorGlobal.DeleteTvShow, localTvShow);
         }
 
         #endregion
@@ -1186,7 +1323,8 @@ namespace HS_Feed_Manager.ViewModels
 
         private void DeleteFromListCommand()
         {
-            DownloadList.RemoveAt(SelectedDownloadIndex);
+            if (SelectedDownloadIndex >= 0)
+                DownloadList.RemoveAt(SelectedDownloadIndex);
         }
 
         public ICommand DownloadThis
@@ -1209,10 +1347,12 @@ namespace HS_Feed_Manager.ViewModels
 
         private void DownloadThisCommand()
         {
-            //if (SelectedDownloadIndex < 0)
-            //    return;
+            if (SelectedDownloadIndex < 0)
+                return;
 
-            //TODO Start Download This
+            Mediator.NotifyColleagues(MediatorGlobal.StartDownloadEpisodes,
+                new List<object> {DownloadList[SelectedDownloadIndex]});
+            DownloadList.Remove(DownloadList[SelectedDownloadIndex]);
         }
 
         public ICommand DownloadAll
@@ -1235,7 +1375,19 @@ namespace HS_Feed_Manager.ViewModels
 
         private void DownloadAllCommand()
         {
-            //TODO Start Download All
+            Mediator.NotifyColleagues(MediatorGlobal.StartDownloadEpisodes,
+                new List<object>(DownloadList.ToList()));
+            DownloadList.Clear();
+        }
+
+        private void OnUpdateDownloadList(object obj)
+        {
+            List<object> autoEpisodes = obj as List<object>;
+            DownloadList.Clear();
+            foreach (var autoEpisode in autoEpisodes)
+            {
+                DownloadList.Add((Episode)autoEpisode);
+            }
         }
 
         #endregion
@@ -1342,9 +1494,7 @@ namespace HS_Feed_Manager.ViewModels
 
         private void PlayEpisodeCommand([NotNull] object param)
         {
-            throw new NotImplementedException(param.ToString());
-
-            // TODO: Play File
+            Mediator.NotifyColleagues(MediatorGlobal.PlayEpisode, SelectedEpisode);
         }
 
         public ICommand OpenFolder
@@ -1353,7 +1503,7 @@ namespace HS_Feed_Manager.ViewModels
             {
                 if (_openFolder == null)
                     _openFolder = new RelayCommand<object>(
-                        param => OpenFolderCommand(param),
+                        param => OpenFolderCommand(),
                         param => CanOpenFolderCommand()
                     );
                 return _openFolder;
@@ -1365,9 +1515,9 @@ namespace HS_Feed_Manager.ViewModels
             return true;
         }
 
-        private void OpenFolderCommand(object param)
+        private void OpenFolderCommand()
         {
-            throw new NotImplementedException(param.ToString());
+            Mediator.NotifyColleagues(MediatorGlobal.OpenFolder, SelectedEpisode);
         }
 
         public ICommand EditEpisodeInfo
@@ -1413,7 +1563,7 @@ namespace HS_Feed_Manager.ViewModels
 
         private void DeleteEpisodeCommand(object param)
         {
-            throw new NotImplementedException(param.ToString());
+            Mediator.NotifyColleagues(MediatorGlobal.DeleteEpisode, SelectedEpisode);
         }
 
         public List<string> EpisodeSortModes

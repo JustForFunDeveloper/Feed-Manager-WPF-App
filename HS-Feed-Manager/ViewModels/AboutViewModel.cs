@@ -4,6 +4,7 @@ namespace HS_Feed_Manager.ViewModels
 {
     public class AboutViewModel : PropertyChangedViewModel
     {
+        // TODO: Add Version, Link to Github and Homepage.Project, Add Link to Homepage Description Help
         // ReSharper disable once NotAccessedField.Local
         private readonly PropertyChangedViewModel _mainViewModel;
 
