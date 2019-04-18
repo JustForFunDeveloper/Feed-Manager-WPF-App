@@ -20,6 +20,7 @@ namespace HS_Feed_Manager.ViewModels
     public class HomeViewModel : PropertyChangedViewModel
     {
         // TODO: Logging and Exception-handling!
+        // TODO: ToggleAutoDownload has to check for duplicates in download list before!
         // ReSharper disable once NotAccessedField.Local
         private readonly PropertyChangedViewModel _mainViewModel;
 
