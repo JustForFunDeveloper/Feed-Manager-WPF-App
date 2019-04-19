@@ -81,9 +81,46 @@ namespace HS_Feed_Manager.Core
             foreach (Episode episode in e)
             {
                 if (episode != null)
+                {
                     _fileHandler.OpenStandardProgram(episode.Link);
+                    episode.DownloadDate = DateTime.Now;
+                    if (LocalTvShows.Any(tvShow => tvShow.Name.Equals(episode.Name)))
+                    {
+                        TvShow localTvShow = LocalTvShows.SingleOrDefault(tvShow => tvShow.Name.Equals(episode.Name));
+                        if (localTvShow != null &&
+                            localTvShow.Episodes.Any(ep => ep.EpisodeNumber.Equals(episode.EpisodeNumber)))
+                        {
+                            Episode localEpisode =
+                                localTvShow.Episodes.SingleOrDefault(ep =>
+                                    ep.EpisodeNumber.Equals(episode.EpisodeNumber));
+                            if (localEpisode != null)
+                            {
+                                localTvShow.LatestDownload = episode.DownloadDate;
+                                localEpisode.DownloadDate = episode.DownloadDate;
+                                _dbHandler.UpdateEpisode(null,localEpisode);
+                            }
+                        }
+                        else if (localTvShow != null)
+                        {
+                            localTvShow.LatestDownload = episode.DownloadDate;
+                            localTvShow.Episodes.Add(episode);
+                            _dbHandler.UpdateTvShow(null, localTvShow);
+                        }
+                    }
+                    else
+                    {
+                        TvShow newTvShow = new TvShow()
+                        {
+                            Name = episode.Name,
+                            Episodes = new List<Episode>() { episode }
+                        };
+                        newTvShow.LatestDownload = episode.DownloadDate;
+                        _dbHandler.AddTvShow(newTvShow, true);
+                    }
+                }
                 Thread.Sleep(10);
             }
+            _controller.RefreshData();
         }
 
         private void OnPlayEpisode(object sender, object e)

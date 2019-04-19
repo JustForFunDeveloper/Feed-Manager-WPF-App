@@ -11,8 +11,6 @@ namespace HS_Feed_Manager.Control
     /// </summary>
     public class Controller : IHomeView
     {
-        // TODO: I should probably remove the generic objects with the real classNames.
-        //      It's probably better to see right away what sort of object will come from this event.
         #region Events
 
         public event EventHandler DownloadFeed;

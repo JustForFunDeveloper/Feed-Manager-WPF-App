@@ -12,7 +12,6 @@ using HS_Feed_Manager.DataModels;
 using HS_Feed_Manager.DataModels.DbModels;
 using HS_Feed_Manager.ViewModels.Common;
 using HS_Feed_Manager.ViewModels.Handler;
-using JetBrains.Annotations;
 using MahApps.Metro.IconPacks;
 
 namespace HS_Feed_Manager.ViewModels
@@ -20,7 +19,6 @@ namespace HS_Feed_Manager.ViewModels
     public class HomeViewModel : PropertyChangedViewModel
     {
         // TODO: Logging and Exception-handling!
-        // TODO: ToggleAutoDownload has to check for duplicates in download list before!
         // ReSharper disable once NotAccessedField.Local
         private readonly PropertyChangedViewModel _mainViewModel;
 
@@ -103,6 +101,7 @@ namespace HS_Feed_Manager.ViewModels
         private ObservableCollection<Episode> _downloadList = new ObservableCollection<Episode>();
         private Visibility _downloadListVisibility = Visibility.Visible;
         private int _selectedDownloadIndex;
+        private Episode _selectedDownloadItem;
 
         private ObservableCollection<Episode> _episodeList;
         private Visibility _episodeListVisibility = Visibility.Hidden;
@@ -177,6 +176,34 @@ namespace HS_Feed_Manager.ViewModels
             Mediator.Register(MediatorGlobal.OnRefreshListView, OnRefreshListViews);
             Mediator.Register(MediatorGlobal.FinishedSearchLocalFolder, OnFinishedSearchLocalFolder);
             Mediator.Register(MediatorGlobal.UpdateDownloadList, OnUpdateDownloadList);
+            Mediator.Register(MediatorGlobal.ListBoxDoubleClick, OnListBoxDoubleClick);
+            Mediator.Register(MediatorGlobal.CustomDialogReturn, OnCustomDialogReturn);
+        }
+
+        private void OnCustomDialogReturn(object obj)
+        {
+            if (obj == null)
+                return;
+            List<object> answer = obj as List<object>;
+
+            if (answer == null)
+                return;
+
+            string identifier = (string) answer[0];
+            bool returnValue = (bool) answer[1];
+
+            if (identifier == null)
+                return;
+
+            switch (identifier)
+            {
+                case "DeleteEpisode":
+                    OnDeleteEpisodeAnswer(returnValue);
+                    break;
+                case "DeleteTvShow":
+                    OnDeleteTvShow(returnValue);
+                    break;
+            }
         }
 
         #region IconBar
@@ -417,12 +444,12 @@ namespace HS_Feed_Manager.ViewModels
                             case 1:
                                 LocalListView.Filter = null;
                                 LocalListView.SortDescriptions.Add(new SortDescription("LatestDownload",
-                                    ListSortDirection.Ascending));
+                                    ListSortDirection.Descending));
                                 break;
                             case 2:
                                 LocalListView.Filter = null;
                                 LocalListView.SortDescriptions.Add(new SortDescription("LatestDownload",
-                                    ListSortDirection.Descending));
+                                    ListSortDirection.Ascending));
                                 break;
                             case 3:
                                 LocalListView.Filter = AutowDownloadFilterOn;
@@ -1006,7 +1033,8 @@ namespace HS_Feed_Manager.ViewModels
                         AutoDownloadStatus = AutoDownload.On,
                         Name = currentEpisode.Name
                     };
-                    DownloadList.Add(currentEpisode);
+                    if (!DownloadList.Any(x => x.Name.Equals(currentEpisode.Name)))
+                        DownloadList.Add(currentEpisode);
                 }
                 else
                 {
@@ -1014,7 +1042,8 @@ namespace HS_Feed_Manager.ViewModels
                         ? AutoDownload.Off
                         : AutoDownload.On;
                     if (currentTvShow.AutoDownloadStatus.Equals(AutoDownload.On))
-                        DownloadList.Add(currentEpisode);
+                        if (!DownloadList.Any(x => x.Name.Equals(currentEpisode.Name)))
+                            DownloadList.Add(currentEpisode);
                 }
             }
 
@@ -1048,6 +1077,22 @@ namespace HS_Feed_Manager.ViewModels
                 return;
 
             DownloadList.Remove((Episode) FeedListView.CurrentItem);
+        }
+
+        private void OnListBoxDoubleClick(object obj)
+        {
+            Episode episode = (Episode)FeedListView.CurrentItem;
+
+            if (episode == null)
+                return;
+
+            TvShow localTvShow = Logic.LocalTvShows.SingleOrDefault(tvShow => tvShow.Name.Equals(episode.Name));
+             if (localTvShow == null)
+                 return;
+
+            TabIndex = 1;
+            LocalListView.MoveCurrentToNext();
+            LocalListView.MoveCurrentTo(localTvShow);
         }
 
         #endregion
@@ -1101,11 +1146,22 @@ namespace HS_Feed_Manager.ViewModels
 
         private void DeleteTvShowCommand()
         {
+            Mediator.NotifyColleagues(MediatorGlobal.CustomDialog, new List<string>()
+            {
+                "DeleteTvShow",
+                "Delete Series?",
+                "Warning! This will delete all local episode files and all database entries of this series! \n" +
+                "Are you sure you want to delete this Series?"
+            });
+        }
+
+        private void OnDeleteTvShow(bool answer)
+        {
             if (LocalListView.CurrentItem == null)
                 return;
-
-            var localTvShow = (TvShow) LocalListView.CurrentItem;
-            Mediator.NotifyColleagues(MediatorGlobal.DeleteTvShow, localTvShow);
+            var localTvShow = (TvShow)LocalListView.CurrentItem;
+            if (answer)
+                Mediator.NotifyColleagues(MediatorGlobal.DeleteTvShow, localTvShow);
         }
 
         #endregion
@@ -1140,6 +1196,29 @@ namespace HS_Feed_Manager.ViewModels
                 _selectedDownloadIndex = value;
                 OnPropertyChanged();
             }
+        }
+
+        public Episode SelectedDownloadItem
+        {
+            get => _selectedDownloadItem;
+            set
+            {
+                _selectedDownloadItem = value;
+                OnSelectedDownloadItem(value);
+                OnPropertyChanged();
+            }
+        }
+
+        private void OnSelectedDownloadItem(Episode episode)
+        {
+            Episode feedEpisode = Logic.FeedEpisodes.SingleOrDefault(ep =>
+                ep.Name.Equals(episode.Name) && ep.EpisodeNumber.Equals(episode.EpisodeNumber));
+
+            if (feedEpisode == null)
+                return;
+
+            FeedListView.MoveCurrentToNext();
+            FeedListView.MoveCurrentTo(feedEpisode);
         }
 
         public ICommand MoveToFirst
@@ -1385,10 +1464,11 @@ namespace HS_Feed_Manager.ViewModels
         {
             List<object> autoEpisodes = obj as List<object>;
             DownloadList.Clear();
-            foreach (var autoEpisode in autoEpisodes)
-            {
-                DownloadList.Add((Episode)autoEpisode);
-            }
+            if (autoEpisodes != null)
+                foreach (var autoEpisode in autoEpisodes)
+                {
+                    DownloadList.Add((Episode) autoEpisode);
+                }
         }
 
         #endregion
@@ -1481,7 +1561,7 @@ namespace HS_Feed_Manager.ViewModels
             {
                 if (_playEpisode == null)
                     _playEpisode = new RelayCommand<object>(
-                        param => PlayEpisodeCommand(param),
+                        param => PlayEpisodeCommand(),
                         param => CanPlayEpisodenCommand()
                     );
                 return _playEpisode;
@@ -1493,7 +1573,7 @@ namespace HS_Feed_Manager.ViewModels
             return true;
         }
 
-        private void PlayEpisodeCommand([NotNull] object param)
+        private void PlayEpisodeCommand()
         {
             Mediator.NotifyColleagues(MediatorGlobal.PlayEpisode, SelectedEpisode);
         }
@@ -1550,7 +1630,7 @@ namespace HS_Feed_Manager.ViewModels
             {
                 if (_deleteEpisode == null)
                     _deleteEpisode = new RelayCommand<object>(
-                        param => DeleteEpisodeCommand(param),
+                        param => DeleteEpisodeCommand(),
                         param => CanDeleteEpisodeCommand()
                     );
                 return _deleteEpisode;
@@ -1562,9 +1642,21 @@ namespace HS_Feed_Manager.ViewModels
             return true;
         }
 
-        private void DeleteEpisodeCommand(object param)
+        private void DeleteEpisodeCommand()
         {
-            Mediator.NotifyColleagues(MediatorGlobal.DeleteEpisode, SelectedEpisode);
+            Mediator.NotifyColleagues(MediatorGlobal.CustomDialog, new List<string>()
+            {
+                "DeleteEpisode",
+                "Delete Episode?",
+                "Warning! This will delete the local file and the database entry! \n" +
+                "Are you sure you want to delete this Episode?"
+            });
+        }
+
+        private void OnDeleteEpisodeAnswer(bool answer)
+        {
+            if (answer)
+                Mediator.NotifyColleagues(MediatorGlobal.DeleteEpisode, SelectedEpisode);
         }
 
         public List<string> EpisodeSortModes

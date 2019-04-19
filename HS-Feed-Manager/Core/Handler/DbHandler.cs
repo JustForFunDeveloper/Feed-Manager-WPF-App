@@ -11,7 +11,6 @@ namespace HS_Feed_Manager.Core.Handler
     public class DbHandler
     {
         // TODO: Better Logging
-        // TODO: Remove TestDataCode
         public static List<TvShow> LocalTvShows => _localTvShows;
 
         private static List<TvShow> _localTvShows;

@@ -21,5 +21,8 @@
         public static readonly string OpenFolder = "OpenFolder";
         public static readonly string FinishedSearchLocalFolder = "FinishedSearchLocalFolder";
         public static readonly string UpdateDownloadList = "UpdateDownloadList";
+        public static readonly string ListBoxDoubleClick = "ListBoxDoubleClick";
+        public static readonly string CustomDialog = "CustomDialog";
+        public static readonly string CustomDialogReturn = "CustomDialogReturn";
     }
 }

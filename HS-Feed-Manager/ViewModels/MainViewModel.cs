@@ -12,7 +12,6 @@ using HS_Feed_Manager.ViewModels.Common;
 
 namespace HS_Feed_Manager.ViewModels
 {
-    // TODO: Edit Episode Info Cancel doesn't work!
     public class MainViewModel : PropertyChangedViewModel
     {
         private static MainViewModel _mainViewModel;
@@ -536,8 +535,7 @@ namespace HS_Feed_Manager.ViewModels
 
         private void EpisodeCancelEditCommand()
         {
-            EpisodesValue = "";
-            IsFlyoutOpen = false;
+            IsEpisodeFlyoutOpen = false;
         }
 
         #endregion

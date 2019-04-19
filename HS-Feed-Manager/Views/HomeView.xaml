@@ -221,7 +221,8 @@
                     ItemsSource="{Binding DownloadList}"
                     SelectedIndex="{Binding SelectedDownloadIndex}"
                     Style="{DynamicResource VirtualisedMetroListBox}"
-                    Visibility="Visible">
+                    Visibility="Visible"
+                    SelectedItem="{Binding SelectedDownloadItem}">
                     <ListBox.ItemTemplate>
                         <DataTemplate DataType="{x:Type dbModels:Episode}">
                             <TextBlock>
@@ -345,7 +346,8 @@
                         ItemsSource="{Binding EpisodeList}"
                         SelectedItem="{Binding SelectedEpisode}"
                         SelectionChanged="EpisodeList_SelectionChanged"
-                        Style="{DynamicResource VirtualisedMetroListBox}">
+                        Style="{DynamicResource VirtualisedMetroListBox}"
+                        MouseDoubleClick="EpisodeList_Control_OnMouseDoubleClick">
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="{x:Type dbModels:Episode}">
                                 <TextBlock>
@@ -445,7 +447,9 @@
                         BorderBrush="Transparent"
                         IsSynchronizedWithCurrentItem="True"
                         ItemsSource="{Binding FeedListView}"
-                        Style="{DynamicResource VirtualisedMetroListBox}">
+                        MouseDoubleClick="FeedList_Control_OnMouseDoubleClick"
+                        Style="{DynamicResource VirtualisedMetroListBox}"
+                        SelectionChanged="Feed_Selector_OnSelectionChanged">
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="{x:Type dbModels:Episode}">
                                 <TextBlock x:Name="txtBlock">
@@ -490,6 +494,7 @@
                         Margin="0,5,0,0"
                         IsSynchronizedWithCurrentItem="True"
                         ItemsSource="{Binding LocalListView}"
+                        SelectionChanged="Selector_OnSelectionChanged"
                         Style="{DynamicResource VirtualisedMetroListBox}">
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="{x:Type models:TvShow}">
