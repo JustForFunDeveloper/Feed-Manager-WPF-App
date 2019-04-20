@@ -25,9 +25,34 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <Grid Grid.Row="1">
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel
+                        Grid.Column="0"
+                        HorizontalAlignment="Left"
+                        Orientation="Vertical">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Foreground="{DynamicResource AccentColorBrush}"
+                            Text="File Endings" />
+                        <TextBox
+                            MinWidth="400"
+                            Margin="0,5,0,5"
+                            mah:TextBoxHelper.Watermark="Watermark"
+                            Text="{Binding LocalPath1}" />
+                    </StackPanel>
+                </Grid>
+                <Rectangle
+                    Grid.Row="1"
+                    Height="2"
+                    Margin="0,5,0,5"
+                    Fill="White" />
+                <Grid Grid.Row="2">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="5" />
@@ -39,10 +64,10 @@
                         Grid.Column="0"
                         HorizontalAlignment="Left"
                         Orientation="Vertical">
-                        <TextBlock Text="Local Path 1" />
+                        <TextBlock Foreground="{DynamicResource AccentColorBrush}" Text="Local Path 1" />
                         <TextBox
                             MinWidth="200"
-                            Margin="5"
+                            Margin="0,5,0,0"
                             mah:TextBoxHelper.Watermark="Watermark"
                             Text="{Binding LocalPath1}" />
                     </StackPanel>
@@ -55,7 +80,7 @@
                         Margin="5,0,0,0"
                         HorizontalAlignment="Left"
                         Orientation="Vertical">
-                        <TextBlock Text="Local Path 2" />
+                        <TextBlock Foreground="{DynamicResource AccentColorBrush}" Text="Local Path 2" />
                         <TextBox
                             Width="200"
                             Margin="0,5,0,0"
@@ -71,7 +96,7 @@
                         Margin="5,0,0,0"
                         HorizontalAlignment="Left"
                         Orientation="Vertical">
-                        <TextBlock Text="Local Path 3" />
+                        <TextBlock Foreground="{DynamicResource AccentColorBrush}" Text="Local Path 3" />
                         <TextBox
                             Width="200"
                             Margin="0,5,0,0"
@@ -91,58 +116,96 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <Grid Grid.Row="1">
+                <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="5" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="5" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <StackPanel
                         Grid.Column="0"
                         HorizontalAlignment="Left"
                         Orientation="Vertical">
-                        <TextBlock Text="Local Path 1" />
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Foreground="{DynamicResource AccentColorBrush}"
+                            Text="Feed Link" />
                         <TextBox
-                            MinWidth="200"
-                            Margin="5"
+                            MinWidth="400"
+                            Margin="0,5,0,5"
                             mah:TextBoxHelper.Watermark="Watermark"
                             Text="{Binding LocalPath1}" />
+                    </StackPanel>
+                </Grid>
+                <Rectangle
+                    Grid.Row="1"
+                    Height="2"
+                    Margin="0,5,0,5"
+                    Fill="White" />
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Vertical">
+                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource AccentColorBrush}"
+                                Text="Name Front" />
+                            <TextBox
+                                MinWidth="200"
+                                Margin="5"
+                                mah:TextBoxHelper.Watermark="Watermark"
+                                Text="{Binding LocalPath1}" />
+                        </StackPanel>
+                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource AccentColorBrush}"
+                                Text="Name Back " />
+                            <TextBox
+                                MinWidth="200"
+                                Margin="5"
+                                mah:TextBoxHelper.Watermark="Watermark"
+                                Text="{Binding LocalPath1}" />
+                        </StackPanel>
                     </StackPanel>
                     <Rectangle
                         Grid.Column="1"
                         Width="2"
                         Fill="White" />
-                    <StackPanel
-                        Grid.Column="2"
-                        Margin="5,0,0,0"
-                        HorizontalAlignment="Left"
-                        Orientation="Vertical">
-                        <TextBlock Text="Local Path 2" />
-                        <TextBox
-                            Width="200"
-                            Margin="0,5,0,0"
-                            mah:TextBoxHelper.Watermark="Watermark"
-                            Text="{Binding LocalPath2}" />
-                    </StackPanel>
-                    <Rectangle
-                        Grid.Column="3"
-                        Width="2"
-                        Fill="White" />
-                    <StackPanel
-                        Grid.Column="4"
-                        Margin="5,0,0,0"
-                        HorizontalAlignment="Left"
-                        Orientation="Vertical">
-                        <TextBlock Text="Local Path 3" />
-                        <TextBox
-                            Width="200"
-                            Margin="0,5,0,0"
-                            mah:TextBoxHelper.Watermark="Watermark"
-                            Text="{Binding LocalPath3}" />
+                    <StackPanel Grid.Column="2" Orientation="Vertical">
+                        <StackPanel
+                            Margin="5,0,0,0"
+                            HorizontalAlignment="Left"
+                            Orientation="Horizontal">
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource AccentColorBrush}"
+                                Text="Number Front" />
+                            <TextBox
+                                Width="200"
+                                Margin="5"
+                                mah:TextBoxHelper.Watermark="Watermark"
+                                Text="{Binding LocalPath2}" />
+                        </StackPanel>
+                        <StackPanel
+                            Margin="5,0,0,0"
+                            HorizontalAlignment="Left"
+                            Orientation="Horizontal">
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource AccentColorBrush}"
+                                Text="Number Back " />
+                            <TextBox
+                                Width="200"
+                                Margin="5"
+                                mah:TextBoxHelper.Watermark="Watermark"
+                                Text="{Binding LocalPath2}" />
+                        </StackPanel>
                     </StackPanel>
                 </Grid>
             </Grid>

@@ -69,8 +69,11 @@ namespace HS_Feed_Manager.Core.Handler
 
         public void OpenStandardProgram(string path)
         {
-            ProcessStartInfo sInfo = new ProcessStartInfo(path);
-            Process.Start(sInfo);
+            if (File.Exists(path))
+            {
+                ProcessStartInfo sInfo = new ProcessStartInfo(path);
+                Process.Start(sInfo);
+            }
         }
 
         #endregion
