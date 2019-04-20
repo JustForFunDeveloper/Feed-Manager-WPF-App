@@ -67,9 +67,17 @@ namespace HS_Feed_Manager.Core.Handler
             }
         }
 
-        public void OpenStandardProgram(string path)
+        public void OpenStandardProgram(string path, bool islocalPath)
         {
-            if (File.Exists(path))
+            if (islocalPath)
+            {
+                if (File.Exists(path))
+                {
+                    ProcessStartInfo sInfo = new ProcessStartInfo(path);
+                    Process.Start(sInfo);
+                }
+            }
+            else
             {
                 ProcessStartInfo sInfo = new ProcessStartInfo(path);
                 Process.Start(sInfo);

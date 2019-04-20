@@ -82,7 +82,7 @@ namespace HS_Feed_Manager.Core
             {
                 if (episode != null)
                 {
-                    _fileHandler.OpenStandardProgram(episode.Link);
+                    _fileHandler.OpenStandardProgram(episode.Link, false);
                     episode.DownloadDate = DateTime.Now;
                     if (LocalTvShows.Any(tvShow => tvShow.Name.Equals(episode.Name)))
                     {
@@ -127,7 +127,7 @@ namespace HS_Feed_Manager.Core
         {
             Episode episode = e as Episode;
             if (episode != null)
-                _fileHandler.OpenStandardProgram(episode.LocalPath);
+                _fileHandler.OpenStandardProgram(episode.LocalPath, true);
         }
 
         private void ScanFolder()
