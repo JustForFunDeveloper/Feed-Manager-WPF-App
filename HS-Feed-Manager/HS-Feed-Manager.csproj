@@ -37,6 +37,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Feed-Manager.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ControlzEx, Version=4.0.0.0, Culture=neutral, PublicKeyToken=69f1c32f803d307e, processorArchitecture=MSIL">
       <HintPath>..\packages\ControlzEx.4.0.0-alpha0232\lib\net45\ControlzEx.dll</HintPath>
@@ -279,7 +282,19 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Feed_Manager.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Ressources\Feed-Manager.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Feed-Manager.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Ressources\Feed-Manager.png" />
+    <Resource Include="Ressources\Logo_klein.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

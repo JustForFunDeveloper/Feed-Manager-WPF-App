@@ -220,9 +220,9 @@
                     IsSynchronizedWithCurrentItem="True"
                     ItemsSource="{Binding DownloadList}"
                     SelectedIndex="{Binding SelectedDownloadIndex}"
+                    SelectedItem="{Binding SelectedDownloadItem}"
                     Style="{DynamicResource VirtualisedMetroListBox}"
-                    Visibility="Visible"
-                    SelectedItem="{Binding SelectedDownloadItem}">
+                    Visibility="Visible">
                     <ListBox.ItemTemplate>
                         <DataTemplate DataType="{x:Type dbModels:Episode}">
                             <TextBlock>
@@ -344,10 +344,10 @@
                         Margin="0,5,0,0"
                         BorderBrush="Transparent"
                         ItemsSource="{Binding EpisodeList}"
+                        MouseDoubleClick="EpisodeList_Control_OnMouseDoubleClick"
                         SelectedItem="{Binding SelectedEpisode}"
                         SelectionChanged="EpisodeList_SelectionChanged"
-                        Style="{DynamicResource VirtualisedMetroListBox}"
-                        MouseDoubleClick="EpisodeList_Control_OnMouseDoubleClick">
+                        Style="{DynamicResource VirtualisedMetroListBox}">
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="{x:Type dbModels:Episode}">
                                 <TextBlock>
@@ -448,8 +448,8 @@
                         IsSynchronizedWithCurrentItem="True"
                         ItemsSource="{Binding FeedListView}"
                         MouseDoubleClick="FeedList_Control_OnMouseDoubleClick"
-                        Style="{DynamicResource VirtualisedMetroListBox}"
-                        SelectionChanged="Feed_Selector_OnSelectionChanged">
+                        SelectionChanged="Feed_Selector_OnSelectionChanged"
+                        Style="{DynamicResource VirtualisedMetroListBox}">
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="{x:Type dbModels:Episode}">
                                 <TextBlock x:Name="txtBlock">

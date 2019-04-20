@@ -5,9 +5,31 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="600"
-    d:DesignWidth="1000"
+    d:DesignHeight="700"
+    d:DesignWidth="1200"
     mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <Style
+            x:Key="ExpanderButtonStyle"
+            BasedOn="{StaticResource AccentedSquareButtonStyle}"
+            TargetType="Button">
+            <Setter Property="Foreground" Value="{DynamicResource BlackBrush}" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Background" Value="Transparent" />
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="DarkRed" />
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource GrayBrush8}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource BlackBrush}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -20,8 +42,47 @@
             Margin="5"
             mah:ControlsHelper.HeaderFontSize="20"
             BorderBrush="Transparent"
-            Header="Local Path Settings"
             IsExpanded="True">
+            <Expander.HeaderTemplate>
+                <ItemContainerTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="LOCAL PATH SETTINGS" />
+                        <Button
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            HorizontalContentAlignment="Right"
+                            BorderBrush="Transparent"
+                            Content="restore default"
+                            FontSize="10"
+                            Style="{DynamicResource SquareButtonStyle}">
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="RESTORE DEFAULT" />
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+                        <Button
+                            Grid.Column="2"
+                            Margin="5,0,0,0"
+                            HorizontalAlignment="Right"
+                            HorizontalContentAlignment="Right"
+                            Content="Refresh Data"
+                            FontSize="10"
+                            Style="{DynamicResource ExpanderButtonStyle}">
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="SAVE" />
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+                    </Grid>
+                </ItemContainerTemplate>
+            </Expander.HeaderTemplate>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -66,7 +127,7 @@
                         Orientation="Vertical">
                         <TextBlock Foreground="{DynamicResource AccentColorBrush}" Text="Local Path 1" />
                         <TextBox
-                            MinWidth="200"
+                            MinWidth="350"
                             Margin="0,5,0,0"
                             mah:TextBoxHelper.Watermark="Watermark"
                             Text="{Binding LocalPath1}" />
@@ -82,7 +143,7 @@
                         Orientation="Vertical">
                         <TextBlock Foreground="{DynamicResource AccentColorBrush}" Text="Local Path 2" />
                         <TextBox
-                            Width="200"
+                            MinWidth="350"
                             Margin="0,5,0,0"
                             mah:TextBoxHelper.Watermark="Watermark"
                             Text="{Binding LocalPath2}" />
@@ -98,7 +159,7 @@
                         Orientation="Vertical">
                         <TextBlock Foreground="{DynamicResource AccentColorBrush}" Text="Local Path 3" />
                         <TextBox
-                            Width="200"
+                            MinWidth="350"
                             Margin="0,5,0,0"
                             mah:TextBoxHelper.Watermark="Watermark"
                             Text="{Binding LocalPath3}" />
@@ -111,8 +172,47 @@
             Margin="5"
             mah:ControlsHelper.HeaderFontSize="20"
             BorderBrush="Transparent"
-            Header="Feed Link and Regex Settings"
             IsExpanded="True">
+            <Expander.HeaderTemplate>
+                <ItemContainerTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="FEED LINK AND REGEX SETTINGS" />
+                        <Button
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            HorizontalContentAlignment="Right"
+                            BorderBrush="Transparent"
+                            Content="restore default"
+                            FontSize="10"
+                            Style="{DynamicResource SquareButtonStyle}">
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="RESTORE DEFAULT" />
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+                        <Button
+                            Grid.Column="2"
+                            Margin="5,0,0,0"
+                            HorizontalAlignment="Right"
+                            HorizontalContentAlignment="Right"
+                            Content="Refresh Data"
+                            FontSize="10"
+                            Style="{StaticResource ExpanderButtonStyle}">
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="SAVE" />
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+                    </Grid>
+                </ItemContainerTemplate>
+            </Expander.HeaderTemplate>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -150,62 +250,80 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0" Orientation="Vertical">
-                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                        <Grid HorizontalAlignment="Left">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
                             <TextBlock
+                                Grid.Column="0"
                                 VerticalAlignment="Center"
                                 Foreground="{DynamicResource AccentColorBrush}"
-                                Text="Name Front" />
+                                Text="Regex Name Front" />
                             <TextBox
-                                MinWidth="200"
+                                Grid.Column="1"
+                                MinWidth="400"
                                 Margin="5"
                                 mah:TextBoxHelper.Watermark="Watermark"
                                 Text="{Binding LocalPath1}" />
-                        </StackPanel>
-                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                        </Grid>
+                        <Grid HorizontalAlignment="Left">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
                             <TextBlock
+                                Grid.Column="0"
                                 VerticalAlignment="Center"
                                 Foreground="{DynamicResource AccentColorBrush}"
-                                Text="Name Back " />
+                                Text="Regex Name Back " />
                             <TextBox
-                                MinWidth="200"
+                                Grid.Column="1"
+                                MinWidth="400"
                                 Margin="5"
                                 mah:TextBoxHelper.Watermark="Watermark"
                                 Text="{Binding LocalPath1}" />
-                        </StackPanel>
+                        </Grid>
                     </StackPanel>
                     <Rectangle
                         Grid.Column="1"
                         Width="2"
                         Fill="White" />
                     <StackPanel Grid.Column="2" Orientation="Vertical">
-                        <StackPanel
-                            Margin="5,0,0,0"
-                            HorizontalAlignment="Left"
-                            Orientation="Horizontal">
+                        <Grid Margin="5,0,0,0" HorizontalAlignment="Left">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
                             <TextBlock
+                                Grid.Column="0"
                                 VerticalAlignment="Center"
                                 Foreground="{DynamicResource AccentColorBrush}"
-                                Text="Number Front" />
+                                Text="Regex Number Front" />
                             <TextBox
-                                Width="200"
-                                Margin="5"
+                                Grid.Column="1"
+                                MinWidth="400"
+                                Margin="5,5,0,5"
                                 mah:TextBoxHelper.Watermark="Watermark"
                                 Text="{Binding LocalPath2}" />
-                        </StackPanel>
-                        <StackPanel
-                            Margin="5,0,0,0"
-                            HorizontalAlignment="Left"
-                            Orientation="Horizontal">
+                        </Grid>
+                        <Grid Margin="5,0,0,0" HorizontalAlignment="Left">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
                             <TextBlock
+                                Grid.Column="0"
                                 VerticalAlignment="Center"
                                 Foreground="{DynamicResource AccentColorBrush}"
-                                Text="Number Back " />
+                                Text="Regex Number Back " />
                             <TextBox
-                                Width="200"
-                                Margin="5"
+                                Grid.Column="1"
+                                MinWidth="400"
+                                Margin="5,5,0,5"
                                 mah:TextBoxHelper.Watermark="Watermark"
                                 Text="{Binding LocalPath2}" />
-                        </StackPanel>
+                        </Grid>
                     </StackPanel>
                 </Grid>
             </Grid>
@@ -215,8 +333,33 @@
             Margin="5"
             mah:ControlsHelper.HeaderFontSize="20"
             BorderBrush="{DynamicResource AccentColorBrush}"
-            Header="Log"
             IsExpanded="True">
+            <Expander.HeaderTemplate>
+                <ItemContainerTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="LOG" />
+                        <Button
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            HorizontalContentAlignment="Right"
+                            BorderBrush="Transparent"
+                            Content="Refresh Data"
+                            FontSize="10"
+                            Style="{DynamicResource SquareButtonStyle}">
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="REFRESH" />
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+                    </Grid>
+                </ItemContainerTemplate>
+            </Expander.HeaderTemplate>
             <ScrollViewer>
                 <TextBlock Text="{Binding LogText}" />
             </ScrollViewer>
