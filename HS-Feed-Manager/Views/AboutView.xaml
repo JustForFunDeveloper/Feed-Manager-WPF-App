@@ -3,130 +3,188 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="700"
     d:DesignWidth="1200"
     mc:Ignorable="d">
-    <Grid x:Name="TheContentGrid">
+
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Top">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Expander
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Grid
             Grid.Row="0"
-            Margin="5"
-            mah:ControlsHelper.HeaderFontSize="20"
-            Header="About"
-            IsExpanded="True">
-            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
+            Grid.Column="0"
+            Margin="0,0,0,30">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock
+                Grid.Row="0"
+                FontSize="60"
+                Foreground="{DynamicResource AccentColorBrush}"
+                Text="Feed Manager" />
+            <StackPanel Grid.Row="1" Orientation="Horizontal">
+                <TextBlock
+                    Margin="0,0,20,0"
+                    FontSize="40"
+                    Text="Version:" />
+                <TextBlock FontSize="40" Text="0.1.0.0 Beta" />
+            </StackPanel>
+            <TextBlock
+                Grid.Row="2"
+                FontSize="30"
+                Foreground="{DynamicResource AccentColorBrush}"
+                Text="Just For Fun Developer" />
+        </Grid>
+        <Button
+            Grid.Row="1"
+            Grid.Column="0"
+            Margin="0,30,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            BorderBrush="Transparent"
+            Content="Check for new Releases"
+            FontSize="15"
+            Style="{StaticResource AccentedSquareButtonStyle}">
+            <Button.ContentTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}, Path=Content}" />
+                </DataTemplate>
+            </Button.ContentTemplate>
+        </Button>
+        <Grid
+            Grid.Row="2"
+            Grid.Column="0"
+            Margin="0,60,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock
+                Grid.Row="0"
+                Margin="0,0,20,0"
+                FontSize="30"
+                Foreground="{DynamicResource AccentColorBrush}"
+                Text="Links:" />
+            <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Grid Grid.Row="0" Grid.Column="0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <TextBlock
-                        Grid.Row="0"
-                        FontSize="50"
-                        Foreground="{DynamicResource AccentColorBrush}"
-                        Text="Feed Manager" />
-                    <StackPanel Grid.Row="1" Orientation="Horizontal">
-                        <TextBlock
-                            Margin="0,0,20,0"
-                            FontSize="30"
-                            Text="Version:" />
-                        <TextBlock FontSize="30" Text="0.1.0.0 Beta" />
-                    </StackPanel>
-                    <TextBlock
-                        Grid.Row="2"
-                        FontSize="20"
-                        Foreground="{DynamicResource AccentColorBrush}"
-                        Text="Just For Fun Developer" />
-                </Grid>
                 <Grid
-                    Grid.Row="1"
-                    Grid.Column="0"
-                    Margin="0,20,0,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <TextBlock
-                        Grid.Row="0"
-                        Margin="0,0,20,0"
-                        FontSize="25"
-                        Foreground="{DynamicResource AccentColorBrush}"
-                        Text="Links" />
-                    <StackPanel Grid.Row="1" Orientation="Horizontal">
-                        <TextBlock
-                            Margin="0,0,20,0"
-                            FontSize="15"
-                            Text="Homepage:" />
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            FontSize="10"
-                            Text="https://www.die-technik-und-ich.at/" />
-                    </StackPanel>
-                    <StackPanel Grid.Row="2" Orientation="Horizontal">
-                        <TextBlock
-                            Margin="0,0,20,0"
-                            FontSize="15"
-                            Text="GitHub:" />
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            FontSize="10"
-                            Text="https://github.com/JustForFunDeveloper/Feed-Manager-WPF-App" />
-                    </StackPanel>
-                </Grid>
-                <Grid
-                    Grid.Row="2"
-                    Grid.Column="0"
-                    Margin="0,20,0,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <TextBlock
-                        Grid.Row="0"
-                        Margin="0,0,20,0"
-                        FontSize="25"
-                        Foreground="{DynamicResource AccentColorBrush}"
-                        Text="Licence Information" />
-                    <TextBlock
-                        Grid.Row="1"
-                        Margin="0,0,20,0"
-                        FontSize="10">
-                        This program is distributed under the terms of the MIT license.<LineBreak />
-                        For Further information</TextBlock>
-                </Grid>
-                <Image
                     Grid.Row="0"
+                    Width="25"
+                    Height="25"
+                    Margin="0,0,10,0"
+                    Background="White">
+                    <Image Width="30" Source="../Ressources/About/Logo_klein.png" />
+                </Grid>
+                <TextBlock
                     Grid.Column="1"
-                    Height="100"
-                    Source="../Ressources/Feed-Manager.png" />
+                    Width="100"
+                    VerticalAlignment="Center"
+                    FontSize="20"
+                    Text="Homepage:" />
+                <Button
+                    Grid.Column="2"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    BorderBrush="Transparent"
+                    Content="www.die-technik-und-ich.at"
+                    FontSize="15"
+                    Style="{DynamicResource AccentedSquareButtonStyle}" />
             </Grid>
-        </Expander>
-        <Expander
-            Grid.Row="1"
-            Margin="5"
-            mah:ControlsHelper.HeaderFontSize="20"
-            Header="Help"
-            IsExpanded="False">
-            <ScrollViewer>
-                <TextBlock Text="{Binding LogText}" />
-            </ScrollViewer>
-        </Expander>
+            <Grid Grid.Row="2" Margin="0,10,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid
+                    Grid.Row="0"
+                    Width="25"
+                    Height="25"
+                    Margin="0,0,10,0"
+                    Background="White">
+                    <Image Width="30" Source="../Ressources/About/GitHub-Mark-32px.png" />
+                </Grid>
+                <TextBlock
+                    Grid.Column="1"
+                    Width="100"
+                    VerticalAlignment="Center"
+                    FontSize="20"
+                    Text="GitHub:" />
+                <Button
+                    Grid.Column="2"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    BorderBrush="Transparent"
+                    Content="JustForFunDeveloper/Feed-Manager-WPF-App"
+                    FontSize="15"
+                    Style="{StaticResource AccentedSquareButtonStyle}">
+                    <Button.ContentTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}, Path=Content}" />
+                        </DataTemplate>
+                    </Button.ContentTemplate>
+                </Button>
+            </Grid>
+        </Grid>
+        <Grid
+            Grid.Row="3"
+            Grid.Column="0"
+            Margin="0,40,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock
+                Grid.Row="0"
+                Margin="0,0,20,0"
+                FontSize="30"
+                Foreground="{DynamicResource AccentColorBrush}"
+                Text="License Information:" />
+            <TextBlock
+                Grid.Row="1"
+                Margin="0,0,20,0"
+                FontSize="15">
+                This program is distributed under the terms of the MIT license.<LineBreak />
+                For Further information follow the this link:</TextBlock>
+            <Button
+                Grid.Row="2"
+                Margin="0,10,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                BorderBrush="Transparent"
+                Content="MIT License"
+                FontSize="15"
+                Style="{StaticResource AccentedSquareButtonStyle}">
+                <Button.ContentTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}, Path=Content}" />
+                    </DataTemplate>
+                </Button.ContentTemplate>
+            </Button>
+        </Grid>
+        <Image
+            Grid.Row="0"
+            Grid.Column="1"
+            Height="100"
+            Margin="20,0,0,0"
+            VerticalAlignment="Center"
+            Source="../Ressources/About/Feed-Manager.png" />
     </Grid>
 </UserControl>

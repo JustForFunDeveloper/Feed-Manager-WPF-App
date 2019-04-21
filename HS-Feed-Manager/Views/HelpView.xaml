@@ -1,0 +1,351 @@
+﻿<UserControl
+    x:Class="HS_Feed_Manager.Views.HelpView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="5000"
+    d:DesignWidth="1200"
+    mc:Ignorable="d">
+    <Grid>
+        <ScrollViewer>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock
+                    Grid.Row="0"
+                    HorizontalAlignment="Center"
+                    FontSize="50"
+                    Foreground="{DynamicResource AccentColorBrush}"
+                    Text="Home View" />
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Image
+                        Grid.Column="0"
+                        Margin="30"
+                        VerticalAlignment="Center"
+                        Source="../Ressources/Help/Home_Feed.png" />
+                    <TextBlock
+                        Grid.Column="1"
+                        Margin="30"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        FontSize="15"
+                        TextWrapping="Wrap">
+                        <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Feed List / Tab Control:</Span> <LineBreak />
+                        If the &quot;Tab Control&quot; is switched to &quot;Feed List&quot; it will show the current available feeds.
+                        The &quot;Feed List&quot; will show the episode number and the name of the series in this list. The &quot;Feed List&quot; will be
+                        downloaded automatically once at start. Further downloads have to be triggered with the correct download button in the
+                        &quot;Icon Bar&quot;. A Double-Click on the episode will jump to the show in the &quot;Local List&quot;.<LineBreak /><LineBreak />
+
+                        <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Feed Information / Info Panel:</Span> <LineBreak />
+                        A Left-Click in the &quot;Feed List&quot; will update the information in the &quot;Info Panel&quot; on the right side.
+                        If this show is already in the database it will display information on it otherwise the fields will be filled
+                        with standard values.<LineBreak /><LineBreak />
+
+                        <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Current Downloads / List View:</Span> <LineBreak />
+                        In this list all automatically (Auto Download = On) or manually added episodes from the &quot;Feed List&quot; will be shown.
+                        With the &quot;Auto Download&quot; function the user will notice immediately if there is a new episode available.</TextBlock>
+                </Grid>
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Image
+                        Grid.Column="1"
+                        Margin="30"
+                        VerticalAlignment="Center"
+                        Source="../Ressources/Help/Home_Local.png" />
+                    <TextBlock
+                        Grid.Column="0"
+                        Margin="30"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        FontSize="15"
+                        TextWrapping="Wrap">
+                        <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Local List / Tab Control:</Span> <LineBreak />
+                        If the &quot;Tab Control&quot; is switched to &quot;Local List&quot; it will show all stored shows in the database.
+                        The data is synchronized with the given paths and file descriptions in the settings once at start. Further synchronization
+                        has to be triggered with the correct button in the &quot;Icon Bar&quot;. The files (filename + filetype) in the given folder will be
+                        scanned and the episode numbers and the show name will be scanned from the file names with defined regex values.
+                        If the files will be local deleted the sync will remove the path entry in the database of this specific episode. All other information
+                        will be still available.<LineBreak /><LineBreak />
+
+                        <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Local Information|Episode Information / Info Panel:</Span> <LineBreak />
+                        A Left-Click in the &quot;Local List&quot; will update the information in the &quot;Info Panel&quot; on the right side.
+                        This information can be edited by a Right-Click which will open the context menu and click the &quot;Edit Local Info&quot; Button.
+                        If an episode in the &quot;Episode List&quot; is clicked it will show more specific data about this file.<LineBreak /><LineBreak />
+
+                        <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Episode List / List View:</Span> <LineBreak />
+                        If a show name in the &quot;Local List&quot; is clicked this list will show all episodes registered to this show. A double click
+                        will play this episode in the local player which is registered by Windows for this file type.</TextBlock>
+                </Grid>
+                <Grid Grid.Row="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Image
+                            Grid.Row="0"
+                            Margin="30"
+                            VerticalAlignment="Center"
+                            Source="../Ressources/Help/Icon_Bar.png" />
+                        <Image
+                            Grid.Row="1"
+                            Margin="100,0,100,0"
+                            VerticalAlignment="Center"
+                            Source="../Ressources/Help/Icon_Bar_2.png" />
+                    </Grid>
+                    <TextBlock
+                        Grid.Column="1"
+                        Margin="30"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        FontSize="15"
+                        TextWrapping="Wrap">
+                        <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Icon Bar|Loading Circle:</Span> <LineBreak />
+                        On the left is the &quot;Icon Bar&quot; which has the four most important buttons of the &quot;Home&quot; View.
+                        On the right side there is one loading circle which will indicate that some background processes are still ongoing.
+                        Also nearly every UI widget will have a Tooltip with a more detailed description of the function of this button.<LineBreak /><LineBreak />
+
+                        <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Download Feed Icon:</Span> <LineBreak />
+                        The first button in the &quot;Icon Bar&quot; is the &quot;Download Feed&quot; which will trigger the download process from the given feed path.<LineBreak /><LineBreak />
+
+                        <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Search local Folders:</Span> <LineBreak />
+                        This button will trigger the synchronization of the given local Paths and will update the &quot;Local List&quot;.
+                        Once pressed it will start the synchronization of all local files and will be busy for a bit. In the meantime the button
+                        is red and can't be pressed again until the synchronization is finished.<LineBreak /><LineBreak />
+
+                        <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Add Feed to Download / Remove Feed from Download</Span> <LineBreak />
+                        The add button will add the selected episode of the &quot;Feed List&quot; to the &quot;Download List&quot;. The remove button will remove the selected episode in the &quot;Download List&quot;
+                        from the &quot;Download List&quot;.<LineBreak /><LineBreak />
+
+                        <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Start Episode Download</Span> <LineBreak />
+                        This button will start the download of all episodes in the &quot;Download List&quot; in the given order. The episode will be downloaded and the
+                        information´about this episode will be stored in the database. But the correct file path will loaded when a new &quot;Search Local Folders&quot; event is triggered.
+                        Since the program doesn't know when the download will be finished.<LineBreak /><LineBreak />
+                    </TextBlock>
+                </Grid>
+                <TextBlock
+                    Grid.Row="4"
+                    HorizontalAlignment="Center"
+                    FontSize="50"
+                    Foreground="{DynamicResource AccentColorBrush}"
+                    Text="Filtering and Sorting" />
+                <Grid Grid.Row="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Image
+                            Grid.Column="0"
+                            Margin="5"
+                            VerticalAlignment="Center"
+                            Source="../Ressources/Help/Episode_Filter.png" />
+                        <Image
+                            Grid.Column="1"
+                            Margin="5"
+                            VerticalAlignment="Center"
+                            Source="../Ressources/Help/Sorting_Feed.png" />
+                        <Image
+                            Grid.Column="2"
+                            Margin="5"
+                            VerticalAlignment="Center"
+                            Source="../Ressources/Help/Sorting Local.png" />
+                    </Grid>
+                    <TextBlock
+                        Grid.Column="0"
+                        Margin="30"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        FontSize="15"
+                        TextWrapping="Wrap">
+                        <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Episode List:</Span> <LineBreak />
+                        The &quot;Episode List&quot; can be filtered and sorted with the DropDown Menu. The Search Box can be used to search for episode numbers.
+                        The numbers have to be entered as a whole to find them.<LineBreak /><LineBreak />
+
+                        <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Feed List and Local List:</Span> <LineBreak />
+                        Most of the filter and sorting algorithm of the &quot;Feed List&quot; and &quot;local List&quot; are the same.
+                        Only a few are not equal since the feed episode and the show doesn't share the same data.
+                        There are also standard filters which will be applied by every tab switch.<LineBreak /><LineBreak />
+                    </TextBlock>
+                </Grid>
+                <TextBlock
+                    Grid.Row="6"
+                    HorizontalAlignment="Center"
+                    FontSize="50"
+                    Foreground="{DynamicResource AccentColorBrush}"
+                    Text="Context Menu" />
+                <Grid Grid.Row="7">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid Column="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Image
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Margin="5"
+                            VerticalAlignment="Center"
+                            Source="../Ressources/Help/Context_Menu_Downloads.png" />
+                        <Image
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Margin="5"
+                            VerticalAlignment="Center"
+                            Source="../Ressources/Help/Context_Menu_Feed.png" />
+                        <Image
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Margin="5"
+                            VerticalAlignment="Center"
+                            Source="../Ressources/Help/Contex_Episode.png" />
+                        <Image
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="5"
+                            VerticalAlignment="Center"
+                            Source="../Ressources/Help/Context_Local.png" />
+                    </Grid>
+                    <TextBlock
+                        Grid.Column="1"
+                        Margin="30"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        FontSize="15"
+                        TextWrapping="Wrap">
+                        <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Context Menu:</Span> <LineBreak />
+                        Basically all lists have a context menu with some features for the list. Especially interesting would be the sorting mechanism
+                        of the &quot;Download List&quot;. You can basically choose the order of the Download. Also all delete options in this context menu will delete
+                        the information locally and in the database.<LineBreak /><LineBreak />
+                    </TextBlock>
+                </Grid>
+                <TextBlock
+                    Grid.Row="8"
+                    HorizontalAlignment="Center"
+                    FontSize="50"
+                    Foreground="{DynamicResource AccentColorBrush}"
+                    Text="Info Panel" />
+                <Grid Grid.Row="9">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Image
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Margin="5"
+                            VerticalAlignment="Center"
+                            Source="../Ressources/Help/Episode_Info.png" />
+                        <Image
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Margin="5"
+                            VerticalAlignment="Center"
+                            Source="../Ressources/Help/Feed_Info.png" />
+                        <Image
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Margin="5"
+                            VerticalAlignment="Center"
+                            Source="../Ressources/Help/Local_Info.png" />
+                    </Grid>
+                    <TextBlock
+                        Grid.Column="0"
+                        Margin="30"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        FontSize="15"
+                        TextWrapping="Wrap">
+                        <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Info Panel:</Span> <LineBreak />
+                        Those are the three different Info Panels which will show up as soon the corresponding list entry is pressed.
+                        Each episode in the &quot;Episode List&quot; and each show in the &quot;Local List&quot; are having their own Rating value.
+                        This value can be used to file the items. Every new local found show will have standard values until they are changed.<LineBreak /><LineBreak />
+                    </TextBlock>
+                </Grid>
+                <TextBlock
+                    Grid.Row="10"
+                    HorizontalAlignment="Center"
+                    FontSize="50"
+                    Foreground="{DynamicResource AccentColorBrush}"
+                    Text="Edit Flyout" />
+                <Grid Grid.Row="11">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid Column="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Image
+                            Grid.Column="0"
+                            Margin="5"
+                            VerticalAlignment="Center"
+                            Source="../Ressources/Help/Edit_Episode.png" />
+                        <Image
+                            Grid.Column="1"
+                            Margin="5"
+                            VerticalAlignment="Center"
+                            Source="../Ressources/Help/Edit_Local.png" />
+                    </Grid>
+                    <TextBlock
+                        Grid.Column="1"
+                        Margin="30"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        FontSize="15"
+                        TextWrapping="Wrap">
+                        <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Edit Flyout:</Span> <LineBreak />
+                        The Flyouts will appear as soon an edit menu button is pressed. Those information will be saved in the database.<LineBreak /><LineBreak />
+                    </TextBlock>
+                </Grid>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

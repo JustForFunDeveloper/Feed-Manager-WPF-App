@@ -98,7 +98,14 @@ namespace HS_Feed_Manager.ViewModels
             {
                 new HamburgerMenuIconItem()
                 {
-                    Icon = new PackIconMaterial() {Kind = PackIconMaterialKind.Help},
+                    Icon =  new PackIconMaterial() {Kind = PackIconMaterialKind.Help},
+                    Label = "Help",
+                    ToolTip = "Program usage.",
+                    Tag = new HelpViewModel(this)
+                },
+                new HamburgerMenuIconItem()
+                {
+                    Icon = new PackIconMaterial() {Kind = PackIconMaterialKind.InformationVariant},
                     Label = "About",
                     ToolTip = "About this Software.",
                     Tag = new AboutViewModel(this)

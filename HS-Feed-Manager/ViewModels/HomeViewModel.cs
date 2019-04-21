@@ -19,6 +19,7 @@ namespace HS_Feed_Manager.ViewModels
     public class HomeViewModel : PropertyChangedViewModel
     {
         // TODO: Logging and Exception-handling!
+        // TODO: Start the feed download once at startup
         // ReSharper disable once NotAccessedField.Local
         private readonly PropertyChangedViewModel _mainViewModel;
 

@@ -44,7 +44,7 @@
         <mah:FlyoutsControl>
             <mah:Flyout
                 Width="275"
-                Header="Edit Feed Info"
+                Header="Edit Local Info"
                 IsOpen="{Binding IsFlyoutOpen}"
                 Position="Right">
                 <Grid Margin="10">
@@ -307,6 +307,9 @@
             </DataTemplate>
             <DataTemplate DataType="{x:Type viewModels:SettingsViewModel}">
                 <views:SettingsView DataContext="{Binding}" />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModels:HelpViewModel}">
+                <views:HelpView DataContext="{Binding}" />
             </DataTemplate>
             <DataTemplate DataType="{x:Type viewModels:AboutViewModel}">
                 <views:AboutView DataContext="{Binding}" />
