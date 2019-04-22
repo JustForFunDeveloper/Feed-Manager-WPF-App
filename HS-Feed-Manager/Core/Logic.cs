@@ -224,7 +224,7 @@ namespace HS_Feed_Manager.Core
         {
             string standardXml = XmlHandler.GetSerializedConfigXml(typeof(Config), _config);
             _fileHandler.OverwriteFile(LogicConstants.StandardXmlName, standardXml, LogicConstants.StandardXmlPath);
-            _controller.RefreshSettingsView();
+            RefreshLocalConfig();
         }
 
         private void OnRestoreLocalPathSettings(object sender, object e)
@@ -234,7 +234,7 @@ namespace HS_Feed_Manager.Core
             _config.LocalPath2 = LogicConstants.LocalPath2;
             _config.LocalPath3 = LogicConstants.LocalPath3;
             OnSaveConfig(null, null);
-            _controller.RefreshSettingsView();
+            RefreshLocalConfig();
         }
 
         private void OnRestoreFeedLinkSettings(object sender, object e)
@@ -245,7 +245,7 @@ namespace HS_Feed_Manager.Core
             _config.NumberFrontRegex = LogicConstants.NumberFrontRegex;
             _config.NumberBackRegex = LogicConstants.NumberBackRegex;
             OnSaveConfig(null, null);
-            _controller.RefreshSettingsView();
+            RefreshLocalConfig();
         }
 
         private void OnLogRefresh(object sender, object e)
