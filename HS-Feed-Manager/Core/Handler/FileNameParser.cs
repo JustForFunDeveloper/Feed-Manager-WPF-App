@@ -14,21 +14,12 @@ namespace HS_Feed_Manager.Core.Handler
 
         #endregion
 
-        public FileNameParser(string nameFrontRegex, string nameBackRegex, string numberFrontRegex,
-            string numberBackRegex)
-        {
-            NameFrontRegex = nameFrontRegex;
-            NameBackRegex = nameBackRegex;
-            NumberFrontRegex = numberFrontRegex;
-            NumberBackRegex = numberBackRegex;
-        }
-
         public FileNameParser()
         {
-            NameFrontRegex = @"\[HorribleSubs] ";
-            NameBackRegex = @" - [0-9]*.[0-9] \[720p].mkv";
-            NumberFrontRegex = @"\[HorribleSubs] .* - ";
-            NumberBackRegex = @" \[720p].mkv";
+            //NameFrontRegex = @"\[HorribleSubs] ";
+            //NameBackRegex = @" - [0-9]*.[0-9] \[720p].mkv";
+            //NumberFrontRegex = @"\[HorribleSubs] .* - ";
+            //NumberBackRegex = @" \[720p].mkv";
         }
 
         public string GetNameFromFeedItem(string feedTitle)

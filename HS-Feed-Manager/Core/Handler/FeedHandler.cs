@@ -21,16 +21,9 @@ namespace HS_Feed_Manager.Core.Handler
 
         #endregion
 
-        public FeedHandler(string feedUrl, FileNameParser fileNameParser)
-        {
-            FeedUrl = feedUrl;
-            _fileNameParser = fileNameParser;
-        }
-
         public FeedHandler(FileNameParser fileNameParser)
         {
             _fileNameParser = fileNameParser;
-            FeedUrl = "http://www.horriblesubs.info/rss.php?res=720";
         }
 
         public List<Episode> DownloadFeedList()

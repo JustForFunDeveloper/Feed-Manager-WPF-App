@@ -9,7 +9,7 @@ namespace HS_Feed_Manager.Control
     /// This Controller class implements all interfaces from the UI.
     /// This should be the only place where the logic or the core functionality is connected to the UI.
     /// </summary>
-    public class Controller : IHomeView
+    public class Controller : IHomeView, ISettingsView
     {
         #region Events
 
@@ -23,6 +23,11 @@ namespace HS_Feed_Manager.Control
         public event EventHandler<object> SaveTvShowData;
         public event EventHandler<object> ToggleAutoDownload;
         public event EventHandler<object> OpenFolder;
+
+        public event EventHandler SaveConfig;
+        public event EventHandler RestoreLocalPathSettings;
+        public event EventHandler RestoreFeedLinkSettings;
+        public event EventHandler LogRefresh;
 
         #endregion
 
@@ -38,6 +43,10 @@ namespace HS_Feed_Manager.Control
             Mediator.Register(MediatorGlobal.SaveEditInfo, OnSaveTvShowData);
             Mediator.Register(MediatorGlobal.ToggleAutoDownload, OnToggleAutoDownload);
             Mediator.Register(MediatorGlobal.OpenFolder, OnOpenFolder);
+            Mediator.Register(MediatorGlobal.SaveConfig, OnSaveConfig);
+            Mediator.Register(MediatorGlobal.RestoreLocalPathSettings, OnRestoreLocalPathSettings);
+            Mediator.Register(MediatorGlobal.RestoreFeedLinkSettings, OnRestoreFeedLinkSettings);
+            Mediator.Register(MediatorGlobal.LogRefresh, OnLogRefresh);
         }
 
         public void RefreshData()
@@ -53,6 +62,11 @@ namespace HS_Feed_Manager.Control
         public void UpdateDownloadList(List<object> autoEpisodes)
         {
             Mediator.NotifyColleagues(MediatorGlobal.UpdateDownloadList, autoEpisodes);
+        }
+
+        public void RefreshSettingsView()
+        {
+            Mediator.NotifyColleagues(MediatorGlobal.RefreshSettingsView, null);
         }
 
         #region Event Invocations
@@ -107,6 +121,25 @@ namespace HS_Feed_Manager.Control
             OpenFolder?.Invoke(this, e);
         }
 
+        protected virtual void OnSaveConfig(object e)
+        {
+            SaveConfig?.Invoke(this, EventArgs.Empty);
+        }
+
+        protected virtual void OnRestoreLocalPathSettings(object e)
+        {
+            RestoreLocalPathSettings?.Invoke(this, EventArgs.Empty);
+        }
+
+        protected virtual void OnRestoreFeedLinkSettings(object e)
+        {
+            RestoreFeedLinkSettings?.Invoke(this, EventArgs.Empty);
+        }
+
+        protected virtual void OnLogRefresh(object e)
+        {
+            LogRefresh?.Invoke(this, EventArgs.Empty);
+        }
         #endregion
     }
 }

@@ -89,7 +89,7 @@
 
                         <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Local Information|Episode Information / Info Panel:</Span> <LineBreak />
                         A Left-Click in the &quot;Local List&quot; will update the information in the &quot;Info Panel&quot; on the right side.
-                        This information can be edited by a Right-Click which will open the context menu and click the &quot;Edit Local Info&quot; Button.
+                        This information can be edited by a Right-Click which will open the context menu and click the &quot;Edit Local Info&quot; button.
                         If an episode in the &quot;Episode List&quot; is clicked it will show more specific data about this file.<LineBreak /><LineBreak />
 
                         <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Episode List / List View:</Span> <LineBreak />
@@ -143,8 +143,9 @@
 
                         <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Start Episode Download</Span> <LineBreak />
                         This button will start the download of all episodes in the &quot;Download List&quot; in the given order. The episode will be downloaded and the
-                        information´about this episode will be stored in the database. But the correct file path will loaded when a new &quot;Search Local Folders&quot; event is triggered.
-                        Since the program doesn't know when the download will be finished.<LineBreak /><LineBreak />
+                        information about this episode will be stored in the database. The correct file path will be loaded when a new &quot;Search Local Folders&quot; event is triggered.
+                        Since the program doesn't know when the download will be finished. The download is basically a torrent magnet link stored in the feed, which will
+                        be then opened by the registered software of this file type.<LineBreak /><LineBreak />
                     </TextBlock>
                 </Grid>
                 <TextBlock
@@ -188,13 +189,14 @@
                         FontSize="15"
                         TextWrapping="Wrap">
                         <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Episode List:</Span> <LineBreak />
-                        The &quot;Episode List&quot; can be filtered and sorted with the DropDown Menu. The Search Box can be used to search for episode numbers.
+                        The &quot;Episode List&quot; can be filtered and sorted with the DropDown menu. The search box can be used to search for episode numbers.
                         The numbers have to be entered as a whole to find them.<LineBreak /><LineBreak />
 
                         <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Feed List and Local List:</Span> <LineBreak />
                         Most of the filter and sorting algorithm of the &quot;Feed List&quot; and &quot;local List&quot; are the same.
                         Only a few are not equal since the feed episode and the show doesn't share the same data.
-                        There are also standard filters which will be applied by every tab switch.<LineBreak /><LineBreak />
+                        There are also standard filters which will be applied by every tab switch. The search box is able to search parts of the file
+                        name and is not case sensitive.<LineBreak /><LineBreak />
                     </TextBlock>
                 </Grid>
                 <TextBlock
@@ -303,8 +305,8 @@
                         TextWrapping="Wrap">
                         <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Info Panel:</Span> <LineBreak />
                         Those are the three different Info Panels which will show up as soon the corresponding list entry is pressed.
-                        Each episode in the &quot;Episode List&quot; and each show in the &quot;Local List&quot; are having their own Rating value.
-                        This value can be used to file the items. Every new local found show will have standard values until they are changed.<LineBreak /><LineBreak />
+                        Each episode in the &quot;Episode List&quot; and each show in the &quot;Local List&quot; are having their own Rating values.
+                        This values can be used to filter the items. Every new local show will have standard values until they are changed.<LineBreak /><LineBreak />
                     </TextBlock>
                 </Grid>
                 <TextBlock

@@ -42,6 +42,7 @@
             Margin="5"
             mah:ControlsHelper.HeaderFontSize="20"
             BorderBrush="Transparent"
+            Header="{Binding}"
             IsExpanded="True">
             <Expander.HeaderTemplate>
                 <ItemContainerTemplate>
@@ -57,6 +58,7 @@
                             HorizontalAlignment="Right"
                             HorizontalContentAlignment="Right"
                             BorderBrush="Transparent"
+                            Command="{Binding DefaultLocalPaths}"
                             Content="restore default"
                             FontSize="10"
                             Style="{DynamicResource SquareButtonStyle}">
@@ -71,6 +73,7 @@
                             Margin="5,0,0,0"
                             HorizontalAlignment="Right"
                             HorizontalContentAlignment="Right"
+                            Command="{Binding SaveLocalPaths}"
                             Content="Refresh Data"
                             FontSize="10"
                             Style="{DynamicResource ExpanderButtonStyle}">
@@ -104,8 +107,8 @@
                         <TextBox
                             MinWidth="400"
                             Margin="0,5,0,5"
-                            mah:TextBoxHelper.Watermark="Watermark"
-                            Text="{Binding LocalPath1}" />
+                            mah:TextBoxHelper.Watermark="{Binding FileEndingsWaterMark}"
+                            Text="{Binding FileEndings}" />
                     </StackPanel>
                 </Grid>
                 <Rectangle
@@ -129,7 +132,7 @@
                         <TextBox
                             MinWidth="350"
                             Margin="0,5,0,0"
-                            mah:TextBoxHelper.Watermark="Watermark"
+                            mah:TextBoxHelper.Watermark="{Binding LocalPath1WaterMark}"
                             Text="{Binding LocalPath1}" />
                     </StackPanel>
                     <Rectangle
@@ -145,7 +148,7 @@
                         <TextBox
                             MinWidth="350"
                             Margin="0,5,0,0"
-                            mah:TextBoxHelper.Watermark="Watermark"
+                            mah:TextBoxHelper.Watermark="{Binding LocalPath2WaterMark}"
                             Text="{Binding LocalPath2}" />
                     </StackPanel>
                     <Rectangle
@@ -161,7 +164,7 @@
                         <TextBox
                             MinWidth="350"
                             Margin="0,5,0,0"
-                            mah:TextBoxHelper.Watermark="Watermark"
+                            mah:TextBoxHelper.Watermark="{Binding LocalPath3WaterMark}"
                             Text="{Binding LocalPath3}" />
                     </StackPanel>
                 </Grid>
@@ -172,6 +175,7 @@
             Margin="5"
             mah:ControlsHelper.HeaderFontSize="20"
             BorderBrush="Transparent"
+            Header="{Binding}"
             IsExpanded="True">
             <Expander.HeaderTemplate>
                 <ItemContainerTemplate>
@@ -187,6 +191,7 @@
                             HorizontalAlignment="Right"
                             HorizontalContentAlignment="Right"
                             BorderBrush="Transparent"
+                            Command="{Binding DefaultFeedLink}"
                             Content="restore default"
                             FontSize="10"
                             Style="{DynamicResource SquareButtonStyle}">
@@ -201,6 +206,7 @@
                             Margin="5,0,0,0"
                             HorizontalAlignment="Right"
                             HorizontalContentAlignment="Right"
+                            Command="{Binding SaveFeedLink}"
                             Content="Refresh Data"
                             FontSize="10"
                             Style="{StaticResource ExpanderButtonStyle}">
@@ -230,12 +236,12 @@
                         <TextBlock
                             VerticalAlignment="Center"
                             Foreground="{DynamicResource AccentColorBrush}"
-                            Text="Feed Link" />
+                            Text="Feed Url" />
                         <TextBox
                             MinWidth="400"
                             Margin="0,5,0,5"
-                            mah:TextBoxHelper.Watermark="Watermark"
-                            Text="{Binding LocalPath1}" />
+                            mah:TextBoxHelper.Watermark="{Binding FeedLinkWaterMark}"
+                            Text="{Binding FeedLink}" />
                     </StackPanel>
                 </Grid>
                 <Rectangle
@@ -264,8 +270,8 @@
                                 Grid.Column="1"
                                 MinWidth="400"
                                 Margin="5"
-                                mah:TextBoxHelper.Watermark="Watermark"
-                                Text="{Binding LocalPath1}" />
+                                mah:TextBoxHelper.Watermark="{Binding RegexNameFrontWaterMark}"
+                                Text="{Binding RegexNameFront}" />
                         </Grid>
                         <Grid HorizontalAlignment="Left">
                             <Grid.ColumnDefinitions>
@@ -281,8 +287,8 @@
                                 Grid.Column="1"
                                 MinWidth="400"
                                 Margin="5"
-                                mah:TextBoxHelper.Watermark="Watermark"
-                                Text="{Binding LocalPath1}" />
+                                mah:TextBoxHelper.Watermark="{Binding RegexNameBackWaterMark}"
+                                Text="{Binding RegexNameBack}" />
                         </Grid>
                     </StackPanel>
                     <Rectangle
@@ -304,8 +310,8 @@
                                 Grid.Column="1"
                                 MinWidth="400"
                                 Margin="5,5,0,5"
-                                mah:TextBoxHelper.Watermark="Watermark"
-                                Text="{Binding LocalPath2}" />
+                                mah:TextBoxHelper.Watermark="{Binding RegexNumberFrontWaterMark}"
+                                Text="{Binding RegexNumberFront}" />
                         </Grid>
                         <Grid Margin="5,0,0,0" HorizontalAlignment="Left">
                             <Grid.ColumnDefinitions>
@@ -321,8 +327,8 @@
                                 Grid.Column="1"
                                 MinWidth="400"
                                 Margin="5,5,0,5"
-                                mah:TextBoxHelper.Watermark="Watermark"
-                                Text="{Binding LocalPath2}" />
+                                mah:TextBoxHelper.Watermark="{Binding RegexNumberBackWaterMark}"
+                                Text="{Binding RegexNumberBack}" />
                         </Grid>
                     </StackPanel>
                 </Grid>
@@ -333,6 +339,7 @@
             Margin="5"
             mah:ControlsHelper.HeaderFontSize="20"
             BorderBrush="{DynamicResource AccentColorBrush}"
+            Header="{Binding}"
             IsExpanded="True">
             <Expander.HeaderTemplate>
                 <ItemContainerTemplate>
@@ -348,6 +355,7 @@
                             HorizontalAlignment="Right"
                             HorizontalContentAlignment="Right"
                             BorderBrush="Transparent"
+                            Command="{Binding LogRefresh}"
                             Content="Refresh Data"
                             FontSize="10"
                             Style="{DynamicResource SquareButtonStyle}">

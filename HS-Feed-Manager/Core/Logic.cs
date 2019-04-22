@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using HS_Feed_Manager.Control;
+using HS_Feed_Manager.Core.GlobalValues;
 using HS_Feed_Manager.Core.Handler;
 using HS_Feed_Manager.DataModels;
 using HS_Feed_Manager.DataModels.DbModels;
+using HS_Feed_Manager.DataModels.XmlModels;
 
 namespace HS_Feed_Manager.Core
 {
@@ -20,6 +23,9 @@ namespace HS_Feed_Manager.Core
 
         public static List<TvShow> LocalTvShows => DbHandler.LocalTvShows;
 
+        public static Config LocalConfig => _config;
+
+        public static string Log => _log;
         #endregion
 
         #region Private Properties
@@ -28,6 +34,9 @@ namespace HS_Feed_Manager.Core
         private Controller _controller;
         private FeedHandler _feedHandler;
         private FileHandler _fileHandler;
+        private FileNameParser _fileNameParser;
+        private static Config _config;
+        private static string _log;
 
         #endregion
 
@@ -35,9 +44,10 @@ namespace HS_Feed_Manager.Core
         {
             _dbHandler = new DbHandler();
             _controller = new Controller();
-            var fileNameParser = new FileNameParser();
-            _feedHandler = new FeedHandler(fileNameParser);
-            _fileHandler = new FileHandler(fileNameParser);
+            _fileNameParser = new FileNameParser();
+            _feedHandler = new FeedHandler(_fileNameParser);
+            _fileHandler = new FileHandler(_fileNameParser);
+            var unused = new LogHandler(LogLevel.Debug, _fileHandler);
 
             _controller.DownloadFeed += OnDownloadFeed;
             _controller.SearchLocalFolder += OnSearchLocalFolder;
@@ -49,6 +59,14 @@ namespace HS_Feed_Manager.Core
             _controller.SaveEpisodeData += _dbHandler.UpdateEpisode;
             _controller.SaveTvShowData += _dbHandler.UpdateTvShow;
             _controller.OpenFolder += OpenFolder;
+
+            _controller.SaveConfig += OnSaveConfig;
+            _controller.RestoreLocalPathSettings += OnRestoreLocalPathSettings;
+            _controller.RestoreFeedLinkSettings += OnRestoreFeedLinkSettings;
+            _controller.LogRefresh += OnLogRefresh;
+
+            LoadOrCreateConfig();
+            OnDownloadFeed(null, null);
         }
 
         private void OnDownloadFeed(object sender, EventArgs e)
@@ -162,6 +180,78 @@ namespace HS_Feed_Manager.Core
         private void OpenFolder(object sender, object e)
         {
             _fileHandler.OpenFolder((Episode) e);
+        }
+
+        private void LoadOrCreateConfig()
+        {
+            try
+            {
+                FileInfo fileInfo = new FileInfo(LogicConstants.StandardXmlPath + LogicConstants.StandardXmlName);
+
+                if (!fileInfo.Exists)
+                {
+                    // Create new xml file since its missing and set it to standard values
+                    string standardXml = XmlHandler.GetSerializedConfigXml(typeof(Config), new Config());
+                    _fileHandler.CreateFileIfNotExist(LogicConstants.StandardXmlName, LogicConstants.StandardXmlPath, false);
+                    _fileHandler.AppendText(LogicConstants.StandardXmlName, standardXml, LogicConstants.StandardXmlPath);
+                }
+                var configAsString = _fileHandler.ReadAllText(LogicConstants.StandardXmlName, LogicConstants.StandardXmlPath);
+                _config = (Config)XmlHandler.GetDeserializedConfigObject(typeof(Config), configAsString);
+                RefreshLocalConfig();
+            }
+            catch (Exception e)
+            {
+                LogHandler.WriteSystemLog(e.ToString(), LogLevel.Error);
+            }
+        }
+
+        private void RefreshLocalConfig()
+        {
+            _fileHandler.FileEndings = _config.FileEndings?.Split(';').ToList();
+            _fileHandler.LocalPath1 = _config.LocalPath1;
+            _fileHandler.LocalPath2 = _config.LocalPath2;
+            _fileHandler.LocalPath3 = _config.LocalPath3;
+
+            _feedHandler.FeedUrl = _config.FeedUrl;
+            _fileNameParser.NameFrontRegex = _config.NameFrontRegex;
+            _fileNameParser.NameBackRegex = _config.NameBackRegex;
+            _fileNameParser.NumberFrontRegex = _config.NumberFrontRegex;
+            _fileNameParser.NumberBackRegex = _config.NumberBackRegex;
+            _controller.RefreshSettingsView();
+        }
+
+        private void OnSaveConfig(object sender, object e)
+        {
+            string standardXml = XmlHandler.GetSerializedConfigXml(typeof(Config), _config);
+            _fileHandler.OverwriteFile(LogicConstants.StandardXmlName, standardXml, LogicConstants.StandardXmlPath);
+            _controller.RefreshSettingsView();
+        }
+
+        private void OnRestoreLocalPathSettings(object sender, object e)
+        {
+            _config.FileEndings = LogicConstants.FileEndings;
+            _config.LocalPath1 = LogicConstants.LocalPath1;
+            _config.LocalPath2 = LogicConstants.LocalPath2;
+            _config.LocalPath3 = LogicConstants.LocalPath3;
+            OnSaveConfig(null, null);
+            _controller.RefreshSettingsView();
+        }
+
+        private void OnRestoreFeedLinkSettings(object sender, object e)
+        {
+            _config.FeedUrl = LogicConstants.FeedUrl;
+            _config.NameFrontRegex = LogicConstants.NameFrontRegex;
+            _config.NameBackRegex = LogicConstants.NameBackRegex;
+            _config.NumberFrontRegex = LogicConstants.NumberFrontRegex;
+            _config.NumberBackRegex = LogicConstants.NumberBackRegex;
+            OnSaveConfig(null, null);
+            _controller.RefreshSettingsView();
+        }
+
+        private void OnLogRefresh(object sender, object e)
+        {
+            _log = _fileHandler?.ReadAllText(LogHandler.CurrentLogName, LogicConstants.LogFilePath);
+            _controller.RefreshSettingsView();
         }
     }
 }

@@ -38,7 +38,7 @@
                     Margin="0,0,20,0"
                     FontSize="40"
                     Text="Version:" />
-                <TextBlock FontSize="40" Text="0.1.0.0 Beta" />
+                <TextBlock FontSize="40" Text="{Binding Version}" />
             </StackPanel>
             <TextBlock
                 Grid.Row="2"
@@ -53,6 +53,7 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             BorderBrush="Transparent"
+            Command="{Binding NewReleases}"
             Content="Check for new Releases"
             FontSize="15"
             Style="{StaticResource AccentedSquareButtonStyle}">
@@ -102,6 +103,7 @@
                     HorizontalAlignment="Right"
                     VerticalAlignment="Center"
                     BorderBrush="Transparent"
+                    Command="{Binding Homepage}"
                     Content="www.die-technik-und-ich.at"
                     FontSize="15"
                     Style="{DynamicResource AccentedSquareButtonStyle}" />
@@ -131,6 +133,7 @@
                     HorizontalAlignment="Right"
                     VerticalAlignment="Center"
                     BorderBrush="Transparent"
+                    Command="{Binding GitHubProject}"
                     Content="JustForFunDeveloper/Feed-Manager-WPF-App"
                     FontSize="15"
                     Style="{StaticResource AccentedSquareButtonStyle}">
@@ -169,6 +172,7 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 BorderBrush="Transparent"
+                Command="{Binding License}"
                 Content="MIT License"
                 FontSize="15"
                 Style="{StaticResource AccentedSquareButtonStyle}">

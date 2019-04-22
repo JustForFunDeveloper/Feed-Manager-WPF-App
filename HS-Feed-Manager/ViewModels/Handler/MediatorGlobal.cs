@@ -24,5 +24,10 @@
         public static readonly string ListBoxDoubleClick = "ListBoxDoubleClick";
         public static readonly string CustomDialog = "CustomDialog";
         public static readonly string CustomDialogReturn = "CustomDialogReturn";
+        public static readonly string SaveConfig = "SaveConfig";
+        public static readonly string RestoreLocalPathSettings = "RestoreLocalPathSettings";
+        public static readonly string RestoreFeedLinkSettings = "RestoreFeedLinkSettings";
+        public static readonly string LogRefresh = "LogRefresh";
+        public static readonly string RefreshSettingsView = "RefreshSettingsView";
     }
 }
