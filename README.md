@@ -4,7 +4,7 @@ Manage youre shows in a nice and easy way. Start to play them via the app and ne
 If you have hundreds of local files you will need to manage them.
 
 ## Libraries
-![https://github.com/JustForFunDeveloper/HS-Feed-Suite](https://img.shields.io/badge/HS_Feed_Suite_Beta-0.1.0.0-green.svg) <br/>
+![https://github.com/JustForFunDeveloper/HS-Feed-Suite](https://img.shields.io/badge/HS_Feed_Suite_Beta-0.1.1.0-green.svg) <br/>
 ![https://github.com/MahApps/MahApps.Metro](https://img.shields.io/badge/MahApps.Metro-2.0.0_alpha0262-blue.svg)
 ![https://github.com/MahApps/MahApps.Metro.IconPacks](https://img.shields.io/badge/MahApps.Metro.IconPacks-3.0.0_alpha0141-blue.svg) <br/>
 ![](https://img.shields.io/badge/Microsoft.EntityFrameworkCore.Sqlite.Core-2.2.4-orange.svg) <br/>
