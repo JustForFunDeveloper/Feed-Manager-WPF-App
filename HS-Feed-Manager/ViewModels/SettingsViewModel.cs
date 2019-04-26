@@ -47,7 +47,7 @@ namespace HS_Feed_Manager.ViewModels
 
         private void RefreshView(object e = null)
         {
-            FeedLink = "";
+            FileEndings = "";
             LocalPath1 = "";
             LocalPath2 = "";
             LocalPath3 = "";

@@ -188,7 +188,8 @@ namespace HS_Feed_Manager.Core
             try
             {
                 List<TvShow> tvShows = _fileHandler.ScanLocalTvShows();
-                _dbHandler.SyncLocalTvShows(tvShows);
+                if (tvShows != null)
+                    _dbHandler.SyncLocalTvShows(tvShows);
             }
             catch (Exception ex)
             {
