@@ -9,6 +9,7 @@ using System.Linq;
 using System.Windows.Input;
 using HS_Feed_Manager.DataModels.DbModels;
 using HS_Feed_Manager.ViewModels.Common;
+using HS_Feed_Manager.Core.Handler;
 
 namespace HS_Feed_Manager.ViewModels
 {
@@ -234,23 +235,30 @@ namespace HS_Feed_Manager.ViewModels
         #region Flyout EditLocalInfo
         private void UpdateFlyoutValues(object value)
         {
-            if (value == null)
-                return;
-
-            TvShow localSeries = value as TvShow;
-            if (localSeries != null)
+            try
             {
-                _currentTvShow = localSeries;
-                int statusIndex = Array.IndexOf(Enum.GetValues(localSeries.Status.GetType()), localSeries.Status);
-                SelectedStatus = statusIndex;
-                Episodes = localSeries.EpisodeCount.ToString();
-                int autoDownloadIndex = Array.IndexOf(Enum.GetValues(localSeries.AutoDownloadStatus.GetType()),
-                    localSeries.AutoDownloadStatus);
-                SelectedAutoDownload = autoDownloadIndex;
-                RatingValue = localSeries.Rating;
-            }
+                if (value == null)
+                    return;
 
-            IsFlyoutOpen = true;
+                TvShow localSeries = value as TvShow;
+                if (localSeries != null)
+                {
+                    _currentTvShow = localSeries;
+                    int statusIndex = Array.IndexOf(Enum.GetValues(localSeries.Status.GetType()), localSeries.Status);
+                    SelectedStatus = statusIndex;
+                    Episodes = localSeries.EpisodeCount.ToString();
+                    int autoDownloadIndex = Array.IndexOf(Enum.GetValues(localSeries.AutoDownloadStatus.GetType()),
+                        localSeries.AutoDownloadStatus);
+                    SelectedAutoDownload = autoDownloadIndex;
+                    RatingValue = localSeries.Rating;
+                }
+
+                IsFlyoutOpen = true;
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("UpdateFlyoutValues: " + ex.ToString(), LogLevel.Error);
+            }
         }
 
         public bool IsFlyoutOpen
@@ -362,14 +370,21 @@ namespace HS_Feed_Manager.ViewModels
 
         private void SliderRateValueChanged(object obj)
         {
-            int length = (int)obj;
-            for (int i = 0; i < length; i++)
+            try
             {
-                Icons[i] = PackIconMaterialDesignKind.Star.ToString();
+                int length = (int)obj;
+                for (int i = 0; i < length; i++)
+                {
+                    Icons[i] = PackIconMaterialDesignKind.Star.ToString();
+                }
+                for (int i = 4; i >= length; i--)
+                {
+                    Icons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
+                }
             }
-            for (int i = 4; i >= length; i--)
+            catch (Exception ex)
             {
-                Icons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
+                LogHandler.WriteSystemLog("SliderRateValueChanged: " + ex.ToString(), LogLevel.Error);
             }
         }
 
@@ -395,16 +410,23 @@ namespace HS_Feed_Manager.ViewModels
 
         private void SaveOkEditCommand()
         {
-            TvShow localTvShow = _currentTvShow;
-            localTvShow.Status = (Status) Enum.Parse(typeof(Status), SelectedValueStatus);
-            if (int.TryParse(EpisodesValue, out int result))
-                localTvShow.EpisodeCount = result;
-            localTvShow.AutoDownloadStatus = (AutoDownload)Enum.Parse(typeof(AutoDownload), SelectedValueAutoDownload);
-            localTvShow.Rating = (int)RatingValue;
-            Mediator.NotifyColleagues(MediatorGlobal.SaveEditInfo, localTvShow);
+            try
+            {
+                TvShow localTvShow = _currentTvShow;
+                localTvShow.Status = (Status)Enum.Parse(typeof(Status), SelectedValueStatus);
+                if (int.TryParse(EpisodesValue, out int result))
+                    localTvShow.EpisodeCount = result;
+                localTvShow.AutoDownloadStatus = (AutoDownload)Enum.Parse(typeof(AutoDownload), SelectedValueAutoDownload);
+                localTvShow.Rating = (int)RatingValue;
+                Mediator.NotifyColleagues(MediatorGlobal.SaveEditInfo, localTvShow);
 
-            IsFlyoutOpen = false;
-            Mediator.NotifyColleagues(MediatorGlobal.OnRefreshListView, null);
+                IsFlyoutOpen = false;
+                Mediator.NotifyColleagues(MediatorGlobal.OnRefreshListView, null);
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("SaveOkEditCommand: " + ex.ToString(), LogLevel.Error);
+            }
         }
 
         public ICommand CancelEdit

@@ -1,5 +1,7 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Windows.Input;
+using HS_Feed_Manager.Core.Handler;
 using HS_Feed_Manager.ViewModels.Common;
 using HS_Feed_Manager.ViewModels.Handler;
 
@@ -7,7 +9,6 @@ namespace HS_Feed_Manager.ViewModels
 {
     public class AboutViewModel : PropertyChangedViewModel
     {
-        // TODO: Add Version, Link to Github and Homepage.Project, Add Link to Homepage Description Help
         // ReSharper disable once NotAccessedField.Local
         private readonly PropertyChangedViewModel _mainViewModel;
 
@@ -19,8 +20,15 @@ namespace HS_Feed_Manager.ViewModels
 
         public AboutViewModel(PropertyChangedViewModel mainViewModel)
         {
-            _mainViewModel = mainViewModel;
-            _version = Assembly.GetEntryAssembly().GetName().Version + " Beta";
+            try
+            {
+                _mainViewModel = mainViewModel;
+                _version = Assembly.GetEntryAssembly().GetName().Version + " Beta";
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("AboutViewModel: " + ex.ToString(), LogLevel.Error);
+            }
         }
 
         public string Version
@@ -53,7 +61,14 @@ namespace HS_Feed_Manager.ViewModels
 
         private void NewReleasesCommand()
         {
-            System.Diagnostics.Process.Start("https://github.com/JustForFunDeveloper/Feed-Manager-WPF-App/releases");
+            try
+            {
+                System.Diagnostics.Process.Start("https://github.com/JustForFunDeveloper/Feed-Manager-WPF-App/releases");
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("NewReleasesCommand: " + ex.ToString(), LogLevel.Error);
+            }
         }
 
         public ICommand Homepage
@@ -76,7 +91,14 @@ namespace HS_Feed_Manager.ViewModels
 
         private void HomepageCommand()
         {
-            System.Diagnostics.Process.Start("https://www.die-technik-und-ich.at/");
+            try
+            {
+                System.Diagnostics.Process.Start("https://www.die-technik-und-ich.at/");
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("HomepageCommand: " + ex.ToString(), LogLevel.Error);
+            }
         }
 
         public ICommand GitHubProject
@@ -99,7 +121,14 @@ namespace HS_Feed_Manager.ViewModels
 
         private void GitHubProjectCommand()
         {
-            System.Diagnostics.Process.Start("https://github.com/JustForFunDeveloper/Feed-Manager-WPF-App");
+            try
+            {
+                System.Diagnostics.Process.Start("https://github.com/JustForFunDeveloper/Feed-Manager-WPF-App");
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("GitHubProjectCommand: " + ex.ToString(), LogLevel.Error);
+            }
         }
 
         public ICommand License
@@ -122,7 +151,14 @@ namespace HS_Feed_Manager.ViewModels
 
         private void LicenseCommand()
         {
-            System.Diagnostics.Process.Start("https://github.com/JustForFunDeveloper/Feed-Manager-WPF-App/blob/master/LICENSE");
+            try
+            {
+                System.Diagnostics.Process.Start("https://github.com/JustForFunDeveloper/Feed-Manager-WPF-App/blob/master/LICENSE");
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("GitHubProjectCommand: " + ex.ToString(), LogLevel.Error);
+            }
         }
     }
 

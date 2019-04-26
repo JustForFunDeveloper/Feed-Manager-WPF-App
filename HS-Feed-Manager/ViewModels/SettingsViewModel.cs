@@ -7,7 +7,6 @@ namespace HS_Feed_Manager.ViewModels
 {
     public class SettingsViewModel : PropertyChangedViewModel
     {
-        // TODO: Add LocalPath 1-3, Regex from FileHandler
         // ReSharper disable once NotAccessedField.Local
         private readonly PropertyChangedViewModel _mainViewModel;
 

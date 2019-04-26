@@ -1,5 +1,7 @@
-﻿using HS_Feed_Manager.DataModels.DbModels;
+﻿using HS_Feed_Manager.Core.Handler;
+using HS_Feed_Manager.DataModels.DbModels;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace HS_Feed_Manager.Core.Data
 {
@@ -10,8 +12,15 @@ namespace HS_Feed_Manager.Core.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("Data Source=local.db");
-            base.OnConfiguring(optionsBuilder);
+            try
+            {
+                optionsBuilder.UseSqlite("Data Source=local.db");
+                base.OnConfiguring(optionsBuilder);
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("UpdateLocalTvShows: " + ex.ToString(), LogLevel.Error);
+            }
         }
     }
 }

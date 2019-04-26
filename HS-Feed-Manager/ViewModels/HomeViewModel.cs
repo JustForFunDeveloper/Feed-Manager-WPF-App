@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using HS_Feed_Manager.Core;
+using HS_Feed_Manager.Core.Handler;
 using HS_Feed_Manager.DataModels;
 using HS_Feed_Manager.DataModels.DbModels;
 using HS_Feed_Manager.ViewModels.Common;
@@ -18,8 +19,6 @@ namespace HS_Feed_Manager.ViewModels
 {
     public class HomeViewModel : PropertyChangedViewModel
     {
-        // TODO: Logging and Exception-handling!
-        // TODO: Start the feed download once at startup
         // ReSharper disable once NotAccessedField.Local
         private readonly PropertyChangedViewModel _mainViewModel;
 
@@ -183,27 +182,34 @@ namespace HS_Feed_Manager.ViewModels
 
         private void OnCustomDialogReturn(object obj)
         {
-            if (obj == null)
-                return;
-            List<object> answer = obj as List<object>;
-
-            if (answer == null)
-                return;
-
-            string identifier = (string) answer[0];
-            bool returnValue = (bool) answer[1];
-
-            if (identifier == null)
-                return;
-
-            switch (identifier)
+            try
             {
-                case "DeleteEpisode":
-                    OnDeleteEpisodeAnswer(returnValue);
-                    break;
-                case "DeleteTvShow":
-                    OnDeleteTvShow(returnValue);
-                    break;
+                if (obj == null)
+                    return;
+                List<object> answer = obj as List<object>;
+
+                if (answer == null)
+                    return;
+
+                string identifier = (string)answer[0];
+                bool returnValue = (bool)answer[1];
+
+                if (identifier == null)
+                    return;
+
+                switch (identifier)
+                {
+                    case "DeleteEpisode":
+                        OnDeleteEpisodeAnswer(returnValue);
+                        break;
+                    case "DeleteTvShow":
+                        OnDeleteTvShow(returnValue);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("OnCustomDialogReturn: " + ex.ToString(), LogLevel.Error);
             }
         }
 
@@ -321,24 +327,31 @@ namespace HS_Feed_Manager.ViewModels
 
         private void TextBoxButtonCommand(object param)
         {
-            if (param == null)
-                return;
+            try
+            {
+                if (param == null)
+                    return;
 
-            if (param is string)
-            {
-                _filterString = param as string;
-                LocalListView.Filter = SearchFilter;
-                FeedListView.Filter = SearchFilter;
-            }
-            else if (param.GetType() == typeof(TextBox))
-            {
-                var textBox = param as TextBox;
-                if (textBox != null && textBox.Text.Length == 0)
+                if (param is string)
                 {
-                    _filterString = "";
+                    _filterString = param as string;
                     LocalListView.Filter = SearchFilter;
                     FeedListView.Filter = SearchFilter;
                 }
+                else if (param.GetType() == typeof(TextBox))
+                {
+                    var textBox = param as TextBox;
+                    if (textBox != null && textBox.Text.Length == 0)
+                    {
+                        _filterString = "";
+                        LocalListView.Filter = SearchFilter;
+                        FeedListView.Filter = SearchFilter;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("TextBoxButtonCommand: " + ex.ToString(), LogLevel.Error);
             }
         }
 
@@ -375,236 +388,323 @@ namespace HS_Feed_Manager.ViewModels
 
         private void InitialiseListViews()
         {
-            FeedListView = CollectionViewSource.GetDefaultView(Logic.FeedEpisodes);
-            FeedListView.CurrentChanged += FeedListViewCurrentChanged;
+            try
+            {
+                FeedListView = CollectionViewSource.GetDefaultView(Logic.FeedEpisodes);
+                FeedListView.CurrentChanged += FeedListViewCurrentChanged;
 
-            LocalListView = CollectionViewSource.GetDefaultView(Logic.LocalTvShows);
-            LocalListView.CurrentChanged += LocalListViewCurrentChanged;
+                LocalListView = CollectionViewSource.GetDefaultView(Logic.LocalTvShows);
+                LocalListView.CurrentChanged += LocalListViewCurrentChanged;
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("InitialiseListViews: " + ex.ToString(), LogLevel.Error);
+            }
         }
 
         private void SortThisList(int value)
         {
-            if (value == -1)
-                return;
-            using (LocalListView.DeferRefresh())
+            try
             {
-                using (FeedListView.DeferRefresh())
+                if (value == -1)
+                    return;
+                using (LocalListView.DeferRefresh())
                 {
-                    if (TabIndex == 0)
+                    using (FeedListView.DeferRefresh())
                     {
-                        FeedListView.SortDescriptions.Clear();
-                        switch (value)
+                        if (TabIndex == 0)
                         {
-                            case 0:
-                                FeedListView.Filter = null;
-                                break;
-                            case 1:
-                                FeedListView.Filter = AutowDownloadFilterOn;
-                                break;
-                            case 2:
-                                FeedListView.Filter = AutowDownloadFilterOff;
-                                break;
-                            case 3:
-                                FeedListView.Filter = ExistsLocally;
-                                break;
-                            case 4:
-                                FeedListView.Filter = DoesntExistsLocally;
-                                break;
-                            case 5:
-                                FeedListView.Filter = StatusFilterUndefined;
-                                break;
-                            case 6:
-                                FeedListView.Filter = StatusFilterOngoing;
-                                break;
-                            case 7:
-                                FeedListView.Filter = StatusFilterNew;
-                                break;
-                            case 8:
-                                FeedListView.Filter = StatusFilterFinished;
-                                break;
-                            case 9:
-                                FeedListView.Filter = null;
-                                FeedListView.SortDescriptions.Add(new SortDescription("Name",
-                                    ListSortDirection.Ascending));
-                                break;
-                            case 10:
-                                FeedListView.Filter = null;
-                                FeedListView.SortDescriptions.Add(new SortDescription("Name",
-                                    ListSortDirection.Descending));
-                                break;
+                            FeedListView.SortDescriptions.Clear();
+                            switch (value)
+                            {
+                                case 0:
+                                    FeedListView.Filter = null;
+                                    break;
+                                case 1:
+                                    FeedListView.Filter = AutowDownloadFilterOn;
+                                    break;
+                                case 2:
+                                    FeedListView.Filter = AutowDownloadFilterOff;
+                                    break;
+                                case 3:
+                                    FeedListView.Filter = ExistsLocally;
+                                    break;
+                                case 4:
+                                    FeedListView.Filter = DoesntExistsLocally;
+                                    break;
+                                case 5:
+                                    FeedListView.Filter = StatusFilterUndefined;
+                                    break;
+                                case 6:
+                                    FeedListView.Filter = StatusFilterOngoing;
+                                    break;
+                                case 7:
+                                    FeedListView.Filter = StatusFilterNew;
+                                    break;
+                                case 8:
+                                    FeedListView.Filter = StatusFilterFinished;
+                                    break;
+                                case 9:
+                                    FeedListView.Filter = null;
+                                    FeedListView.SortDescriptions.Add(new SortDescription("Name",
+                                        ListSortDirection.Ascending));
+                                    break;
+                                case 10:
+                                    FeedListView.Filter = null;
+                                    FeedListView.SortDescriptions.Add(new SortDescription("Name",
+                                        ListSortDirection.Descending));
+                                    break;
+                            }
                         }
-                    }
-                    else if (TabIndex == 1)
-                    {
-                        LocalListView.SortDescriptions.Clear();
-                        switch (value)
+                        else if (TabIndex == 1)
                         {
-                            case 0:
-                                LocalListView.Filter = null;
-                                break;
-                            case 1:
-                                LocalListView.Filter = null;
-                                LocalListView.SortDescriptions.Add(new SortDescription("LatestDownload",
-                                    ListSortDirection.Descending));
-                                break;
-                            case 2:
-                                LocalListView.Filter = null;
-                                LocalListView.SortDescriptions.Add(new SortDescription("LatestDownload",
-                                    ListSortDirection.Ascending));
-                                break;
-                            case 3:
-                                LocalListView.Filter = AutowDownloadFilterOn;
-                                break;
-                            case 4:
-                                LocalListView.Filter = AutowDownloadFilterOff;
-                                break;
-                            case 5:
-                                LocalListView.Filter = StatusFilterUndefined;
-                                break;
-                            case 6:
-                                LocalListView.Filter = StatusFilterOngoing;
-                                break;
-                            case 7:
-                                LocalListView.Filter = StatusFilterNew;
-                                break;
-                            case 8:
-                                LocalListView.Filter = StatusFilterFinished;
-                                break;
-                            case 9:
-                                LocalListView.Filter = null;
-                                LocalListView.SortDescriptions.Add(new SortDescription("Name",
-                                    ListSortDirection.Ascending));
-                                break;
-                            case 10:
-                                LocalListView.Filter = null;
-                                LocalListView.SortDescriptions.Add(new SortDescription("Name",
-                                    ListSortDirection.Descending));
-                                break;
+                            LocalListView.SortDescriptions.Clear();
+                            switch (value)
+                            {
+                                case 0:
+                                    LocalListView.Filter = null;
+                                    break;
+                                case 1:
+                                    LocalListView.Filter = null;
+                                    LocalListView.SortDescriptions.Add(new SortDescription("LatestDownload",
+                                        ListSortDirection.Descending));
+                                    break;
+                                case 2:
+                                    LocalListView.Filter = null;
+                                    LocalListView.SortDescriptions.Add(new SortDescription("LatestDownload",
+                                        ListSortDirection.Ascending));
+                                    break;
+                                case 3:
+                                    LocalListView.Filter = AutowDownloadFilterOn;
+                                    break;
+                                case 4:
+                                    LocalListView.Filter = AutowDownloadFilterOff;
+                                    break;
+                                case 5:
+                                    LocalListView.Filter = StatusFilterUndefined;
+                                    break;
+                                case 6:
+                                    LocalListView.Filter = StatusFilterOngoing;
+                                    break;
+                                case 7:
+                                    LocalListView.Filter = StatusFilterNew;
+                                    break;
+                                case 8:
+                                    LocalListView.Filter = StatusFilterFinished;
+                                    break;
+                                case 9:
+                                    LocalListView.Filter = null;
+                                    LocalListView.SortDescriptions.Add(new SortDescription("Name",
+                                        ListSortDirection.Ascending));
+                                    break;
+                                case 10:
+                                    LocalListView.Filter = null;
+                                    LocalListView.SortDescriptions.Add(new SortDescription("Name",
+                                        ListSortDirection.Descending));
+                                    break;
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("SortThisList: " + ex.ToString(), LogLevel.Error);
             }
         }
 
         private bool AutowDownloadFilterOn(object item)
         {
-            if (item.GetType() == typeof(Episode))
-                return Logic.LocalTvShows.Any(x =>
-                    x.AutoDownloadStatus == AutoDownload.On && x.Name == ((Episode) item).Name);
-
-            if (item.GetType() == typeof(TvShow))
+            try
             {
-                var localSeries = item as TvShow;
-                if (localSeries == null) throw new ArgumentNullException(nameof(localSeries));
-                return localSeries.AutoDownloadStatus.Equals(AutoDownload.On);
-            }
+                if (item.GetType() == typeof(Episode))
+                    return Logic.LocalTvShows.Any(x =>
+                        x.AutoDownloadStatus == AutoDownload.On && x.Name == ((Episode)item).Name);
 
-            return false;
+                if (item.GetType() == typeof(TvShow))
+                {
+                    var localSeries = item as TvShow;
+                    if (localSeries == null) throw new ArgumentNullException(nameof(localSeries));
+                    return localSeries.AutoDownloadStatus.Equals(AutoDownload.On);
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("AutowDownloadFilterOn: " + ex.ToString(), LogLevel.Error);
+                return false;
+            }
         }
 
         private bool AutowDownloadFilterOff(object item)
         {
-            if (item.GetType() == typeof(Episode))
-                return Logic.LocalTvShows.Any(x =>
-                    x.AutoDownloadStatus == AutoDownload.Off && x.Name == ((Episode) item).Name);
-
-            if (item.GetType() == typeof(TvShow))
+            try
             {
-                var localSeries = item as TvShow;
-                if (localSeries == null) throw new ArgumentNullException(nameof(localSeries));
-                return localSeries.AutoDownloadStatus.Equals(AutoDownload.Off);
-            }
+                if (item.GetType() == typeof(Episode))
+                    return Logic.LocalTvShows.Any(x =>
+                        x.AutoDownloadStatus == AutoDownload.Off && x.Name == ((Episode)item).Name);
 
-            return false;
+                if (item.GetType() == typeof(TvShow))
+                {
+                    var localSeries = item as TvShow;
+                    if (localSeries == null) throw new ArgumentNullException(nameof(localSeries));
+                    return localSeries.AutoDownloadStatus.Equals(AutoDownload.Off);
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("AutowDownloadFilterOff: " + ex.ToString(), LogLevel.Error);
+                return false;
+            }
         }
 
         private bool ExistsLocally(object item)
         {
-            return Logic.LocalTvShows.Any(x => x.Name == ((Episode) item).Name);
+            try
+            {
+                return Logic.LocalTvShows.Any(x => x.Name == ((Episode)item).Name);
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("ExistsLocally: " + ex.ToString(), LogLevel.Error);
+                return false;
+            }
         }
 
         private bool DoesntExistsLocally(object item)
         {
-            return !Logic.LocalTvShows.Any(x => x.Name == ((Episode) item).Name);
+            try
+            {
+                return !Logic.LocalTvShows.Any(x => x.Name == ((Episode)item).Name);
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("DoesntExistsLocally: " + ex.ToString(), LogLevel.Error);
+                return false;
+            }
         }
 
         private bool StatusFilterUndefined(object item)
         {
-            if (item.GetType() == typeof(Episode))
-                return Logic.LocalTvShows.Any(x => x.Status == Status.Undefined && x.Name == ((Episode) item).Name);
-
-            if (item.GetType() == typeof(TvShow))
+            try
             {
-                var localSeries = item as TvShow;
-                if (localSeries == null) throw new ArgumentNullException(nameof(localSeries));
-                return localSeries.Status.Equals(Status.Undefined);
-            }
+                if (item.GetType() == typeof(Episode))
+                    return Logic.LocalTvShows.Any(x => x.Status == Status.Undefined && x.Name == ((Episode)item).Name);
 
-            return false;
+                if (item.GetType() == typeof(TvShow))
+                {
+                    var localSeries = item as TvShow;
+                    if (localSeries == null) throw new ArgumentNullException(nameof(localSeries));
+                    return localSeries.Status.Equals(Status.Undefined);
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("StatusFilterUndefined: " + ex.ToString(), LogLevel.Error);
+                return false;
+            }
         }
 
         private bool StatusFilterOngoing(object item)
         {
-            if (item.GetType() == typeof(Episode))
-                return Logic.LocalTvShows.Any(x => x.Status == Status.Ongoing && x.Name == ((Episode) item).Name);
-
-            if (item.GetType() == typeof(TvShow))
+            try
             {
-                var localSeries = item as TvShow;
-                if (localSeries == null) throw new ArgumentNullException(nameof(localSeries));
-                return localSeries.Status.Equals(Status.Ongoing);
-            }
+                if (item.GetType() == typeof(Episode))
+                    return Logic.LocalTvShows.Any(x => x.Status == Status.Ongoing && x.Name == ((Episode)item).Name);
 
-            return false;
+                if (item.GetType() == typeof(TvShow))
+                {
+                    var localSeries = item as TvShow;
+                    if (localSeries == null) throw new ArgumentNullException(nameof(localSeries));
+                    return localSeries.Status.Equals(Status.Ongoing);
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("StatusFilterOngoing: " + ex.ToString(), LogLevel.Error);
+                return false;
+            }
         }
 
         private bool StatusFilterNew(object item)
         {
-            if (item.GetType() == typeof(Episode))
-                return Logic.LocalTvShows.Any(x => x.Status == Status.New && x.Name == ((Episode) item).Name);
-
-            if (item.GetType() == typeof(TvShow))
+            try
             {
-                var localSeries = item as TvShow;
-                if (localSeries == null) throw new ArgumentNullException(nameof(localSeries));
-                return localSeries.Status.Equals(Status.New);
-            }
+                if (item.GetType() == typeof(Episode))
+                    return Logic.LocalTvShows.Any(x => x.Status == Status.New && x.Name == ((Episode)item).Name);
 
-            return false;
+                if (item.GetType() == typeof(TvShow))
+                {
+                    var localSeries = item as TvShow;
+                    if (localSeries == null) throw new ArgumentNullException(nameof(localSeries));
+                    return localSeries.Status.Equals(Status.New);
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("StatusFilterNew: " + ex.ToString(), LogLevel.Error);
+                return false;
+
+            }
         }
 
         private bool StatusFilterFinished(object item)
         {
-            if (item.GetType() == typeof(Episode))
-                return Logic.LocalTvShows.Any(x => x.Status == Status.Finished && x.Name == ((Episode) item).Name);
-
-            if (item.GetType() == typeof(TvShow))
+            try
             {
-                var localSeries = item as TvShow;
-                if (localSeries == null) throw new ArgumentNullException(nameof(localSeries));
-                return localSeries.Status.Equals(Status.Finished);
-            }
+                if (item.GetType() == typeof(Episode))
+                    return Logic.LocalTvShows.Any(x => x.Status == Status.Finished && x.Name == ((Episode)item).Name);
 
-            return false;
+                if (item.GetType() == typeof(TvShow))
+                {
+                    var localSeries = item as TvShow;
+                    if (localSeries == null) throw new ArgumentNullException(nameof(localSeries));
+                    return localSeries.Status.Equals(Status.Finished);
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("StatusFilterFinished: " + ex.ToString(), LogLevel.Error);
+                return false;
+            }
         }
 
         private bool SearchFilter(object item)
         {
-            if (item.GetType() == typeof(Episode))
+            try
             {
-                var episode = item as Episode;
-                if (episode == null) throw new ArgumentNullException(nameof(episode));
-                return episode.Name.IndexOf(_filterString, StringComparison.OrdinalIgnoreCase) >= 0;
-            }
+                if (item.GetType() == typeof(Episode))
+                {
+                    var episode = item as Episode;
+                    if (episode == null) throw new ArgumentNullException(nameof(episode));
+                    return episode.Name.IndexOf(_filterString, StringComparison.OrdinalIgnoreCase) >= 0;
+                }
 
-            if (item.GetType() == typeof(TvShow))
+                if (item.GetType() == typeof(TvShow))
+                {
+                    var localSeries = item as TvShow;
+                    if (localSeries == null) throw new ArgumentNullException(nameof(localSeries));
+                    return localSeries.Name.IndexOf(_filterString, StringComparison.OrdinalIgnoreCase) >= 0;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
             {
-                var localSeries = item as TvShow;
-                if (localSeries == null) throw new ArgumentNullException(nameof(localSeries));
-                return localSeries.Name.IndexOf(_filterString, StringComparison.OrdinalIgnoreCase) >= 0;
+                LogHandler.WriteSystemLog("SearchFilter: " + ex.ToString(), LogLevel.Error);
+                return false;
             }
-
-            return false;
         }
 
         #endregion
@@ -613,115 +713,136 @@ namespace HS_Feed_Manager.ViewModels
 
         private void FeedListViewCurrentChanged(object sender, EventArgs e)
         {
-            if (sender == null)
-                return;
-
-            if (TabIndex == 0)
+            try
             {
-                FeedInfoVisibility = Visibility.Visible;
-                LocalInfoVisibility = Visibility.Hidden;
-                EpisodeInfoVisibility = Visibility.Hidden;
-                DownloadListVisibility = Visibility.Visible;
-                EpisodeListVisibility = Visibility.Hidden;
+                if (sender == null)
+                    return;
+
+                if (TabIndex == 0)
+                {
+                    FeedInfoVisibility = Visibility.Visible;
+                    LocalInfoVisibility = Visibility.Hidden;
+                    EpisodeInfoVisibility = Visibility.Hidden;
+                    DownloadListVisibility = Visibility.Visible;
+                    EpisodeListVisibility = Visibility.Hidden;
+                }
+
+                var feedEpisode = (Episode)FeedListView.CurrentItem;
+
+                if (feedEpisode == null)
+                    return;
+
+                FeedInfoName = feedEpisode.Name;
+                FeedInfoEpisode = feedEpisode.EpisodeNumber.ToString();
+
+                var localSeries = Logic.LocalTvShows.SingleOrDefault(x => x.Name == feedEpisode.Name);
+
+                if (localSeries != null)
+                {
+                    FeedInfoAutoDownload = localSeries.AutoDownloadStatus.ToString();
+                    FeedInfoLocalEpisodeCount = localSeries.LocalEpisodesCount.ToString();
+
+                    for (var i = 0; i < localSeries.Rating; i++) FeedIcons[i] = PackIconMaterialDesignKind.Star.ToString();
+                    for (var i = 4; i >= localSeries.Rating; i--)
+                        FeedIcons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
+                }
+                else
+                {
+                    FeedInfoAutoDownload = "None";
+                    FeedInfoLocalEpisodeCount = "None";
+
+                    for (var i = 4; i >= 0; i--) FeedIcons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
+                }
             }
-
-            var feedEpisode = (Episode) FeedListView.CurrentItem;
-
-            if (feedEpisode == null)
-                return;
-
-            FeedInfoName = feedEpisode.Name;
-            FeedInfoEpisode = feedEpisode.EpisodeNumber.ToString();
-
-            var localSeries = Logic.LocalTvShows.SingleOrDefault(x => x.Name == feedEpisode.Name);
-
-            if (localSeries != null)
+            catch (Exception ex)
             {
-                FeedInfoAutoDownload = localSeries.AutoDownloadStatus.ToString();
-                FeedInfoLocalEpisodeCount = localSeries.LocalEpisodesCount.ToString();
-
-                for (var i = 0; i < localSeries.Rating; i++) FeedIcons[i] = PackIconMaterialDesignKind.Star.ToString();
-                for (var i = 4; i >= localSeries.Rating; i--)
-                    FeedIcons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
-            }
-            else
-            {
-                FeedInfoAutoDownload = "None";
-                FeedInfoLocalEpisodeCount = "None";
-
-                for (var i = 4; i >= 0; i--) FeedIcons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
+                LogHandler.WriteSystemLog("FeedListViewCurrentChanged: " + ex.ToString(), LogLevel.Error);
             }
         }
 
         private void LocalListViewCurrentChanged(object sender, EventArgs e)
         {
-            if (sender == null)
-                return;
-            if (TabIndex == 1)
+            try
             {
-                FeedInfoVisibility = Visibility.Hidden;
-                LocalInfoVisibility = Visibility.Visible;
-                EpisodeInfoVisibility = Visibility.Hidden;
-                DownloadListVisibility = Visibility.Hidden;
-                EpisodeListVisibility = Visibility.Visible;
+                if (sender == null)
+                    return;
+                if (TabIndex == 1)
+                {
+                    FeedInfoVisibility = Visibility.Hidden;
+                    LocalInfoVisibility = Visibility.Visible;
+                    EpisodeInfoVisibility = Visibility.Hidden;
+                    DownloadListVisibility = Visibility.Hidden;
+                    EpisodeListVisibility = Visibility.Visible;
+                }
+
+                var localSeries = (TvShow)LocalListView.CurrentItem;
+
+                if (localSeries != null)
+                {
+                    EpisodeSortModesIndex = 2;
+                    EpisodeClearSearch = "";
+
+                    LocalInfoName = localSeries.Name;
+                    LocalInfoStatus = localSeries.Status.ToString();
+                    LocalInfoEpisodes = localSeries.EpisodeCount.ToString();
+                    LocalInfoAutoDownload = localSeries.AutoDownloadStatus.ToString();
+                    LocalInfoLocalEpisodeCount = localSeries.LocalEpisodesCount.ToString();
+
+                    for (var i = 0; i < localSeries.Rating; i++) LocalIcons[i] = PackIconMaterialDesignKind.Star.ToString();
+                    for (var i = 4; i >= localSeries.Rating; i--)
+                        LocalIcons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
+                }
+                else
+                {
+                    for (var i = 4; i >= 0; i--) LocalIcons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
+                }
             }
-
-            var localSeries = (TvShow) LocalListView.CurrentItem;
-
-            if (localSeries != null)
+            catch (Exception ex)
             {
-                EpisodeSortModesIndex = 2;
-                EpisodeClearSearch = "";
-
-                LocalInfoName = localSeries.Name;
-                LocalInfoStatus = localSeries.Status.ToString();
-                LocalInfoEpisodes = localSeries.EpisodeCount.ToString();
-                LocalInfoAutoDownload = localSeries.AutoDownloadStatus.ToString();
-                LocalInfoLocalEpisodeCount = localSeries.LocalEpisodesCount.ToString();
-
-                for (var i = 0; i < localSeries.Rating; i++) LocalIcons[i] = PackIconMaterialDesignKind.Star.ToString();
-                for (var i = 4; i >= localSeries.Rating; i--)
-                    LocalIcons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
-            }
-            else
-            {
-                for (var i = 4; i >= 0; i--) LocalIcons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
+                LogHandler.WriteSystemLog("LocalListViewCurrentChanged: " + ex.ToString(), LogLevel.Error);
             }
         }
 
         private void ListBoxSelectionChanged(object obj)
         {
-            if (TabIndex == 1)
+            try
             {
-                FeedInfoVisibility = Visibility.Hidden;
-                LocalInfoVisibility = Visibility.Hidden;
-                EpisodeInfoVisibility = Visibility.Visible;
+                if (TabIndex == 1)
+                {
+                    FeedInfoVisibility = Visibility.Hidden;
+                    LocalInfoVisibility = Visibility.Hidden;
+                    EpisodeInfoVisibility = Visibility.Visible;
+                }
+
+                var listEpisode = (Episode)obj;
+
+                if (listEpisode == null)
+                {
+                    for (var i = 4; i >= 0; i--) EpisodeIcons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
+                    return;
+                }
+
+
+                EpisodeInfoName = listEpisode.Name;
+                EpisodeInfoEpisode = listEpisode.EpisodeNumber.ToString();
+                EpisodeInfoDownloadDate = listEpisode.DownloadDate.ToString("dd.MM.yyyy HH:mm:ss");
+
+                for (var i = 0; i < listEpisode.Rating; i++) EpisodeIcons[i] = PackIconMaterialDesignKind.Star.ToString();
+                for (var i = 4; i >= listEpisode.Rating; i--)
+                    EpisodeIcons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
+
+                var localSeries = Logic.LocalTvShows.Where(x => x.Name == listEpisode.Name).SingleOrDefault();
+
+                if (localSeries != null)
+                {
+                    EpisodeInfoStatus = localSeries.Status.ToString();
+                    EpisodeInfoAutoDownload = localSeries.AutoDownloadStatus.ToString();
+                    EpisodeInfoLocalEpisodeCount = localSeries.LocalEpisodesCount.ToString();
+                }
             }
-
-            var listEpisode = (Episode) obj;
-
-            if (listEpisode == null)
+            catch (Exception ex)
             {
-                for (var i = 4; i >= 0; i--) EpisodeIcons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
-                return;
-            }
-
-
-            EpisodeInfoName = listEpisode.Name;
-            EpisodeInfoEpisode = listEpisode.EpisodeNumber.ToString();
-            EpisodeInfoDownloadDate = listEpisode.DownloadDate.ToString("dd.MM.yyyy HH:mm:ss");
-
-            for (var i = 0; i < listEpisode.Rating; i++) EpisodeIcons[i] = PackIconMaterialDesignKind.Star.ToString();
-            for (var i = 4; i >= listEpisode.Rating; i--)
-                EpisodeIcons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
-
-            var localSeries = Logic.LocalTvShows.Where(x => x.Name == listEpisode.Name).SingleOrDefault();
-
-            if (localSeries != null)
-            {
-                EpisodeInfoStatus = localSeries.Status.ToString();
-                EpisodeInfoAutoDownload = localSeries.AutoDownloadStatus.ToString();
-                EpisodeInfoLocalEpisodeCount = localSeries.LocalEpisodesCount.ToString();
+                LogHandler.WriteSystemLog("ListBoxSelectionChanged: " + ex.ToString(), LogLevel.Error);
             }
         }
 
@@ -1013,45 +1134,52 @@ namespace HS_Feed_Manager.ViewModels
 
         private void ToggleAutoDownloadCommand(object param)
         {
-            TvShow currentTvShow = null;
-            string listName = param as string;
-            if (listName != null && listName.Equals("LocalList"))
+            try
             {
-                currentTvShow = (TvShow) LocalListView.CurrentItem;
-                currentTvShow.AutoDownloadStatus = currentTvShow.AutoDownloadStatus.Equals(AutoDownload.On)
-                    ? AutoDownload.Off
-                    : AutoDownload.On;
-                Mediator.NotifyColleagues(MediatorGlobal.ToggleAutoDownload, currentTvShow);
-            }
-            else if (listName != null && listName.Equals("FeedList"))
-            {
-                Episode currentEpisode = (Episode) FeedListView.CurrentItem;
-                currentTvShow = Logic.LocalTvShows.SingleOrDefault(tvShow => tvShow.Name.Equals(currentEpisode.Name));
-                if (currentTvShow == null)
+                TvShow currentTvShow = null;
+                string listName = param as string;
+                if (listName != null && listName.Equals("LocalList"))
                 {
-                    currentTvShow = new TvShow()
-                    {
-                        AutoDownloadStatus = AutoDownload.On,
-                        Name = currentEpisode.Name
-                    };
-                    if (!DownloadList.Any(x => x.Name.Equals(currentEpisode.Name)))
-                        DownloadList.Add(currentEpisode);
-                }
-                else
-                {
+                    currentTvShow = (TvShow)LocalListView.CurrentItem;
                     currentTvShow.AutoDownloadStatus = currentTvShow.AutoDownloadStatus.Equals(AutoDownload.On)
                         ? AutoDownload.Off
                         : AutoDownload.On;
-                    if (currentTvShow.AutoDownloadStatus.Equals(AutoDownload.On))
+                    Mediator.NotifyColleagues(MediatorGlobal.ToggleAutoDownload, currentTvShow);
+                }
+                else if (listName != null && listName.Equals("FeedList"))
+                {
+                    Episode currentEpisode = (Episode)FeedListView.CurrentItem;
+                    currentTvShow = Logic.LocalTvShows.SingleOrDefault(tvShow => tvShow.Name.Equals(currentEpisode.Name));
+                    if (currentTvShow == null)
+                    {
+                        currentTvShow = new TvShow()
+                        {
+                            AutoDownloadStatus = AutoDownload.On,
+                            Name = currentEpisode.Name
+                        };
                         if (!DownloadList.Any(x => x.Name.Equals(currentEpisode.Name)))
                             DownloadList.Add(currentEpisode);
+                    }
+                    else
+                    {
+                        currentTvShow.AutoDownloadStatus = currentTvShow.AutoDownloadStatus.Equals(AutoDownload.On)
+                            ? AutoDownload.Off
+                            : AutoDownload.On;
+                        if (currentTvShow.AutoDownloadStatus.Equals(AutoDownload.On))
+                            if (!DownloadList.Any(x => x.Name.Equals(currentEpisode.Name)))
+                                DownloadList.Add(currentEpisode);
+                    }
                 }
+
+                if (currentTvShow != null)
+                    Mediator.NotifyColleagues(MediatorGlobal.ToggleAutoDownload, currentTvShow);
+
+                OnRefreshListViews(null);
             }
-
-            if (currentTvShow != null)
-                Mediator.NotifyColleagues(MediatorGlobal.ToggleAutoDownload, currentTvShow);
-
-            OnRefreshListViews(null);
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("ToggleAutoDownloadCommand: " + ex.ToString(), LogLevel.Error);
+            }
         }
 
         public ICommand DeleteFeedFromList
@@ -1074,26 +1202,40 @@ namespace HS_Feed_Manager.ViewModels
 
         private void DeleteFeedFromListCommand()
         {
-            if (FeedListView.CurrentItem == null)
-                return;
+            try
+            {
+                if (FeedListView.CurrentItem == null)
+                    return;
 
-            DownloadList.Remove((Episode) FeedListView.CurrentItem);
+                DownloadList.Remove((Episode)FeedListView.CurrentItem);
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("DeleteFeedFromListCommand: " + ex.ToString(), LogLevel.Error);
+            }
         }
 
         private void OnListBoxDoubleClick(object obj)
         {
-            Episode episode = (Episode)FeedListView.CurrentItem;
+            try
+            {
+                Episode episode = (Episode)FeedListView.CurrentItem;
 
-            if (episode == null)
-                return;
+                if (episode == null)
+                    return;
 
-            TvShow localTvShow = Logic.LocalTvShows.SingleOrDefault(tvShow => tvShow.Name.Equals(episode.Name));
-             if (localTvShow == null)
-                 return;
+                TvShow localTvShow = Logic.LocalTvShows.SingleOrDefault(tvShow => tvShow.Name.Equals(episode.Name));
+                if (localTvShow == null)
+                    return;
 
-            TabIndex = 1;
-            LocalListView.MoveCurrentToNext();
-            LocalListView.MoveCurrentTo(localTvShow);
+                TabIndex = 1;
+                LocalListView.MoveCurrentToNext();
+                LocalListView.MoveCurrentTo(localTvShow);
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("OnListBoxDoubleClick: " + ex.ToString(), LogLevel.Error);
+            }
         }
 
         #endregion
@@ -1120,11 +1262,18 @@ namespace HS_Feed_Manager.ViewModels
 
         private void EditLocalInfoCommand()
         {
-            if (LocalListView.CurrentItem == null)
-                return;
+            try
+            {
+                if (LocalListView.CurrentItem == null)
+                    return;
 
-            var localSeries = (TvShow) LocalListView.CurrentItem;
-            Mediator.NotifyColleagues(MediatorGlobal.UpdateFlyoutValues, localSeries);
+                var localSeries = (TvShow)LocalListView.CurrentItem;
+                Mediator.NotifyColleagues(MediatorGlobal.UpdateFlyoutValues, localSeries);
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("EditLocalInfoCommand: " + ex.ToString(), LogLevel.Error);
+            }
         }
 
         public ICommand DeleteTvShow
@@ -1158,11 +1307,18 @@ namespace HS_Feed_Manager.ViewModels
 
         private void OnDeleteTvShow(bool answer)
         {
-            if (LocalListView.CurrentItem == null)
-                return;
-            var localTvShow = (TvShow)LocalListView.CurrentItem;
-            if (answer)
-                Mediator.NotifyColleagues(MediatorGlobal.DeleteTvShow, localTvShow);
+            try
+            {
+                if (LocalListView.CurrentItem == null)
+                    return;
+                var localTvShow = (TvShow)LocalListView.CurrentItem;
+                if (answer)
+                    Mediator.NotifyColleagues(MediatorGlobal.DeleteTvShow, localTvShow);
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("OnDeleteTvShow: " + ex.ToString(), LogLevel.Error);
+            }
         }
 
         #endregion
@@ -1212,14 +1368,21 @@ namespace HS_Feed_Manager.ViewModels
 
         private void OnSelectedDownloadItem(Episode episode)
         {
-            Episode feedEpisode = Logic.FeedEpisodes.SingleOrDefault(ep =>
+            try
+            {
+                Episode feedEpisode = Logic.FeedEpisodes.SingleOrDefault(ep => 
                 ep.Name.Equals(episode.Name) && ep.EpisodeNumber.Equals(episode.EpisodeNumber));
 
-            if (feedEpisode == null)
-                return;
+                if (feedEpisode == null)
+                    return;
 
-            FeedListView.MoveCurrentToNext();
-            FeedListView.MoveCurrentTo(feedEpisode);
+                FeedListView.MoveCurrentToNext();
+                FeedListView.MoveCurrentTo(feedEpisode);
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("OnSelectedDownloadItem: " + ex.ToString(), LogLevel.Error);
+            }
         }
 
         public ICommand MoveToFirst
@@ -1242,13 +1405,20 @@ namespace HS_Feed_Manager.ViewModels
 
         private void MoveToFirstCommand()
         {
-            if (SelectedDownloadIndex < 0 || DownloadList.Count <= 0)
-                return;
+            try
+            {
+                if (SelectedDownloadIndex < 0 || DownloadList.Count <= 0)
+                    return;
 
-            var episode = DownloadList[SelectedDownloadIndex];
-            DownloadList.RemoveAt(SelectedDownloadIndex);
-            DownloadList.Insert(0, episode);
-            SelectedDownloadIndex = 0;
+                var episode = DownloadList[SelectedDownloadIndex];
+                DownloadList.RemoveAt(SelectedDownloadIndex);
+                DownloadList.Insert(0, episode);
+                SelectedDownloadIndex = 0;
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("MoveToFirstCommand: " + ex.ToString(), LogLevel.Error);
+            }
         }
 
         public ICommand MoveToLast
@@ -1271,13 +1441,20 @@ namespace HS_Feed_Manager.ViewModels
 
         private void MoveToLastCommand()
         {
-            if (SelectedDownloadIndex < 0 || DownloadList.Count <= 0)
-                return;
+            try
+            {
+                if (SelectedDownloadIndex < 0 || DownloadList.Count <= 0)
+                    return;
 
-            var episode = DownloadList[SelectedDownloadIndex];
-            DownloadList.RemoveAt(SelectedDownloadIndex);
-            DownloadList.Add(episode);
-            SelectedDownloadIndex = DownloadList.Count - 1;
+                var episode = DownloadList[SelectedDownloadIndex];
+                DownloadList.RemoveAt(SelectedDownloadIndex);
+                DownloadList.Add(episode);
+                SelectedDownloadIndex = DownloadList.Count - 1;
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("MoveToLastCommand: " + ex.ToString(), LogLevel.Error);
+            }
         }
 
         public ICommand MoveUp
@@ -1300,24 +1477,31 @@ namespace HS_Feed_Manager.ViewModels
 
         private void MoveUpCommand()
         {
-            if (SelectedDownloadIndex < 0 || DownloadList.Count <= 0)
-                return;
-
-            if (SelectedDownloadIndex - 1 >= 0)
+            try
             {
-                var episode = DownloadList[SelectedDownloadIndex];
-                if (SelectedDownloadIndex == DownloadList.Count - 1)
+                if (SelectedDownloadIndex < 0 || DownloadList.Count <= 0)
+                    return;
+
+                if (SelectedDownloadIndex - 1 >= 0)
                 {
-                    DownloadList.RemoveAt(SelectedDownloadIndex);
-                    DownloadList.Insert(SelectedDownloadIndex, episode);
-                    SelectedDownloadIndex = SelectedDownloadIndex - 1;
+                    var episode = DownloadList[SelectedDownloadIndex];
+                    if (SelectedDownloadIndex == DownloadList.Count - 1)
+                    {
+                        DownloadList.RemoveAt(SelectedDownloadIndex);
+                        DownloadList.Insert(SelectedDownloadIndex, episode);
+                        SelectedDownloadIndex = SelectedDownloadIndex - 1;
+                    }
+                    else
+                    {
+                        DownloadList.RemoveAt(SelectedDownloadIndex);
+                        DownloadList.Insert(SelectedDownloadIndex - 1, episode);
+                        SelectedDownloadIndex = SelectedDownloadIndex - 2;
+                    }
                 }
-                else
-                {
-                    DownloadList.RemoveAt(SelectedDownloadIndex);
-                    DownloadList.Insert(SelectedDownloadIndex - 1, episode);
-                    SelectedDownloadIndex = SelectedDownloadIndex - 2;
-                }
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("MoveUpCommand: " + ex.ToString(), LogLevel.Error);
             }
         }
 
@@ -1341,15 +1525,22 @@ namespace HS_Feed_Manager.ViewModels
 
         private void MoveDownCommand()
         {
-            if (SelectedDownloadIndex < 0 || DownloadList.Count <= 0)
-                return;
-
-            if (SelectedDownloadIndex + 1 < DownloadList.Count)
+            try
             {
-                var episode = DownloadList[SelectedDownloadIndex];
-                DownloadList.RemoveAt(SelectedDownloadIndex);
-                DownloadList.Insert(SelectedDownloadIndex + 1, episode);
-                SelectedDownloadIndex = SelectedDownloadIndex + 1;
+                if (SelectedDownloadIndex < 0 || DownloadList.Count <= 0)
+                    return;
+
+                if (SelectedDownloadIndex + 1 < DownloadList.Count)
+                {
+                    var episode = DownloadList[SelectedDownloadIndex];
+                    DownloadList.RemoveAt(SelectedDownloadIndex);
+                    DownloadList.Insert(SelectedDownloadIndex + 1, episode);
+                    SelectedDownloadIndex = SelectedDownloadIndex + 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("MoveDownCommand: " + ex.ToString(), LogLevel.Error);
             }
         }
 
@@ -1373,14 +1564,21 @@ namespace HS_Feed_Manager.ViewModels
 
         private void AddToListCommand()
         {
-            if (FeedListView.CurrentItem == null)
-                return;
-
-            if (!DownloadList.Any(x => x.Name == ((Episode) FeedListView.CurrentItem).Name))
+            try
             {
-                var episode = (Episode) FeedListView.CurrentItem;
-                if (episode != null)
-                    DownloadList.Add(episode);
+                if (FeedListView.CurrentItem == null)
+                    return;
+
+                if (!DownloadList.Any(x => x.Name == ((Episode)FeedListView.CurrentItem).Name))
+                {
+                    var episode = (Episode)FeedListView.CurrentItem;
+                    if (episode != null)
+                        DownloadList.Add(episode);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("AddToListCommand: " + ex.ToString(), LogLevel.Error);
             }
         }
 
@@ -1404,8 +1602,15 @@ namespace HS_Feed_Manager.ViewModels
 
         private void DeleteFromListCommand()
         {
-            if (SelectedDownloadIndex >= 0)
-                DownloadList.RemoveAt(SelectedDownloadIndex);
+            try
+            {
+                if (SelectedDownloadIndex >= 0)
+                    DownloadList.RemoveAt(SelectedDownloadIndex);
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("DeleteFromListCommand: " + ex.ToString(), LogLevel.Error);
+            }
         }
 
         public ICommand DownloadThis
@@ -1428,12 +1633,19 @@ namespace HS_Feed_Manager.ViewModels
 
         private void DownloadThisCommand()
         {
-            if (SelectedDownloadIndex < 0)
-                return;
+            try
+            {
+                if (SelectedDownloadIndex < 0)
+                    return;
 
-            Mediator.NotifyColleagues(MediatorGlobal.StartDownloadEpisodes,
-                new List<object> {DownloadList[SelectedDownloadIndex]});
-            DownloadList.Remove(DownloadList[SelectedDownloadIndex]);
+                Mediator.NotifyColleagues(MediatorGlobal.StartDownloadEpisodes,
+                    new List<object> { DownloadList[SelectedDownloadIndex] });
+                DownloadList.Remove(DownloadList[SelectedDownloadIndex]);
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("DownloadThisCommand: " + ex.ToString(), LogLevel.Error);
+            }
         }
 
         public ICommand DownloadAll
@@ -1456,20 +1668,34 @@ namespace HS_Feed_Manager.ViewModels
 
         private void DownloadAllCommand()
         {
-            Mediator.NotifyColleagues(MediatorGlobal.StartDownloadEpisodes,
+            try
+            {
+                Mediator.NotifyColleagues(MediatorGlobal.StartDownloadEpisodes,
                 new List<object>(DownloadList.ToList()));
-            DownloadList.Clear();
+                DownloadList.Clear();
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("DownloadAllCommand: " + ex.ToString(), LogLevel.Error);
+            }
         }
 
         private void OnUpdateDownloadList(object obj)
         {
-            List<object> autoEpisodes = obj as List<object>;
-            DownloadList.Clear();
-            if (autoEpisodes != null)
-                foreach (var autoEpisode in autoEpisodes)
-                {
-                    DownloadList.Add((Episode) autoEpisode);
-                }
+            try
+            {
+                List<object> autoEpisodes = obj as List<object>;
+                DownloadList.Clear();
+                if (autoEpisodes != null)
+                    foreach (var autoEpisode in autoEpisodes)
+                    {
+                        DownloadList.Add((Episode)autoEpisode);
+                    }
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("OnUpdateDownloadList: " + ex.ToString(), LogLevel.Error);
+            }
         }
 
         #endregion
@@ -1536,23 +1762,30 @@ namespace HS_Feed_Manager.ViewModels
 
         private void EpisodeTextBoxButtonCommand(object param)
         {
-            if (param == null)
-                return;
-
-            var value = param as string;
-            var localSeries = (TvShow) LocalListView.CurrentItem;
-            var episodes = new List<Episode>(localSeries.Episodes);
-
-            if (value != null && value.Equals(""))
+            try
             {
-                EpisodeList = new ObservableCollection<Episode>(episodes);
-                return;
+                if (param == null)
+                    return;
+
+                var value = param as string;
+                var localSeries = (TvShow)LocalListView.CurrentItem;
+                var episodes = new List<Episode>(localSeries.Episodes);
+
+                if (value != null && value.Equals(""))
+                {
+                    EpisodeList = new ObservableCollection<Episode>(episodes);
+                    return;
+                }
+
+                if (param is string)
+                {
+                    var episodeFiltered = episodes.Where(item => item.EpisodeNumber.ToString() == value).ToList();
+                    EpisodeList = new ObservableCollection<Episode>(episodeFiltered);
+                }
             }
-
-            if (param is string)
+            catch (Exception ex)
             {
-                var episodeFiltered = episodes.Where(item => item.EpisodeNumber.ToString() == value).ToList();
-                EpisodeList = new ObservableCollection<Episode>(episodeFiltered);
+                LogHandler.WriteSystemLog("EpisodeTextBoxButtonCommand: " + ex.ToString(), LogLevel.Error);
             }
         }
 
@@ -1683,37 +1916,44 @@ namespace HS_Feed_Manager.ViewModels
 
         private void SortEpisodeList(int value)
         {
-            var localSeries = (TvShow) LocalListView.CurrentItem;
-            var episodes = new List<Episode>(localSeries.Episodes);
-            switch (value)
+            try
             {
-                case 0:
-                    EpisodeList = new ObservableCollection<Episode>(localSeries.Episodes);
-                    break;
-                case 1:
-                    episodes.Sort((ep1, ep2) => ep1.EpisodeNumber.CompareTo(ep2.EpisodeNumber));
-                    EpisodeList = new ObservableCollection<Episode>(episodes);
-                    break;
-                case 2:
-                    episodes.Sort((ep1, ep2) => ep2.EpisodeNumber.CompareTo(ep1.EpisodeNumber));
-                    EpisodeList = new ObservableCollection<Episode>(episodes);
-                    break;
-                case 3:
-                    episodes.Sort((ep1, ep2) => ep1.Rating.CompareTo(ep2.Rating));
-                    EpisodeList = new ObservableCollection<Episode>(episodes);
-                    break;
-                case 4:
-                    episodes.Sort((ep1, ep2) => ep2.Rating.CompareTo(ep1.Rating));
-                    EpisodeList = new ObservableCollection<Episode>(episodes);
-                    break;
-                case 5:
-                    episodes.Sort((ep1, ep2) => ep1.DownloadDate.CompareTo(ep2.DownloadDate));
-                    EpisodeList = new ObservableCollection<Episode>(episodes);
-                    break;
-                case 6:
-                    episodes.Sort((ep1, ep2) => ep2.DownloadDate.CompareTo(ep1.DownloadDate));
-                    EpisodeList = new ObservableCollection<Episode>(episodes);
-                    break;
+                var localSeries = (TvShow)LocalListView.CurrentItem;
+                var episodes = new List<Episode>(localSeries.Episodes);
+                switch (value)
+                {
+                    case 0:
+                        EpisodeList = new ObservableCollection<Episode>(localSeries.Episodes);
+                        break;
+                    case 1:
+                        episodes.Sort((ep1, ep2) => ep1.EpisodeNumber.CompareTo(ep2.EpisodeNumber));
+                        EpisodeList = new ObservableCollection<Episode>(episodes);
+                        break;
+                    case 2:
+                        episodes.Sort((ep1, ep2) => ep2.EpisodeNumber.CompareTo(ep1.EpisodeNumber));
+                        EpisodeList = new ObservableCollection<Episode>(episodes);
+                        break;
+                    case 3:
+                        episodes.Sort((ep1, ep2) => ep1.Rating.CompareTo(ep2.Rating));
+                        EpisodeList = new ObservableCollection<Episode>(episodes);
+                        break;
+                    case 4:
+                        episodes.Sort((ep1, ep2) => ep2.Rating.CompareTo(ep1.Rating));
+                        EpisodeList = new ObservableCollection<Episode>(episodes);
+                        break;
+                    case 5:
+                        episodes.Sort((ep1, ep2) => ep1.DownloadDate.CompareTo(ep2.DownloadDate));
+                        EpisodeList = new ObservableCollection<Episode>(episodes);
+                        break;
+                    case 6:
+                        episodes.Sort((ep1, ep2) => ep2.DownloadDate.CompareTo(ep1.DownloadDate));
+                        EpisodeList = new ObservableCollection<Episode>(episodes);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("SortEpisodeList: " + ex.ToString(), LogLevel.Error);
             }
         }
 

@@ -9,7 +9,6 @@ namespace HS_Feed_Manager.Core.Handler
 {
     public class FileHandler
     {
-        // TODO: Better Logging
         #region Public Properties
 
         public string LocalPath1 { get; set; }
@@ -62,26 +61,32 @@ namespace HS_Feed_Manager.Core.Handler
             }
             catch (Exception e)
             {
-                // TODO: Write in error Log!
-                Console.WriteLine(e);
+                OnExceptionEvent(e);
                 return null;
             }
         }
 
         public void OpenStandardProgram(string path, bool islocalPath)
         {
-            if (islocalPath)
+            try
             {
-                if (File.Exists(path))
+                if (islocalPath)
+                {
+                    if (File.Exists(path))
+                    {
+                        ProcessStartInfo sInfo = new ProcessStartInfo(path);
+                        Process.Start(sInfo);
+                    }
+                }
+                else
                 {
                     ProcessStartInfo sInfo = new ProcessStartInfo(path);
                     Process.Start(sInfo);
                 }
             }
-            else
+            catch (Exception e)
             {
-                ProcessStartInfo sInfo = new ProcessStartInfo(path);
-                Process.Start(sInfo);
+                OnExceptionEvent(e);
             }
         }
 
@@ -156,11 +161,19 @@ namespace HS_Feed_Manager.Core.Handler
         /// <returns>Returns null if something went wrong.</returns>
         public string ReadAllText(string fileName, string path = "")
         {
-            FileInfo fileInfo = new FileInfo(path + fileName);
-            if (!fileInfo.Exists)
-                return null;
+            try
+            {
+                FileInfo fileInfo = new FileInfo(path + fileName);
+                if (!fileInfo.Exists)
+                    return null;
 
-            return File.ReadAllText(path + fileName);
+                return File.ReadAllText(path + fileName);
+            }
+            catch (Exception e)
+            {
+                OnExceptionEvent(e);
+                return null;
+            }
         }
 
         /// <summary>
@@ -209,8 +222,7 @@ namespace HS_Feed_Manager.Core.Handler
                     double episodeNumber = _fileNameParser.GetEpisodeNumberFromFeedItem(fileInfo.Name);
                     if (episodeNumber.Equals(-1))
                     {
-                        // TODO: Better Logging
-                        Console.WriteLine("Can't parse Local Episode-number from: " + fileInfo.Name);
+                        OnExceptionEvent(new FileFormatException("Can't parse Local Episode-number from: " + fileInfo.Name));
                         continue;
                     }
                     else
@@ -237,55 +249,83 @@ namespace HS_Feed_Manager.Core.Handler
             }
             catch (Exception e)
             {
-                // TODO: Write in error Log!
-                Console.WriteLine(e);
+                OnExceptionEvent(e);
                 return null;
             }
         }
 
         private IEnumerable<FileInfo> GetLocalFileNames(string localPath1)
         {
-            List<FileInfo> fileInfos = new List<FileInfo>();
-            foreach (var fileEnding in FileEndings)
+            try
             {
-                DirectoryInfo d = new DirectoryInfo(localPath1);
-                FileInfo[] files = d.GetFiles(fileEnding);
-                foreach (var fileInfo in files)
+                List<FileInfo> fileInfos = new List<FileInfo>();
+                foreach (var fileEnding in FileEndings)
                 {
-                    fileInfos.Add(fileInfo);
+                    DirectoryInfo d = new DirectoryInfo(localPath1);
+                    FileInfo[] files = d.GetFiles(fileEnding);
+                    foreach (var fileInfo in files)
+                    {
+                        fileInfos.Add(fileInfo);
+                    }
                 }
-            }
 
-            return fileInfos;
+                return fileInfos;
+            }
+            catch (Exception e)
+            {
+                OnExceptionEvent(e);
+                return null;
+            }
         }
 
         public void DeleteEpisode(Episode episode)
         {
-            if (File.Exists(episode.LocalPath))
+            try
             {
-                File.Delete(episode.LocalPath);
+                if (File.Exists(episode.LocalPath))
+                {
+                    File.Delete(episode.LocalPath);
+                }
+            }
+            catch (Exception e)
+            {
+                OnExceptionEvent(e);
             }
         }
 
         public void DeleteTvShow(TvShow tvShow)
         {
-            if (tvShow != null)
+            try
             {
-                foreach (var tvShowEpisode in tvShow.Episodes)
+                if (tvShow != null)
                 {
-                    if (File.Exists(tvShowEpisode.LocalPath))
+                    foreach (var tvShowEpisode in tvShow.Episodes)
                     {
-                        File.Delete(tvShowEpisode.LocalPath);
+                        if (File.Exists(tvShowEpisode.LocalPath))
+                        {
+                            File.Delete(tvShowEpisode.LocalPath);
+                        }
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                OnExceptionEvent(e);
             }
         }
 
         public void OpenFolder(Episode episode)
         {
-            if (File.Exists(episode.LocalPath))
+            try
             {
-                Process.Start("explorer.exe", "/select, " + episode.LocalPath);
+                if (File.Exists(episode.LocalPath))
+                {
+                    Process.Start("explorer.exe", "/select, " + episode.LocalPath);
+                }
+            }
+            catch (Exception e)
+            {
+                OnExceptionEvent(e);
             }
         }
 

@@ -20,5 +20,7 @@ namespace HS_Feed_Manager.Core.GlobalValues
         public static readonly string NameBackRegex = @" - [0-9]*.[0-9] \[720p].mkv";
         public static readonly string NumberFrontRegex = @"\[HorribleSubs] .* - ";
         public static readonly string NumberBackRegex = @" \[720p].mkv";
+
+        public static string DateTimeFormat = "yyyy-MM-dd HH:mm:ss.fff";
     }
 }

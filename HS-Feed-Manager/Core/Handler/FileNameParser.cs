@@ -1,8 +1,8 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 
 namespace HS_Feed_Manager.Core.Handler
 {
-    // TODO: Better Logging
     public class FileNameParser
     {
         #region Public Properties
@@ -14,37 +14,45 @@ namespace HS_Feed_Manager.Core.Handler
 
         #endregion
 
-        public FileNameParser()
-        {
-            //NameFrontRegex = @"\[HorribleSubs] ";
-            //NameBackRegex = @" - [0-9]*.[0-9] \[720p].mkv";
-            //NumberFrontRegex = @"\[HorribleSubs] .* - ";
-            //NumberBackRegex = @" \[720p].mkv";
-        }
-
         public string GetNameFromFeedItem(string feedTitle)
         {
-            string temp = Regex.Replace(feedTitle, NameFrontRegex, "");
-            return Regex.Replace(temp, NameBackRegex, "");
+            try
+            {
+                string temp = Regex.Replace(feedTitle, NameFrontRegex, "");
+                return Regex.Replace(temp, NameBackRegex, "");
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("GetNameFromFeedItem: " + ex.ToString(), LogLevel.Error);
+                return null;
+            }
         }
 
         public double GetEpisodeNumberFromFeedItem(string feedTitle)
         {
-            string temp = Regex.Replace(feedTitle, NumberFrontRegex, "");
-            string value = Regex.Replace(temp, NumberBackRegex, "");
+            try
+            {
+                string temp = Regex.Replace(feedTitle, NumberFrontRegex, "");
+                string value = Regex.Replace(temp, NumberBackRegex, "");
 
-            if (value.Contains("v"))
-            {
-                value = value.Replace("v", ".");
+                if (value.Contains("v"))
+                {
+                    value = value.Replace("v", ".");
+                }
+                if (value.Contains("."))
+                {
+                    value = value.Replace(".", ",");
+                }
+                if (double.TryParse(value, out double returnValue))
+                    return returnValue;
+                else
+                    return -1;
             }
-            if (value.Contains("."))
+            catch (Exception ex)
             {
-                value = value.Replace(".", ",");
-            }
-            if (double.TryParse(value, out double returnValue))
-                return returnValue;
-            else
+                LogHandler.WriteSystemLog("GetEpisodeNumberFromFeedItem: " + ex.ToString(), LogLevel.Error);
                 return -1;
+            }
         }
     }
 }

@@ -9,34 +9,50 @@ namespace HS_Feed_Manager.Core.Handler
     {
         public static string GetSerializedConfigXml(Type type, object config)
         {
-            XmlWriterSettings settings = new XmlWriterSettings
+            try
             {
-                Indent = true,
-                IndentChars = "  ",
-                NewLineChars = "\r\n",
-                NewLineHandling = NewLineHandling.Replace
-            };
-
-            XmlSerializer xmlSerializer = new XmlSerializer(type);
-            using (var stringWriter = new StringWriter())
-            {
-                using (XmlWriter writer = XmlWriter.Create(stringWriter, settings))
+                XmlWriterSettings settings = new XmlWriterSettings
                 {
-                    if (config == null)
-                        return null;
-                    else
-                        xmlSerializer.Serialize(writer, config);
-                    return stringWriter.ToString();
+                    Indent = true,
+                    IndentChars = "  ",
+                    NewLineChars = "\r\n",
+                    NewLineHandling = NewLineHandling.Replace
+                };
+
+                XmlSerializer xmlSerializer = new XmlSerializer(type);
+                using (var stringWriter = new StringWriter())
+                {
+                    using (XmlWriter writer = XmlWriter.Create(stringWriter, settings))
+                    {
+                        if (config == null)
+                            return null;
+                        else
+                            xmlSerializer.Serialize(writer, config);
+                        return stringWriter.ToString();
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("GetSerializedConfigXml: " + ex.ToString(), LogLevel.Error);
+                return null;
             }
         }
 
         public static object GetDeserializedConfigObject(Type type, string xmlDocumentText)
         {
-            XmlSerializer serializer = new XmlSerializer(type);
-            using (StringReader reader = new StringReader(xmlDocumentText))
+            try
             {
-                return serializer.Deserialize(reader);
+                XmlSerializer serializer = new XmlSerializer(type);
+                using (StringReader reader = new StringReader(xmlDocumentText))
+                {
+                    return serializer.Deserialize(reader);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("GetDeserializedConfigObject: " + ex.ToString(), LogLevel.Error);
+                return null;
             }
         }
     }

@@ -10,7 +10,6 @@ namespace HS_Feed_Manager.Core.Handler
 {
     public class DbHandler
     {
-        // TODO: Better Logging
         public static List<TvShow> LocalTvShows => _localTvShows;
 
         private static List<TvShow> _localTvShows;
@@ -26,9 +25,9 @@ namespace HS_Feed_Manager.Core.Handler
                 }
                 UpdateLocalTvShows();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e);
+                LogHandler.WriteSystemLog("DbHandler: " + ex.ToString(), LogLevel.Error);
             }
         }
 
@@ -48,9 +47,9 @@ namespace HS_Feed_Manager.Core.Handler
                     db.SaveChanges();
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e);
+                LogHandler.WriteSystemLog("UpdateTvShow: " + ex.ToString(), LogLevel.Error);
             }
         }
 
@@ -68,9 +67,9 @@ namespace HS_Feed_Manager.Core.Handler
                     db.SaveChanges();
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e);
+                LogHandler.WriteSystemLog("UpdateEpisode: " + ex.ToString(), LogLevel.Error);
             }
         }
 
@@ -142,9 +141,9 @@ namespace HS_Feed_Manager.Core.Handler
 
                 UpdateLocalTvShows();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e);
+                LogHandler.WriteSystemLog("SyncLocalTvShows: " + ex.ToString(), LogLevel.Error);
             }
         }
 
@@ -160,9 +159,9 @@ namespace HS_Feed_Manager.Core.Handler
                 if(updateNow)
                     UpdateLocalTvShows();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e);
+                LogHandler.WriteSystemLog("AddTvShow: " + ex.ToString(), LogLevel.Error);
             }
         }
 
@@ -186,9 +185,9 @@ namespace HS_Feed_Manager.Core.Handler
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e);
+                LogHandler.WriteSystemLog("DeleteEpisode: " + ex.ToString(), LogLevel.Error);
             }
         }
 
@@ -212,9 +211,9 @@ namespace HS_Feed_Manager.Core.Handler
                 }
                 UpdateLocalTvShows();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e);
+                LogHandler.WriteSystemLog("DeleteTvShow: " + ex.ToString(), LogLevel.Error);
             }
         }
 
@@ -224,12 +223,19 @@ namespace HS_Feed_Manager.Core.Handler
 
         private void UpdateLocalTvShows()
         {
-            using (var db = new ApplicationDbContext())
+            try
             {
-                _localTvShows.Clear();
-                _localTvShows.AddRange(db.TvShows
-                    .Include(tvShow => tvShow.Episodes)
-                    .ToList());
+                using (var db = new ApplicationDbContext())
+                {
+                    _localTvShows.Clear();
+                    _localTvShows.AddRange(db.TvShows
+                        .Include(tvShow => tvShow.Episodes)
+                        .ToList());
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("UpdateLocalTvShows: " + ex.ToString(), LogLevel.Error);
             }
         }
 

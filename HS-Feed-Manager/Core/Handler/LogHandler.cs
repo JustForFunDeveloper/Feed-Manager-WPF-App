@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using HS_Feed_Manager.Core.GlobalValues;
-using MahApps.Metro.Controls;
 
 namespace HS_Feed_Manager.Core.Handler
 {
@@ -18,7 +17,7 @@ namespace HS_Feed_Manager.Core.Handler
 
     public class LogHandler
     {
-        #region Private Methods
+        #region Private Properties
 
         private static LogLevel _logLevel = LogLevel.Debug;
 
@@ -97,8 +96,15 @@ namespace HS_Feed_Manager.Core.Handler
         /// <param name="logLevel">The <see cref="LogLevel"/> of this message.</param>
         public static void WriteSystemLog(string message, LogLevel logLevel)
         {
-            string text = message.Replace("'", "\"");
-            WriteErrorToStandardFile(text, logLevel);
+            try
+            {
+                string text = message.Replace("'", "\"");
+                WriteErrorToStandardFile(text, logLevel);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
         #endregion
@@ -111,23 +117,30 @@ namespace HS_Feed_Manager.Core.Handler
         /// <param name="logLevel"></param>
         private static void UpdateLogCounter(LogLevel logLevel)
         {
-            switch (logLevel)
+            try
             {
-                case LogLevel.Debug:
-                    Interlocked.Increment(ref _debugCounter);
-                    break;
-                case LogLevel.Warning:
-                    Interlocked.Increment(ref _warningCounter);
-                    break;
-                case LogLevel.Info:
-                    Interlocked.Increment(ref _infoCounter);
-                    break;
-                case LogLevel.Error:
-                    Interlocked.Increment(ref _errorCounter);
-                    break;
-            }
+                switch (logLevel)
+                {
+                    case LogLevel.Debug:
+                        Interlocked.Increment(ref _debugCounter);
+                        break;
+                    case LogLevel.Warning:
+                        Interlocked.Increment(ref _warningCounter);
+                        break;
+                    case LogLevel.Info:
+                        Interlocked.Increment(ref _infoCounter);
+                        break;
+                    case LogLevel.Error:
+                        Interlocked.Increment(ref _errorCounter);
+                        break;
+                }
 
-            OnCounterChangedEvent();
+                OnCounterChangedEvent();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
         /// <summary>
@@ -137,14 +150,21 @@ namespace HS_Feed_Manager.Core.Handler
         /// <param name="logLevel"></param>
         private static void WriteErrorToStandardFile(string text, LogLevel logLevel)
         {
-            if (logLevel >= _logLevel)
+            try
             {
-                _fileHandler.CreateFileIfNotExist(GetCurrentLogName());
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.Append(DateTime.Now).Append(";").Append(LogLevel.Error).Append(";").Append(text);
-                _fileHandler.AppendText(GetCurrentLogName(), stringBuilder.ToString(),
-                    LogicConstants.LogFilePath);
-                UpdateLogCounter(logLevel);
+                if (logLevel >= _logLevel)
+                {
+                    _fileHandler.CreateFileIfNotExist(GetCurrentLogName());
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.Append(DateTime.Now).Append(";").Append(LogLevel.Error).Append(";").Append(text);
+                    _fileHandler.AppendText(GetCurrentLogName(), stringBuilder.ToString(),
+                        LogicConstants.LogFilePath);
+                    UpdateLogCounter(logLevel);
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
             }
         }
 

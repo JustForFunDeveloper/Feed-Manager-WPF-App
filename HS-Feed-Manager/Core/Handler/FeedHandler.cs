@@ -6,7 +6,6 @@ using HS_Feed_Manager.DataModels.DbModels;
 
 namespace HS_Feed_Manager.Core.Handler
 {
-    // TODO: Better Logging
     public class FeedHandler
     {
         #region Public Properties
@@ -48,8 +47,7 @@ namespace HS_Feed_Manager.Core.Handler
                     double episodeNumber = _fileNameParser.GetEpisodeNumberFromFeedItem(syndicationItem.Title.Text);
                     if (episodeNumber.Equals(-1))
                     {
-                        // TODO: Create better Logging
-                        Console.WriteLine("Can't parse Feed Episode-number from: " + syndicationItem.Title.Text);
+                        throw new FormatException("Can't parse Feed Episode-number from: " + syndicationItem.Title.Text);
                     }
                     else
                     {
@@ -61,10 +59,9 @@ namespace HS_Feed_Manager.Core.Handler
 
                 return episodes;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                // TODO: Write in error Log!
-                Console.WriteLine(e);
+                LogHandler.WriteSystemLog("DownloadFeedList: " + ex.ToString(), LogLevel.Error);
                 return null;
             }
         }
