@@ -10,6 +10,10 @@ If you have hundreds of local files you will need to manage them.
 ![](https://img.shields.io/badge/Microsoft.EntityFrameworkCore.Sqlite.Core-2.2.4-orange.svg) <br/>
 ![](https://img.shields.io/badge/.NET_Framework-4.6.1-yellow.svg) <br/>
 
+## Issues
+[![](https://img.shields.io/github/issues-raw/JustForFunDeveloper/Feed-Manager-WPF-App.svg?style=flat-square)](https://github.com/JustForFunDeveloper/Feed-Manager-WPF-App/issues)
+[![](https://img.shields.io/github/issues-closed-raw/JustForFunDeveloper/Feed-Manager-WPF-App.svg?style=flat-square)](https://github.com/JustForFunDeveloper/Feed-Manager-WPF-App/issues)
+
 ## Release v0.1.1.0-beta is out now!
 
 Find the latest relase here =>
