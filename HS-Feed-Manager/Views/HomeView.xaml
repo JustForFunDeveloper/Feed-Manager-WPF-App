@@ -130,6 +130,7 @@
         </Style>
 
         <ValueConverter:FirstEpisodeConverter x:Key="FirstEpisodeConverter" />
+        <ValueConverter:FirstDownloadedItemOfLastDownloadDay x:Key="FirstDownloadedItemOfLastDownloadDay" />
     </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding
@@ -491,6 +492,7 @@
                 </mah:MetroTabItem>
                 <mah:MetroTabItem Header="Local List">
                     <ListBox
+                        x:Name="LocalListBox"
                         Margin="0,5,0,0"
                         IsSynchronizedWithCurrentItem="True"
                         ItemsSource="{Binding LocalListView}"
@@ -498,17 +500,27 @@
                         Style="{DynamicResource VirtualisedMetroListBox}">
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="{x:Type models:TvShow}">
-                                <TextBlock>
+                                <TextBlock x:Name="LocalTextBlock">
                                     <TextBlock.Text>
                                         <MultiBinding StringFormat="{}{0}">
                                             <Binding Mode="OneWay" Path="Name" />
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding TvShowId, Mode=OneWay, Converter={StaticResource FirstDownloadedItemOfLastDownloadDay}}" Value="true">
+                                        <Setter TargetName="LocalTextBlock" Property="TextBlock.Foreground" Value="#00c853" />
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                         <ListBox.ContextMenu>
                             <ContextMenu>
+                                <MenuItem
+                                    Margin="3,0,0,0"
+                                    Command="{Binding CopyTvShowName}"
+                                    Header="Copy Name"
+                                    Icon="{iconPacks:Material Kind=ContentCopy}" />
                                 <MenuItem
                                     Margin="3,0,0,0"
                                     Command="{Binding ToggleAutoDownload}"

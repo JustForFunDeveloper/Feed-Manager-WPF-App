@@ -8,7 +8,7 @@
     <ProjectGuid>{30D3090B-5662-4C1D-BEDE-9D35786FA762}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>HS_Feed_Manager</RootNamespace>
-    <AssemblyName>HS-Feed-Manager</AssemblyName>
+    <AssemblyName>Feed-Manager</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -227,6 +227,7 @@
       <DependentUpon>20190417190210_AddNewStatusUndefined.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\ApplicationDbContextModelSnapshot.cs" />
+    <Compile Include="ValueConverter\FirstDownloadedItemOfLastDownloadDay.cs" />
     <Compile Include="ValueConverter\FirstEpisodeConverter.cs" />
     <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\Handler\MediatorGlobal.cs" />
@@ -353,6 +354,9 @@
     <Resource Include="Ressources\Help\Menu.png" />
     <Resource Include="Ressources\Help\Sorting Local.png" />
     <Resource Include="Ressources\Help\Sorting_Feed.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Ressources\Help\Settings.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -4,13 +4,15 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="5000"
+    d:DesignHeight="7000"
     d:DesignWidth="1200"
     mc:Ignorable="d">
     <Grid>
         <ScrollViewer>
             <Grid>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -87,7 +89,7 @@
                         If the files will be local deleted the sync will remove the path entry in the database of this specific episode. All other information
                         will be still available.<LineBreak /><LineBreak />
 
-                        <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Local Information|Episode Information / Info Panel:</Span> <LineBreak />
+                        <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Local|Episode Information / Info Panel:</Span> <LineBreak />
                         A Left-Click in the &quot;Local List&quot; will update the information in the &quot;Info Panel&quot; on the right side.
                         This information can be edited by a Right-Click which will open the context menu and click the &quot;Edit Local Info&quot; button.
                         If an episode in the &quot;Episode List&quot; is clicked it will show more specific data about this file.<LineBreak /><LineBreak />
@@ -137,11 +139,11 @@
                         Once pressed it will start the synchronization of all local files and will be busy for a bit. In the meantime the button
                         is red and can't be pressed again until the synchronization is finished.<LineBreak /><LineBreak />
 
-                        <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Add Feed to Download / Remove Feed from Download</Span> <LineBreak />
+                        <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Add|Remove Feed from Download:</Span> <LineBreak />
                         The add button will add the selected episode of the &quot;Feed List&quot; to the &quot;Download List&quot;. The remove button will remove the selected episode in the &quot;Download List&quot;
                         from the &quot;Download List&quot;.<LineBreak /><LineBreak />
 
-                        <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Start Episode Download</Span> <LineBreak />
+                        <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Start Episode Download:</Span> <LineBreak />
                         This button will start the download of all episodes in the &quot;Download List&quot; in the given order. The episode will be downloaded and the
                         information about this episode will be stored in the database. The correct file path will be loaded when a new &quot;Search Local Folders&quot; event is triggered.
                         Since the program doesn't know when the download will be finished. The download is basically a torrent magnet link stored in the feed, which will
@@ -345,6 +347,47 @@
                         TextWrapping="Wrap">
                         <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Edit Flyout:</Span> <LineBreak />
                         The Flyouts will appear as soon an edit menu button is pressed. Those information will be saved in the database.<LineBreak /><LineBreak />
+                    </TextBlock>
+                </Grid>
+                <TextBlock
+                    Grid.Row="12"
+                    HorizontalAlignment="Center"
+                    FontSize="50"
+                    Foreground="{DynamicResource AccentColorBrush}"
+                    Text="Settings" />
+                <Grid Grid.Row="13">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Image
+                            Grid.Column="0"
+                            Margin="5"
+                            VerticalAlignment="Center"
+                            Source="../Ressources/Help/Settings.png" />
+                    </Grid>
+                    <TextBlock
+                        Grid.Column="0"
+                        Margin="30"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        FontSize="15"
+                        TextWrapping="Wrap">
+                        <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">XML File:</Span> <LineBreak />
+                        The following input parameter are all saved in  the &quot;config.xml&quot; in the bin folder. The settings are loaded at startup. You can either change the file or change the parameter in the program itself.
+                        If you change the parameter here the changes will be activated immediately.<LineBreak /><LineBreak />
+                        <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Local Path Settings:</Span> <LineBreak />
+                        In the local path settings the &quot;File Endings&quot; indicate which type of file should be searched for in the given &quot;Local Paths&quot; folders. Use ';' to separate multiple file types.<LineBreak /><LineBreak />
+                        <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Feed Link and Regex Settings:</Span> <LineBreak />
+                        The &quot;Feed Url&quot; is the given RSS Atom Feed Link which is used to get all necessary information from the feed.<LineBreak />
+                        &quot;Regex Name&quot; is a regex which is used to get the Name from the File Name (=Feed Name) and &quot;Regex Number&quot; is a regex to get the episode number from the File Name (=Feed Name).<LineBreak />
+                        The &quot;Front&quot; and &quot;Back&quot; regex are used in this order to get rid of all unnecessary chars until only the name or number is left in the string.<LineBreak /><LineBreak />
+                        <Span FontSize="20" Foreground="{DynamicResource AccentColorBrush}">Log:</Span> <LineBreak />
+                        All logs are written to a file ([Month].[Year]_log.txt) and are located in the bin folder. If you press &quot;refresh&quot; the log file will be read and displayed here.<LineBreak /><LineBreak />
                     </TextBlock>
                 </Grid>
             </Grid>

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28803.156
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HS-Feed-Manager", "HS-Feed-Manager\HS-Feed-Manager.csproj", "{30D3090B-5662-4C1D-BEDE-9D35786FA762}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Feed-Manager", "HS-Feed-Manager\Feed-Manager.csproj", "{30D3090B-5662-4C1D-BEDE-9D35786FA762}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1A93AFF0-97DE-4946-B5CD-CED10F5184BD}"
 	ProjectSection(SolutionItems) = preProject

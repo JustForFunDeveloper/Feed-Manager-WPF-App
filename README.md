@@ -1,16 +1,23 @@
-# HS-Feed-Suite
+# Feed-Manager
 Download RSS Feeds, save them in multiple locations, rate them and download youre favourite shows automatically.
 Manage youre shows in a nice and easy way. Start to play them via the app and never use the slow explorer.exe anymore.
 If you have hundreds of local files you will need to manage them.
 
 ## Libraries
-![https://github.com/JustForFunDeveloper/HS-Feed-Suite](https://img.shields.io/badge/HS_Feed_Suite_Beta-0.1.1.0-green.svg) <br/>
-![https://github.com/MahApps/MahApps.Metro](https://img.shields.io/badge/MahApps.Metro-2.0.0_alpha0262-blue.svg)
-![https://github.com/MahApps/MahApps.Metro.IconPacks](https://img.shields.io/badge/MahApps.Metro.IconPacks-3.0.0_alpha0141-blue.svg) <br/>
+[![](https://img.shields.io/badge/Feed_Manager-0.1.2.0_beta-green.svg)](https://github.com/JustForFunDeveloper/HS-Feed-Suite) <br/>
+[![](https://img.shields.io/badge/MahApps.Metro-2.0.0_alpha0262-blue.svg)](https://github.com/MahApps/MahApps.Metro)
+[![](https://img.shields.io/badge/MahApps.Metro.IconPacks-3.0.0_alpha0141-blue.svg)](https://github.com/MahApps/MahApps.Metro.IconPacks) <br/>
 ![](https://img.shields.io/badge/Microsoft.EntityFrameworkCore.Sqlite.Core-2.2.4-orange.svg) <br/>
 ![](https://img.shields.io/badge/.NET_Framework-4.6.1-yellow.svg) <br/>
 
-## UI Promo Video Beta 0.1.0.0
+## Release v0.1.1.0-beta is out now!
+
+Find the latest relase here =>
+[<b>Release</b>](https://github.com/JustForFunDeveloper/Feed-Manager-WPF-App/releases)
+
+Detaild usage description is available in the App under "Help" or here => [<b>Homepage Feed Manager</b>](https://www.die-technik-und-ich.at/?page_id=557)
+
+## UI Promo Video  v0.1.0.0-beta
 A small video about the usage and design of the current version. The first release is coming soon.
 
 [![Promo-Video](./Pictures/Promo-Video.png)](https://www.die-technik-und-ich.at/wp-content/uploads/2019/04/17-18-04-2019_21_01_47.mp4)

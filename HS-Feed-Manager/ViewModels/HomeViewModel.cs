@@ -69,6 +69,7 @@ namespace HS_Feed_Manager.ViewModels
         private ICommand _downloadFeed;
         private ICommand _searchLocalFolder;
 
+        private ICommand _copyTvShowName;
         private ICommand _textBoxButtonCmd;
         private ICommand _editLocalInfo;
         private ICommand _toggleAutoDownload;
@@ -209,7 +210,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("OnCustomDialogReturn: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("OnCustomDialogReturn: " + ex, LogLevel.Error);
             }
         }
 
@@ -351,7 +352,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("TextBoxButtonCommand: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("TextBoxButtonCommand: " + ex, LogLevel.Error);
             }
         }
 
@@ -398,7 +399,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("InitialiseListViews: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("InitialiseListViews: " + ex, LogLevel.Error);
             }
         }
 
@@ -509,7 +510,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("SortThisList: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("SortThisList: " + ex, LogLevel.Error);
             }
         }
 
@@ -532,7 +533,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("AutowDownloadFilterOn: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("AutowDownloadFilterOn: " + ex, LogLevel.Error);
                 return false;
             }
         }
@@ -556,7 +557,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("AutowDownloadFilterOff: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("AutowDownloadFilterOff: " + ex, LogLevel.Error);
                 return false;
             }
         }
@@ -569,7 +570,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("ExistsLocally: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("ExistsLocally: " + ex, LogLevel.Error);
                 return false;
             }
         }
@@ -582,7 +583,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("DoesntExistsLocally: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("DoesntExistsLocally: " + ex, LogLevel.Error);
                 return false;
             }
         }
@@ -605,7 +606,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("StatusFilterUndefined: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("StatusFilterUndefined: " + ex, LogLevel.Error);
                 return false;
             }
         }
@@ -628,7 +629,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("StatusFilterOngoing: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("StatusFilterOngoing: " + ex, LogLevel.Error);
                 return false;
             }
         }
@@ -651,7 +652,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("StatusFilterNew: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("StatusFilterNew: " + ex, LogLevel.Error);
                 return false;
 
             }
@@ -675,7 +676,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("StatusFilterFinished: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("StatusFilterFinished: " + ex, LogLevel.Error);
                 return false;
             }
         }
@@ -702,7 +703,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("SearchFilter: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("SearchFilter: " + ex, LogLevel.Error);
                 return false;
             }
         }
@@ -756,7 +757,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("FeedListViewCurrentChanged: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("FeedListViewCurrentChanged: " + ex, LogLevel.Error);
             }
         }
 
@@ -799,7 +800,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("LocalListViewCurrentChanged: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("LocalListViewCurrentChanged: " + ex, LogLevel.Error);
             }
         }
 
@@ -842,7 +843,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("ListBoxSelectionChanged: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("ListBoxSelectionChanged: " + ex, LogLevel.Error);
             }
         }
 
@@ -1178,7 +1179,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("ToggleAutoDownloadCommand: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("ToggleAutoDownloadCommand: " + ex, LogLevel.Error);
             }
         }
 
@@ -1211,7 +1212,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("DeleteFeedFromListCommand: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("DeleteFeedFromListCommand: " + ex, LogLevel.Error);
             }
         }
 
@@ -1234,7 +1235,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("OnListBoxDoubleClick: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("OnListBoxDoubleClick: " + ex, LogLevel.Error);
             }
         }
 
@@ -1242,6 +1243,39 @@ namespace HS_Feed_Manager.ViewModels
 
         #region Local List
 
+        public ICommand CopyTvShowName
+        {
+            get
+            {
+                if (_copyTvShowName == null)
+                    _copyTvShowName = new RelayCommand(
+                        param => CopyTvShowNameCommand(),
+                        param => CanCopyTvShowNameCommand()
+                    );
+                return _copyTvShowName;
+            }
+        }
+
+        private bool CanCopyTvShowNameCommand()
+        {
+            return true;
+        }
+
+        private void CopyTvShowNameCommand()
+        {
+            try
+            {
+                if (LocalListView.CurrentItem == null)
+                    return;
+
+                var localSeries = (TvShow)LocalListView.CurrentItem;
+                Clipboard.SetText(localSeries.Name);
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("CopyTvShowNameCommand: " + ex, LogLevel.Error);
+            }
+        }
         public ICommand EditLocalInfo
         {
             get
@@ -1272,7 +1306,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("EditLocalInfoCommand: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("EditLocalInfoCommand: " + ex, LogLevel.Error);
             }
         }
 
@@ -1317,7 +1351,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("OnDeleteTvShow: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("OnDeleteTvShow: " + ex, LogLevel.Error);
             }
         }
 
@@ -1370,6 +1404,9 @@ namespace HS_Feed_Manager.ViewModels
         {
             try
             {
+                if (null == episode)
+                    return;
+
                 Episode feedEpisode = Logic.FeedEpisodes.SingleOrDefault(ep => 
                 ep.Name.Equals(episode.Name) && ep.EpisodeNumber.Equals(episode.EpisodeNumber));
 
@@ -1381,7 +1418,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("OnSelectedDownloadItem: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("OnSelectedDownloadItem: " + ex, LogLevel.Error);
             }
         }
 
@@ -1417,7 +1454,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("MoveToFirstCommand: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("MoveToFirstCommand: " + ex, LogLevel.Error);
             }
         }
 
@@ -1453,7 +1490,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("MoveToLastCommand: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("MoveToLastCommand: " + ex, LogLevel.Error);
             }
         }
 
@@ -1501,7 +1538,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("MoveUpCommand: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("MoveUpCommand: " + ex, LogLevel.Error);
             }
         }
 
@@ -1540,7 +1577,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("MoveDownCommand: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("MoveDownCommand: " + ex, LogLevel.Error);
             }
         }
 
@@ -1578,7 +1615,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("AddToListCommand: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("AddToListCommand: " + ex, LogLevel.Error);
             }
         }
 
@@ -1609,7 +1646,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("DeleteFromListCommand: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("DeleteFromListCommand: " + ex, LogLevel.Error);
             }
         }
 
@@ -1644,7 +1681,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("DownloadThisCommand: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("DownloadThisCommand: " + ex, LogLevel.Error);
             }
         }
 
@@ -1676,7 +1713,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("DownloadAllCommand: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("DownloadAllCommand: " + ex, LogLevel.Error);
             }
         }
 
@@ -1694,7 +1731,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("OnUpdateDownloadList: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("OnUpdateDownloadList: " + ex, LogLevel.Error);
             }
         }
 
@@ -1785,7 +1822,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("EpisodeTextBoxButtonCommand: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("EpisodeTextBoxButtonCommand: " + ex, LogLevel.Error);
             }
         }
 
@@ -1953,7 +1990,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("SortEpisodeList: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("SortEpisodeList: " + ex, LogLevel.Error);
             }
         }
 
