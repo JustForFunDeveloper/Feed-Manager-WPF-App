@@ -72,7 +72,7 @@ namespace HS_Feed_Manager.Core
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("Logic: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("Logic: " + ex, LogLevel.Error);
             }
         }
 
@@ -97,7 +97,7 @@ namespace HS_Feed_Manager.Core
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("OnDownloadFeed: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("OnDownloadFeed: " + ex, LogLevel.Error);
             }
         }
 
@@ -111,7 +111,7 @@ namespace HS_Feed_Manager.Core
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("OnSearchLocalFolder: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("OnSearchLocalFolder: " + ex, LogLevel.Error);
             }
         }
 
@@ -165,7 +165,7 @@ namespace HS_Feed_Manager.Core
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("OnStartDownloadEpisodes: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("OnStartDownloadEpisodes: " + ex, LogLevel.Error);
             }
         }
 
@@ -179,7 +179,7 @@ namespace HS_Feed_Manager.Core
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("OnPlayEpisode: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("OnPlayEpisode: " + ex, LogLevel.Error);
             }
         }
 
@@ -187,13 +187,14 @@ namespace HS_Feed_Manager.Core
         {
             try
             {
+                Thread.Sleep(10);
                 List<TvShow> tvShows = _fileHandler.ScanLocalTvShows();
                 if (tvShows != null)
                     _dbHandler.SyncLocalTvShows(tvShows);
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("OnDeleteEpisode: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("OnDeleteEpisode: " + ex, LogLevel.Error);
             }
         }
 
@@ -207,7 +208,7 @@ namespace HS_Feed_Manager.Core
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("OnDeleteEpisode: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("OnDeleteEpisode: " + ex, LogLevel.Error);
             }
         }
 
@@ -221,7 +222,7 @@ namespace HS_Feed_Manager.Core
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("OnDeleteTvShow: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("OnDeleteTvShow: " + ex, LogLevel.Error);
             }
         }
 
@@ -237,7 +238,7 @@ namespace HS_Feed_Manager.Core
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("OnToggleAutoDownload: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("OnToggleAutoDownload: " + ex, LogLevel.Error);
             }
         }
 
@@ -265,7 +266,7 @@ namespace HS_Feed_Manager.Core
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("LoadOrCreateConfig: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("LoadOrCreateConfig: " + ex, LogLevel.Error);
             }
         }
 
@@ -287,7 +288,7 @@ namespace HS_Feed_Manager.Core
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("RefreshLocalConfig: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("RefreshLocalConfig: " + ex, LogLevel.Error);
             }
         }
 
@@ -301,7 +302,7 @@ namespace HS_Feed_Manager.Core
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("RefreshLocalConfig: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("RefreshLocalConfig: " + ex, LogLevel.Error);
             }
         }
 
@@ -318,7 +319,7 @@ namespace HS_Feed_Manager.Core
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("OnRestoreLocalPathSettings: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("OnRestoreLocalPathSettings: " + ex, LogLevel.Error);
             }
         }
 
@@ -336,7 +337,7 @@ namespace HS_Feed_Manager.Core
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("OnRestoreFeedLinkSettings: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("OnRestoreFeedLinkSettings: " + ex, LogLevel.Error);
             }
         }
 
@@ -349,7 +350,7 @@ namespace HS_Feed_Manager.Core
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("OnLogRefresh: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("OnLogRefresh: " + ex, LogLevel.Error);
             }
         }
 

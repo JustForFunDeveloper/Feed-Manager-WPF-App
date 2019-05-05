@@ -20,7 +20,7 @@ namespace HS_Feed_Manager.ValueConverter
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("Convert: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("Convert: " + ex, LogLevel.Error);
                 return false;
             }
         }

@@ -23,7 +23,7 @@ namespace HS_Feed_Manager.Core.Handler
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("GetNameFromFeedItem: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("GetNameFromFeedItem: " + ex, LogLevel.Error);
                 return null;
             }
         }
@@ -50,7 +50,7 @@ namespace HS_Feed_Manager.Core.Handler
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("GetEpisodeNumberFromFeedItem: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("GetEpisodeNumberFromFeedItem: " + ex, LogLevel.Error);
                 return -1;
             }
         }

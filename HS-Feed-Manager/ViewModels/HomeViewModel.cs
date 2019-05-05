@@ -31,6 +31,7 @@ namespace HS_Feed_Manager.ViewModels
             "Auto Download Off",
             "Exists locally",
             "Don't exists locally",
+            "Status Undefined",
             "Status Ongoing",
             "Status New",
             "Status Finished",

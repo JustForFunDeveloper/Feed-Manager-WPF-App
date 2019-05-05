@@ -257,7 +257,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("UpdateFlyoutValues: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("UpdateFlyoutValues: " + ex, LogLevel.Error);
             }
         }
 
@@ -384,7 +384,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("SliderRateValueChanged: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("SliderRateValueChanged: " + ex, LogLevel.Error);
             }
         }
 
@@ -425,7 +425,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("SaveOkEditCommand: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("SaveOkEditCommand: " + ex, LogLevel.Error);
             }
         }
 

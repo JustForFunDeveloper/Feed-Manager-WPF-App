@@ -34,7 +34,7 @@ namespace HS_Feed_Manager.Core.Handler
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("GetSerializedConfigXml: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("GetSerializedConfigXml: " + ex, LogLevel.Error);
                 return null;
             }
         }
@@ -51,7 +51,7 @@ namespace HS_Feed_Manager.Core.Handler
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("GetDeserializedConfigObject: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("GetDeserializedConfigObject: " + ex, LogLevel.Error);
                 return null;
             }
         }

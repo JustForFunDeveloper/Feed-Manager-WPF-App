@@ -19,7 +19,7 @@ namespace HS_Feed_Manager.Core.Data
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("UpdateLocalTvShows: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("UpdateLocalTvShows: " + ex, LogLevel.Error);
             }
         }
     }

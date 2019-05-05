@@ -27,7 +27,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("AboutViewModel: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("AboutViewModel: " + ex, LogLevel.Error);
             }
         }
 
@@ -67,7 +67,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("NewReleasesCommand: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("NewReleasesCommand: " + ex, LogLevel.Error);
             }
         }
 
@@ -97,7 +97,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("HomepageCommand: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("HomepageCommand: " + ex, LogLevel.Error);
             }
         }
 
@@ -127,7 +127,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("GitHubProjectCommand: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("GitHubProjectCommand: " + ex, LogLevel.Error);
             }
         }
 
@@ -157,7 +157,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("GitHubProjectCommand: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("GitHubProjectCommand: " + ex, LogLevel.Error);
             }
         }
     }

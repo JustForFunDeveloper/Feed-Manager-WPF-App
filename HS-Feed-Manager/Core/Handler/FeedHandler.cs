@@ -61,7 +61,7 @@ namespace HS_Feed_Manager.Core.Handler
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("DownloadFeedList: " + ex.ToString(), LogLevel.Error);
+                LogHandler.WriteSystemLog("DownloadFeedList: " + ex, LogLevel.Error);
                 return null;
             }
         }
