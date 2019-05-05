@@ -1,46 +1,49 @@
-﻿using System.Windows.Input;
+﻿using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Windows.Input;
 using HS_Feed_Manager.Core;
-using HS_Feed_Manager.ViewModels.Common;
 using HS_Feed_Manager.ViewModels.Handler;
 
 namespace HS_Feed_Manager.ViewModels
 {
-    public class SettingsViewModel : PropertyChangedViewModel
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    public class SettingsViewModel : INotifyPropertyChanged
     {
         // ReSharper disable once NotAccessedField.Local
-        private readonly PropertyChangedViewModel _mainViewModel;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         private ICommand _defaultLocalPaths;
         private ICommand _saveLocalPaths;
-        private string _fileEndings = "";
-        private string _fileEndingsWaterMark;
-        private string _localPath1 = "";
-        private string _localPath1WaterMark;
-        private string _localPath2 = "";
-        private string _localPath2WaterMark;
-        private string _localPath3 = "";
-        private string _localPath3WaterMark;
+
+        public string FileEndings { get; set; }
+        public string FileEndingsWaterMark { get; set; }
+        public string LocalPath1 { get; set; }
+        public string LocalPath1WaterMark { get; set; }
+        public string LocalPath2 { get; set; }
+        public string LocalPath2WaterMark { get; set; }
+        public string LocalPath3 { get; set; }
+        public string LocalPath3WaterMark { get; set; }
 
         private ICommand _defaultFeedLink;
         private ICommand _saveFeedLink;
-        private string _feedLink = "";
-        private string _feedLinkWaterMark;
-        private string _regexNameFront = "";
-        private string _regexNameFrontWaterMark;
-        private string _regexNameBack = "";
-        private string _regexNameBackWaterMark;
-        private string _regexNumberFront = "";
-        private string _regexNumberFrontWaterMark;
-        private string _regexNumberBack = "";
-        private string _regexNumberBackWaterMark;
+
+        public string FeedLink { get; set; }
+        public string FeedLinkWaterMark { get; set; }
+        public string RegexNameFront { get; set; }
+        public string RegexNameFrontWaterMark { get; set; }
+        public string RegexNameBack { get; set; }
+        public string RegexNameBackWaterMark { get; set; }
+        public string RegexNumberFront { get; set; }
+        public string RegexNumberFrontWaterMark { get; set; }
+        public string RegexNumberBack { get; set; }
+        public string RegexNumberBackWaterMark { get; set; }
 
         private ICommand _logRefresh;
-        private string _logText;
 
+        public string LogText { get; set; }
 
-        public SettingsViewModel(PropertyChangedViewModel mainViewModel)
+        public SettingsViewModel()
         {
-            _mainViewModel = mainViewModel;
             Mediator.Register(MediatorGlobal.RefreshSettingsView, RefreshView);
             RefreshView();
         }
@@ -127,86 +130,6 @@ namespace HS_Feed_Manager.ViewModels
             Mediator.NotifyColleagues(MediatorGlobal.SaveConfig, null);
         }
 
-        public string FileEndings
-        {
-            get => _fileEndings;
-            set
-            {
-                _fileEndings = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string FileEndingsWaterMark
-        {
-            get => _fileEndingsWaterMark;
-            set
-            {
-                _fileEndingsWaterMark = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string LocalPath1
-        {
-            get => _localPath1;
-            set
-            {
-                _localPath1 = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string LocalPath1WaterMark
-        {
-            get => _localPath1WaterMark;
-            set
-            {
-                _localPath1WaterMark = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string LocalPath2
-        {
-            get => _localPath2;
-            set
-            {
-                _localPath2 = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string LocalPath2WaterMark
-        {
-            get => _localPath2WaterMark;
-            set
-            {
-                _localPath2WaterMark = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string LocalPath3
-        {
-            get => _localPath3;
-            set
-            {
-                _localPath3 = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string LocalPath3WaterMark
-        {
-            get => _localPath3WaterMark;
-            set
-            {
-                _localPath3WaterMark = value;
-                OnPropertyChanged();
-            }
-        }
-
         #endregion
 
         #region Feed Link and Regex Settings
@@ -268,106 +191,6 @@ namespace HS_Feed_Manager.ViewModels
             Mediator.NotifyColleagues(MediatorGlobal.SaveConfig, null);
         }
 
-        public string FeedLink
-        {
-            get => _feedLink;
-            set
-            {
-                _feedLink = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string FeedLinkWaterMark
-        {
-            get => _feedLinkWaterMark;
-            set
-            {
-                _feedLinkWaterMark = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string RegexNameFront
-        {
-            get => _regexNameFront;
-            set
-            {
-                _regexNameFront = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string RegexNameFrontWaterMark
-        {
-            get => _regexNameFrontWaterMark;
-            set
-            {
-                _regexNameFrontWaterMark = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string RegexNameBack
-        {
-            get => _regexNameBack;
-            set
-            {
-                _regexNameBack = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string RegexNameBackWaterMark
-        {
-            get => _regexNameBackWaterMark;
-            set
-            {
-                _regexNameBackWaterMark = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string RegexNumberFront
-        {
-            get => _regexNumberFront;
-            set
-            {
-                _regexNumberFront = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string RegexNumberFrontWaterMark
-        {
-            get => _regexNumberFrontWaterMark;
-            set
-            {
-                _regexNumberFrontWaterMark = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string RegexNumberBack
-        {
-            get => _regexNumberBack;
-            set
-            {
-                _regexNumberBack = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string RegexNumberBackWaterMark
-        {
-            get => _regexNumberBackWaterMark;
-            set
-            {
-                _regexNumberBackWaterMark = value;
-                OnPropertyChanged();
-            }
-        }
-
         #endregion
 
         public ICommand LogRefresh
@@ -392,16 +215,6 @@ namespace HS_Feed_Manager.ViewModels
         {
             Mediator.NotifyColleagues(MediatorGlobal.LogRefresh, null);
             RefreshView();
-        }
-
-        public string LogText
-        {
-            get => _logText;
-            set
-            {
-                _logText = value;
-                OnPropertyChanged();
-            }
         }
     }
 }

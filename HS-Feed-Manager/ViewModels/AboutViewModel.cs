@@ -1,43 +1,34 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Windows.Input;
 using HS_Feed_Manager.Core.Handler;
-using HS_Feed_Manager.ViewModels.Common;
 using HS_Feed_Manager.ViewModels.Handler;
 
 namespace HS_Feed_Manager.ViewModels
 {
-    public class AboutViewModel : PropertyChangedViewModel
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    public class AboutViewModel : INotifyPropertyChanged
     {
-        // ReSharper disable once NotAccessedField.Local
-        private readonly PropertyChangedViewModel _mainViewModel;
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        private string _version;
+        public string Version { get; set; }
+
         private ICommand _newReleases;
         private ICommand _homepage;
         private ICommand _gitHubProject;
         private ICommand _license;
 
-        public AboutViewModel(PropertyChangedViewModel mainViewModel)
+        public AboutViewModel()
         {
             try
             {
-                _mainViewModel = mainViewModel;
-                _version = Assembly.GetEntryAssembly().GetName().Version + " Beta";
+                Version = Assembly.GetEntryAssembly()?.GetName().Version + " Beta";
             }
             catch (Exception ex)
             {
                 LogHandler.WriteSystemLog("AboutViewModel: " + ex, LogLevel.Error);
-            }
-        }
-
-        public string Version
-        {
-            get => _version;
-            set
-            {
-                _version = value;
-                OnPropertyChanged();
             }
         }
 
