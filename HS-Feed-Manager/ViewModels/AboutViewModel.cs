@@ -24,7 +24,8 @@ namespace HS_Feed_Manager.ViewModels
         {
             try
             {
-                Version = Assembly.GetEntryAssembly()?.GetName().Version + " Beta";
+                string version = Assembly.GetEntryAssembly()?.GetName().Version.ToString();
+                if (version != null) Version = "v" + version.Remove(version.Length - 2) + "-beta";
             }
             catch (Exception ex)
             {
@@ -84,7 +85,7 @@ namespace HS_Feed_Manager.ViewModels
         {
             try
             {
-                System.Diagnostics.Process.Start("https://www.die-technik-und-ich.at/");
+                System.Diagnostics.Process.Start("https://www.die-technik-und-ich.at/?page_id=557");
             }
             catch (Exception ex)
             {

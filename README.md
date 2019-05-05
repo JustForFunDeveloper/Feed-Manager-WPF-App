@@ -7,6 +7,7 @@ If you have hundreds of local files you will need to manage them.
 [![](https://img.shields.io/github/release/JustForFunDeveloper/Feed-Manager-WPF-App.svg)](https://github.com/JustForFunDeveloper/HS-Feed-Suite) <br/>
 [![](https://img.shields.io/badge/MahApps.Metro-2.0.0_alpha0262-blue.svg)](https://github.com/MahApps/MahApps.Metro)
 [![](https://img.shields.io/badge/MahApps.Metro.IconPacks-3.0.0_alpha0141-blue.svg)](https://github.com/MahApps/MahApps.Metro.IconPacks) <br/>
+[![](https://img.shields.io/badge/PropertyChanged.Fody-3.0.0-green.svg)](https://github.com/Fody/PropertyChanged) <br/>
 ![](https://img.shields.io/badge/Microsoft.EntityFrameworkCore.Sqlite.Core-2.2.4-orange.svg) <br/>
 ![](https://img.shields.io/badge/.NET_Framework-4.6.1-yellow.svg) <br/>
 
@@ -51,8 +52,9 @@ This app shows the basic usage of the following components:
 
 1. [Mahapps Library](https://github.com/MahApps/MahApps.Metro) (Hamburger Menu, Button, SplitButton, DataGrid, ScrollViewer, Checkbox, Login Window, PasswordBox)
 2. [Mahapps IconPacks](https://github.com/MahApps/MahApps.Metro.IconPacks) (Material Design Icons)
-3. MVVM Design Pattern with Mediator, RelayCommand
-4. SQLite Database
-5. Microsoft.EntityFramework.Core.Sqlite (Code First)
-6. LINQ
-7. C# WPF
+3. [PropertyChanged.Fody](https://github.com/Fody/PropertyChanged) Injects INotifyPropertyChanged code into properties at compile time. (Suggestion from [sebleg](https://github.com/sebleg) => Thank you!)
+4. MVVM Design Pattern with Mediator, RelayCommand
+5. SQLite Database
+6. Microsoft.EntityFramework.Core.Sqlite (Code First)
+7. LINQ
+8. C# WPF
