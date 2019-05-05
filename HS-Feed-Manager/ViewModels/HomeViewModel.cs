@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -11,16 +13,18 @@ using HS_Feed_Manager.Core;
 using HS_Feed_Manager.Core.Handler;
 using HS_Feed_Manager.DataModels;
 using HS_Feed_Manager.DataModels.DbModels;
-using HS_Feed_Manager.ViewModels.Common;
 using HS_Feed_Manager.ViewModels.Handler;
+using JetBrains.Annotations;
 using MahApps.Metro.IconPacks;
+using PropertyChanged;
 
 namespace HS_Feed_Manager.ViewModels
 {
-    public class HomeViewModel : PropertyChangedViewModel
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    public class HomeViewModel : INotifyPropertyChanged
     {
         // ReSharper disable once NotAccessedField.Local
-        private readonly PropertyChangedViewModel _mainViewModel;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         #region private Member
 
@@ -53,7 +57,7 @@ namespace HS_Feed_Manager.ViewModels
             "Sort By Name Desc."
         };
 
-        private List<string> _episodeSortModes = new List<string>
+        private readonly List<string> _episodeSortModes = new List<string>
         {
             "Not sorted",
             "By Number Asc.",
@@ -64,7 +68,7 @@ namespace HS_Feed_Manager.ViewModels
             "By Date Desc."
         };
 
-        private List<string> _sortModes;
+        public List<string> SortModes { get; set; }
 
         private ICommand _downloadFeed;
         private ICommand _searchLocalFolder;
@@ -94,33 +98,35 @@ namespace HS_Feed_Manager.ViewModels
 
         private int _sortModesIndex;
         private string _filterString = "";
-        private int _tabIndex;
-        private string _clearSearch;
-        private int _episodeSortModesIndex;
-        private string _episodeClearSearch;
 
-        private ObservableCollection<Episode> _downloadList = new ObservableCollection<Episode>();
-        private Visibility _downloadListVisibility = Visibility.Visible;
-        private int _selectedDownloadIndex;
+        public int TabIndex { get; set; }
+        public string ClearSearch { get; set; }
+        private int _episodeSortModesIndex;
+        public List<string> EpisodeSortModes { get; set; }
+        public string EpisodeClearSearch { get; set; }
+
+        public Visibility DownloadListVisibility { get; set; }
+        public ObservableCollection<Episode> DownloadList { get; set; }
+        public int SelectedDownloadIndex { get; set; }
         private Episode _selectedDownloadItem;
 
-        private ObservableCollection<Episode> _episodeList;
-        private Visibility _episodeListVisibility = Visibility.Hidden;
-        private object _selectedEpisode;
+        public ObservableCollection<Episode> EpisodeList { get; set; }
+        public object SelectedEpisode { get; set; }
+        public Visibility EpisodeListVisibility { get; set; }
 
-        private bool _isProgressActive;
-        private string _progressToolTip;
-        private bool _isSearchLocalEnabled = true;
+        public bool IsProgressActive { get; set; }
+        public string ProgressToolTip { get; set; }
+        public bool IsSearchLocalEnabled { get; set; }
 
-        private Visibility _feedInfoVisibility = Visibility.Visible;
         public ICollectionView FeedListView { get; private set; }
+        public Visibility FeedInfoVisibility { get; set; }
+        public string FeedInfoName { get; set; }
+        public string FeedInfoEpisode { get; set; }
+        public string FeedInfoAutoDownload { get; set; }
+        public string FeedInfoLocalEpisodeCount { get; set; }
+        public ObservableCollection<string> FeedIcons { get; set; }
 
-        private string _feedInfoName;
-        private string _feedInfoEpisode;
-        private string _feedInfoAutoDownload;
-        private string _feedInfoLocalEpisodeCount;
-
-        private ObservableCollection<string> _feedIcons = new ObservableCollection<string>
+        private readonly ObservableCollection<string> _feedIcons = new ObservableCollection<string>
         {
             PackIconMaterialDesignKind.StarBorder.ToString(),
             PackIconMaterialDesignKind.StarBorder.ToString(),
@@ -129,16 +135,16 @@ namespace HS_Feed_Manager.ViewModels
             PackIconMaterialDesignKind.StarBorder.ToString()
         };
 
-        private Visibility _localInfoVisibility = Visibility.Hidden;
         public ICollectionView LocalListView { get; private set; }
+        public Visibility LocalInfoVisibility { get; set; }
+        public string LocalInfoName { get; set; }
+        public string LocalInfoStatus { get; set; }
+        public string LocalInfoEpisodes { get; set; }
+        public string LocalInfoAutoDownload { get; set; }
+        public string LocalInfoLocalEpisodeCount { get; set; }
+        public ObservableCollection<string> LocalIcons { get; set; }
 
-        private string _localInfoName;
-        private string _localInfoStatus;
-        private string _localInfoEpisodes;
-        private string _localInfoAutoDownload;
-        private string _localInfoLocalEpisodeCount;
-
-        private ObservableCollection<string> _localIcons = new ObservableCollection<string>
+        private readonly ObservableCollection<string> _localIcons = new ObservableCollection<string>
         {
             PackIconMaterialDesignKind.StarBorder.ToString(),
             PackIconMaterialDesignKind.StarBorder.ToString(),
@@ -147,15 +153,17 @@ namespace HS_Feed_Manager.ViewModels
             PackIconMaterialDesignKind.StarBorder.ToString()
         };
 
-        private Visibility _episodeInfoVisibility = Visibility.Hidden;
-        private string _episodeInfoName;
-        private string _episodeInfoStatus;
-        private string _episodeInfoEpisode;
-        private string _episodeInfoAutoDownload;
-        private string _episodeInfoLocalEpisodeCount;
-        private string _episodeInfoDownloadDate;
+        public Visibility EpisodeInfoVisibility { get; set; }
 
-        private ObservableCollection<string> _episodeIcons = new ObservableCollection<string>
+        public string EpisodeInfoName { get; set; }
+        public string EpisodeInfoStatus { get; set; }
+        public string EpisodeInfoEpisode { get; set; }
+        public string EpisodeInfoAutoDownload { get; set; }
+        public string EpisodeInfoLocalEpisodeCount { get; set; }
+        public string EpisodeInfoDownloadDate { get; set; }
+        public ObservableCollection<string> EpisodeIcons { get; set; }
+
+        private readonly ObservableCollection<string> _episodeIcons = new ObservableCollection<string>
         {
             PackIconMaterialDesignKind.StarBorder.ToString(),
             PackIconMaterialDesignKind.StarBorder.ToString(),
@@ -166,12 +174,11 @@ namespace HS_Feed_Manager.ViewModels
 
         #endregion
 
-        public HomeViewModel(PropertyChangedViewModel mainViewModel)
+        public HomeViewModel()
         {
-            _mainViewModel = mainViewModel;
             InitialiseListViews();
+            InitialiseProperties();
 
-            SortModes = _feedSortModes;
             Mediator.Register(MediatorGlobal.TabControlSelectionChanged, TabControlSelectionChanged);
             Mediator.Register(MediatorGlobal.ListBoxSelectionChanged, ListBoxSelectionChanged);
             Mediator.Register(MediatorGlobal.OnRefreshListView, OnRefreshListViews);
@@ -179,6 +186,33 @@ namespace HS_Feed_Manager.ViewModels
             Mediator.Register(MediatorGlobal.UpdateDownloadList, OnUpdateDownloadList);
             Mediator.Register(MediatorGlobal.ListBoxDoubleClick, OnListBoxDoubleClick);
             Mediator.Register(MediatorGlobal.CustomDialogReturn, OnCustomDialogReturn);
+        }
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnCustomPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void InitialiseProperties()
+        {
+            IsSearchLocalEnabled = true;
+
+            SortModes = _feedSortModes;
+            FeedInfoVisibility = Visibility.Visible;
+            FeedIcons = _feedIcons;
+
+            LocalInfoVisibility = Visibility.Hidden;
+            LocalIcons = _localIcons;
+
+            EpisodeInfoVisibility = Visibility.Hidden;
+            EpisodeIcons = _episodeIcons;
+
+            DownloadListVisibility = Visibility.Visible;
+            DownloadList = new ObservableCollection<Episode>();
+
+            EpisodeListVisibility = Visibility.Hidden;
+            EpisodeSortModes = _episodeSortModes;
         }
 
         private void OnCustomDialogReturn(object obj)
@@ -192,8 +226,8 @@ namespace HS_Feed_Manager.ViewModels
                 if (answer == null)
                     return;
 
-                string identifier = (string)answer[0];
-                bool returnValue = (bool)answer[1];
+                string identifier = (string) answer[0];
+                bool returnValue = (bool) answer[1];
 
                 if (identifier == null)
                     return;
@@ -272,36 +306,6 @@ namespace HS_Feed_Manager.ViewModels
             ProgressToolTip = "";
         }
 
-        public bool IsProgressActive
-        {
-            get => _isProgressActive;
-            set
-            {
-                _isProgressActive = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string ProgressToolTip
-        {
-            get => _progressToolTip;
-            set
-            {
-                _progressToolTip = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public bool IsSearchLocalEnabled
-        {
-            get => _isSearchLocalEnabled;
-            set
-            {
-                _isSearchLocalEnabled = value;
-                OnPropertyChanged();
-            }
-        }
-
         #endregion
 
         #region Search and Filter
@@ -356,16 +360,7 @@ namespace HS_Feed_Manager.ViewModels
             }
         }
 
-        public List<string> SortModes
-        {
-            get => _sortModes;
-            set
-            {
-                _sortModes = value;
-                OnPropertyChanged();
-            }
-        }
-
+        [DoNotNotify]
         public int SortModesIndex
         {
             get => _sortModesIndex;
@@ -373,7 +368,7 @@ namespace HS_Feed_Manager.ViewModels
             {
                 _sortModesIndex = value;
                 SortThisList(value);
-                OnPropertyChanged();
+                OnCustomPropertyChanged();
             }
         }
 
@@ -520,7 +515,7 @@ namespace HS_Feed_Manager.ViewModels
             {
                 if (item.GetType() == typeof(Episode))
                     return Logic.LocalTvShows.Any(x =>
-                        x.AutoDownloadStatus == AutoDownload.On && x.Name == ((Episode)item).Name);
+                        x.AutoDownloadStatus == AutoDownload.On && x.Name == ((Episode) item).Name);
 
                 if (item.GetType() == typeof(TvShow))
                 {
@@ -544,7 +539,7 @@ namespace HS_Feed_Manager.ViewModels
             {
                 if (item.GetType() == typeof(Episode))
                     return Logic.LocalTvShows.Any(x =>
-                        x.AutoDownloadStatus == AutoDownload.Off && x.Name == ((Episode)item).Name);
+                        x.AutoDownloadStatus == AutoDownload.Off && x.Name == ((Episode) item).Name);
 
                 if (item.GetType() == typeof(TvShow))
                 {
@@ -566,7 +561,7 @@ namespace HS_Feed_Manager.ViewModels
         {
             try
             {
-                return Logic.LocalTvShows.Any(x => x.Name == ((Episode)item).Name);
+                return Logic.LocalTvShows.Any(x => x.Name == ((Episode) item).Name);
             }
             catch (Exception ex)
             {
@@ -579,7 +574,7 @@ namespace HS_Feed_Manager.ViewModels
         {
             try
             {
-                return !Logic.LocalTvShows.Any(x => x.Name == ((Episode)item).Name);
+                return !Logic.LocalTvShows.Any(x => x.Name == ((Episode) item).Name);
             }
             catch (Exception ex)
             {
@@ -593,7 +588,7 @@ namespace HS_Feed_Manager.ViewModels
             try
             {
                 if (item.GetType() == typeof(Episode))
-                    return Logic.LocalTvShows.Any(x => x.Status == Status.Undefined && x.Name == ((Episode)item).Name);
+                    return Logic.LocalTvShows.Any(x => x.Status == Status.Undefined && x.Name == ((Episode) item).Name);
 
                 if (item.GetType() == typeof(TvShow))
                 {
@@ -616,7 +611,7 @@ namespace HS_Feed_Manager.ViewModels
             try
             {
                 if (item.GetType() == typeof(Episode))
-                    return Logic.LocalTvShows.Any(x => x.Status == Status.Ongoing && x.Name == ((Episode)item).Name);
+                    return Logic.LocalTvShows.Any(x => x.Status == Status.Ongoing && x.Name == ((Episode) item).Name);
 
                 if (item.GetType() == typeof(TvShow))
                 {
@@ -639,7 +634,7 @@ namespace HS_Feed_Manager.ViewModels
             try
             {
                 if (item.GetType() == typeof(Episode))
-                    return Logic.LocalTvShows.Any(x => x.Status == Status.New && x.Name == ((Episode)item).Name);
+                    return Logic.LocalTvShows.Any(x => x.Status == Status.New && x.Name == ((Episode) item).Name);
 
                 if (item.GetType() == typeof(TvShow))
                 {
@@ -654,7 +649,6 @@ namespace HS_Feed_Manager.ViewModels
             {
                 LogHandler.WriteSystemLog("StatusFilterNew: " + ex, LogLevel.Error);
                 return false;
-
             }
         }
 
@@ -663,7 +657,7 @@ namespace HS_Feed_Manager.ViewModels
             try
             {
                 if (item.GetType() == typeof(Episode))
-                    return Logic.LocalTvShows.Any(x => x.Status == Status.Finished && x.Name == ((Episode)item).Name);
+                    return Logic.LocalTvShows.Any(x => x.Status == Status.Finished && x.Name == ((Episode) item).Name);
 
                 if (item.GetType() == typeof(TvShow))
                 {
@@ -728,7 +722,7 @@ namespace HS_Feed_Manager.ViewModels
                     EpisodeListVisibility = Visibility.Hidden;
                 }
 
-                var feedEpisode = (Episode)FeedListView.CurrentItem;
+                var feedEpisode = (Episode) FeedListView.CurrentItem;
 
                 if (feedEpisode == null)
                     return;
@@ -743,7 +737,8 @@ namespace HS_Feed_Manager.ViewModels
                     FeedInfoAutoDownload = localSeries.AutoDownloadStatus.ToString();
                     FeedInfoLocalEpisodeCount = localSeries.LocalEpisodesCount.ToString();
 
-                    for (var i = 0; i < localSeries.Rating; i++) FeedIcons[i] = PackIconMaterialDesignKind.Star.ToString();
+                    for (var i = 0; i < localSeries.Rating; i++)
+                        FeedIcons[i] = PackIconMaterialDesignKind.Star.ToString();
                     for (var i = 4; i >= localSeries.Rating; i--)
                         FeedIcons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
                 }
@@ -776,7 +771,7 @@ namespace HS_Feed_Manager.ViewModels
                     EpisodeListVisibility = Visibility.Visible;
                 }
 
-                var localSeries = (TvShow)LocalListView.CurrentItem;
+                var localSeries = (TvShow) LocalListView.CurrentItem;
 
                 if (localSeries != null)
                 {
@@ -789,7 +784,8 @@ namespace HS_Feed_Manager.ViewModels
                     LocalInfoAutoDownload = localSeries.AutoDownloadStatus.ToString();
                     LocalInfoLocalEpisodeCount = localSeries.LocalEpisodesCount.ToString();
 
-                    for (var i = 0; i < localSeries.Rating; i++) LocalIcons[i] = PackIconMaterialDesignKind.Star.ToString();
+                    for (var i = 0; i < localSeries.Rating; i++)
+                        LocalIcons[i] = PackIconMaterialDesignKind.Star.ToString();
                     for (var i = 4; i >= localSeries.Rating; i--)
                         LocalIcons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
                 }
@@ -815,7 +811,7 @@ namespace HS_Feed_Manager.ViewModels
                     EpisodeInfoVisibility = Visibility.Visible;
                 }
 
-                var listEpisode = (Episode)obj;
+                var listEpisode = (Episode) obj;
 
                 if (listEpisode == null)
                 {
@@ -828,7 +824,8 @@ namespace HS_Feed_Manager.ViewModels
                 EpisodeInfoEpisode = listEpisode.EpisodeNumber.ToString();
                 EpisodeInfoDownloadDate = listEpisode.DownloadDate.ToString("dd.MM.yyyy HH:mm:ss");
 
-                for (var i = 0; i < listEpisode.Rating; i++) EpisodeIcons[i] = PackIconMaterialDesignKind.Star.ToString();
+                for (var i = 0; i < listEpisode.Rating; i++)
+                    EpisodeIcons[i] = PackIconMaterialDesignKind.Star.ToString();
                 for (var i = 4; i >= listEpisode.Rating; i--)
                     EpisodeIcons[i] = PackIconMaterialDesignKind.StarBorder.ToString();
 
@@ -853,26 +850,6 @@ namespace HS_Feed_Manager.ViewModels
 
         #region Tab
 
-        public string ClearSearch
-        {
-            get => _clearSearch;
-            set
-            {
-                _clearSearch = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public int TabIndex
-        {
-            get => _tabIndex;
-            set
-            {
-                _tabIndex = value;
-                OnPropertyChanged();
-            }
-        }
-
         private void TabControlSelectionChanged(object obj)
         {
             if (TabIndex == 0)
@@ -886,228 +863,6 @@ namespace HS_Feed_Manager.ViewModels
                 SortModes = _localSortModes;
                 SortModesIndex = 1;
                 ClearSearch = "";
-            }
-        }
-
-        #endregion
-
-        #region Feed Info
-
-        public Visibility FeedInfoVisibility
-        {
-            get => _feedInfoVisibility;
-            set
-            {
-                _feedInfoVisibility = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string FeedInfoName
-        {
-            get => _feedInfoName;
-            set
-            {
-                _feedInfoName = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string FeedInfoEpisode
-        {
-            get => _feedInfoEpisode;
-            set
-            {
-                _feedInfoEpisode = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string FeedInfoAutoDownload
-        {
-            get => _feedInfoAutoDownload;
-            set
-            {
-                _feedInfoAutoDownload = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string FeedInfoLocalEpisodeCount
-        {
-            get => _feedInfoLocalEpisodeCount;
-            set
-            {
-                _feedInfoLocalEpisodeCount = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public ObservableCollection<string> FeedIcons
-        {
-            get => _feedIcons;
-            set
-            {
-                _feedIcons = value;
-                OnPropertyChanged();
-            }
-        }
-
-        #endregion
-
-        #region Local Info
-
-        public Visibility LocalInfoVisibility
-        {
-            get => _localInfoVisibility;
-            set
-            {
-                _localInfoVisibility = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string LocalInfoName
-        {
-            get => _localInfoName;
-            set
-            {
-                _localInfoName = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string LocalInfoStatus
-        {
-            get => _localInfoStatus;
-            set
-            {
-                _localInfoStatus = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string LocalInfoEpisodes
-        {
-            get => _localInfoEpisodes;
-            set
-            {
-                _localInfoEpisodes = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string LocalInfoAutoDownload
-        {
-            get => _localInfoAutoDownload;
-            set
-            {
-                _localInfoAutoDownload = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string LocalInfoLocalEpisodeCount
-        {
-            get => _localInfoLocalEpisodeCount;
-            set
-            {
-                _localInfoLocalEpisodeCount = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public ObservableCollection<string> LocalIcons
-        {
-            get => _localIcons;
-            set
-            {
-                _localIcons = value;
-                OnPropertyChanged();
-            }
-        }
-
-        #endregion
-
-        #region Episode Info
-
-        public Visibility EpisodeInfoVisibility
-        {
-            get => _episodeInfoVisibility;
-            set
-            {
-                _episodeInfoVisibility = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string EpisodeInfoName
-        {
-            get => _episodeInfoName;
-            set
-            {
-                _episodeInfoName = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string EpisodeInfoStatus
-        {
-            get => _episodeInfoStatus;
-            set
-            {
-                _episodeInfoStatus = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string EpisodeInfoEpisode
-        {
-            get => _episodeInfoEpisode;
-            set
-            {
-                _episodeInfoEpisode = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string EpisodeInfoAutoDownload
-        {
-            get => _episodeInfoAutoDownload;
-            set
-            {
-                _episodeInfoAutoDownload = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string EpisodeInfoLocalEpisodeCount
-        {
-            get => _episodeInfoLocalEpisodeCount;
-            set
-            {
-                _episodeInfoLocalEpisodeCount = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string EpisodeInfoDownloadDate
-        {
-            get => _episodeInfoDownloadDate;
-            set
-            {
-                _episodeInfoDownloadDate = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public ObservableCollection<string> EpisodeIcons
-        {
-            get => _episodeIcons;
-            set
-            {
-                _episodeIcons = value;
-                OnPropertyChanged();
             }
         }
 
@@ -1141,7 +896,7 @@ namespace HS_Feed_Manager.ViewModels
                 string listName = param as string;
                 if (listName != null && listName.Equals("LocalList"))
                 {
-                    currentTvShow = (TvShow)LocalListView.CurrentItem;
+                    currentTvShow = (TvShow) LocalListView.CurrentItem;
                     currentTvShow.AutoDownloadStatus = currentTvShow.AutoDownloadStatus.Equals(AutoDownload.On)
                         ? AutoDownload.Off
                         : AutoDownload.On;
@@ -1149,8 +904,9 @@ namespace HS_Feed_Manager.ViewModels
                 }
                 else if (listName != null && listName.Equals("FeedList"))
                 {
-                    Episode currentEpisode = (Episode)FeedListView.CurrentItem;
-                    currentTvShow = Logic.LocalTvShows.SingleOrDefault(tvShow => tvShow.Name.Equals(currentEpisode.Name));
+                    Episode currentEpisode = (Episode) FeedListView.CurrentItem;
+                    currentTvShow =
+                        Logic.LocalTvShows.SingleOrDefault(tvShow => tvShow.Name.Equals(currentEpisode.Name));
                     if (currentTvShow == null)
                     {
                         currentTvShow = new TvShow()
@@ -1208,7 +964,7 @@ namespace HS_Feed_Manager.ViewModels
                 if (FeedListView.CurrentItem == null)
                     return;
 
-                DownloadList.Remove((Episode)FeedListView.CurrentItem);
+                DownloadList.Remove((Episode) FeedListView.CurrentItem);
             }
             catch (Exception ex)
             {
@@ -1220,7 +976,7 @@ namespace HS_Feed_Manager.ViewModels
         {
             try
             {
-                Episode episode = (Episode)FeedListView.CurrentItem;
+                Episode episode = (Episode) FeedListView.CurrentItem;
 
                 if (episode == null)
                     return;
@@ -1268,7 +1024,7 @@ namespace HS_Feed_Manager.ViewModels
                 if (LocalListView.CurrentItem == null)
                     return;
 
-                var localSeries = (TvShow)LocalListView.CurrentItem;
+                var localSeries = (TvShow) LocalListView.CurrentItem;
                 Clipboard.SetText(localSeries.Name);
             }
             catch (Exception ex)
@@ -1276,6 +1032,7 @@ namespace HS_Feed_Manager.ViewModels
                 LogHandler.WriteSystemLog("CopyTvShowNameCommand: " + ex, LogLevel.Error);
             }
         }
+
         public ICommand EditLocalInfo
         {
             get
@@ -1301,7 +1058,7 @@ namespace HS_Feed_Manager.ViewModels
                 if (LocalListView.CurrentItem == null)
                     return;
 
-                var localSeries = (TvShow)LocalListView.CurrentItem;
+                var localSeries = (TvShow) LocalListView.CurrentItem;
                 Mediator.NotifyColleagues(MediatorGlobal.UpdateFlyoutValues, localSeries);
             }
             catch (Exception ex)
@@ -1345,7 +1102,7 @@ namespace HS_Feed_Manager.ViewModels
             {
                 if (LocalListView.CurrentItem == null)
                     return;
-                var localTvShow = (TvShow)LocalListView.CurrentItem;
+                var localTvShow = (TvShow) LocalListView.CurrentItem;
                 if (answer)
                     Mediator.NotifyColleagues(MediatorGlobal.DeleteTvShow, localTvShow);
             }
@@ -1359,36 +1116,7 @@ namespace HS_Feed_Manager.ViewModels
 
         #region Download List
 
-        public Visibility DownloadListVisibility
-        {
-            get => _downloadListVisibility;
-            set
-            {
-                _downloadListVisibility = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public ObservableCollection<Episode> DownloadList
-        {
-            get => _downloadList;
-            set
-            {
-                _downloadList = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public int SelectedDownloadIndex
-        {
-            get => _selectedDownloadIndex;
-            set
-            {
-                _selectedDownloadIndex = value;
-                OnPropertyChanged();
-            }
-        }
-
+        [DoNotNotify]
         public Episode SelectedDownloadItem
         {
             get => _selectedDownloadItem;
@@ -1396,7 +1124,7 @@ namespace HS_Feed_Manager.ViewModels
             {
                 _selectedDownloadItem = value;
                 OnSelectedDownloadItem(value);
-                OnPropertyChanged();
+                OnCustomPropertyChanged();
             }
         }
 
@@ -1407,8 +1135,8 @@ namespace HS_Feed_Manager.ViewModels
                 if (null == episode)
                     return;
 
-                Episode feedEpisode = Logic.FeedEpisodes.SingleOrDefault(ep => 
-                ep.Name.Equals(episode.Name) && ep.EpisodeNumber.Equals(episode.EpisodeNumber));
+                Episode feedEpisode = Logic.FeedEpisodes.SingleOrDefault(ep =>
+                    ep.Name.Equals(episode.Name) && ep.EpisodeNumber.Equals(episode.EpisodeNumber));
 
                 if (feedEpisode == null)
                     return;
@@ -1606,9 +1334,9 @@ namespace HS_Feed_Manager.ViewModels
                 if (FeedListView.CurrentItem == null)
                     return;
 
-                if (!DownloadList.Any(x => x.Name == ((Episode)FeedListView.CurrentItem).Name))
+                if (!DownloadList.Any(x => x.Name == ((Episode) FeedListView.CurrentItem).Name))
                 {
-                    var episode = (Episode)FeedListView.CurrentItem;
+                    var episode = (Episode) FeedListView.CurrentItem;
                     if (episode != null)
                         DownloadList.Add(episode);
                 }
@@ -1676,7 +1404,7 @@ namespace HS_Feed_Manager.ViewModels
                     return;
 
                 Mediator.NotifyColleagues(MediatorGlobal.StartDownloadEpisodes,
-                    new List<object> { DownloadList[SelectedDownloadIndex] });
+                    new List<object> {DownloadList[SelectedDownloadIndex]});
                 DownloadList.Remove(DownloadList[SelectedDownloadIndex]);
             }
             catch (Exception ex)
@@ -1708,7 +1436,7 @@ namespace HS_Feed_Manager.ViewModels
             try
             {
                 Mediator.NotifyColleagues(MediatorGlobal.StartDownloadEpisodes,
-                new List<object>(DownloadList.ToList()));
+                    new List<object>(DownloadList.ToList()));
                 DownloadList.Clear();
             }
             catch (Exception ex)
@@ -1726,7 +1454,7 @@ namespace HS_Feed_Manager.ViewModels
                 if (autoEpisodes != null)
                     foreach (var autoEpisode in autoEpisodes)
                     {
-                        DownloadList.Add((Episode)autoEpisode);
+                        DownloadList.Add((Episode) autoEpisode);
                     }
             }
             catch (Exception ex)
@@ -1738,46 +1466,6 @@ namespace HS_Feed_Manager.ViewModels
         #endregion
 
         #region Episode List
-
-        public ObservableCollection<Episode> EpisodeList
-        {
-            get => _episodeList;
-            set
-            {
-                _episodeList = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public object SelectedEpisode
-        {
-            get => _selectedEpisode;
-            set
-            {
-                _selectedEpisode = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public Visibility EpisodeListVisibility
-        {
-            get => _episodeListVisibility;
-            set
-            {
-                _episodeListVisibility = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string EpisodeClearSearch
-        {
-            get => _episodeClearSearch;
-            set
-            {
-                _episodeClearSearch = value;
-                OnPropertyChanged();
-            }
-        }
 
         public ICommand EpisodeTextBoxButtonCmd
         {
@@ -1805,7 +1493,7 @@ namespace HS_Feed_Manager.ViewModels
                     return;
 
                 var value = param as string;
-                var localSeries = (TvShow)LocalListView.CurrentItem;
+                var localSeries = (TvShow) LocalListView.CurrentItem;
                 var episodes = new List<Episode>(localSeries.Episodes);
 
                 if (value != null && value.Equals(""))
@@ -1930,16 +1618,7 @@ namespace HS_Feed_Manager.ViewModels
                 Mediator.NotifyColleagues(MediatorGlobal.DeleteEpisode, SelectedEpisode);
         }
 
-        public List<string> EpisodeSortModes
-        {
-            get => _episodeSortModes;
-            set
-            {
-                _episodeSortModes = value;
-                OnPropertyChanged();
-            }
-        }
-
+        [DoNotNotify]
         public int EpisodeSortModesIndex
         {
             get => _episodeSortModesIndex;
@@ -1947,7 +1626,7 @@ namespace HS_Feed_Manager.ViewModels
             {
                 _episodeSortModesIndex = value;
                 SortEpisodeList(value);
-                OnPropertyChanged();
+                OnCustomPropertyChanged();
             }
         }
 
@@ -1955,7 +1634,7 @@ namespace HS_Feed_Manager.ViewModels
         {
             try
             {
-                var localSeries = (TvShow)LocalListView.CurrentItem;
+                var localSeries = (TvShow) LocalListView.CurrentItem;
                 var episodes = new List<Episode>(localSeries.Episodes);
                 switch (value)
                 {

@@ -1,15 +1,9 @@
-﻿using HS_Feed_Manager.ViewModels.Common;
+﻿using System.ComponentModel;
 
 namespace HS_Feed_Manager.ViewModels
 {
-    public class HelpViewModel : PropertyChangedViewModel
+    public class HelpViewModel : INotifyPropertyChanged
     {
-        // ReSharper disable once NotAccessedField.Local
-        private readonly PropertyChangedViewModel _mainViewModel;
-
-        public HelpViewModel(PropertyChangedViewModel mainViewModel)
-        {
-            _mainViewModel = mainViewModel;
-        }
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }
