@@ -49,7 +49,7 @@ namespace HS_Feed_Manager.Core.Handler
                 if (LocalPath2.Length > 0)
                     fileInfos.AddRange(GetLocalFileNames(LocalPath2));
 
-                if (LocalPath2.Length > 0)
+                if (LocalPath3.Length > 0)
                     fileInfos.AddRange(GetLocalFileNames(LocalPath3));
 
                 if (fileInfos.Count > 0)
