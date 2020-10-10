@@ -226,11 +226,11 @@ namespace HS_Feed_Manager.Core.Handler
                 {
                     Episode episode = new Episode()
                     {
-                        Name = FileNameParser.GetNameFromFileItem(fileInfo.Name),
+                        Name = FileNameParser.GetNameFromItem(fileInfo.Name),
                         LocalPath = fileInfo.FullName
                     };
 
-                    double episodeNumber = FileNameParser.GetEpisodeNumberFromFileItem(fileInfo.Name);
+                    double episodeNumber = FileNameParser.GetEpisodeNumberFromItem(fileInfo.Name);
                     if (episodeNumber.Equals(-1))
                     {
                         OnExceptionEvent(new FileFormatException("Can't parse Local Episode-number from: " + fileInfo.Name));

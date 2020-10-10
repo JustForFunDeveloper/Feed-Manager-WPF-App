@@ -133,6 +133,7 @@
 
         <ValueConverter:FirstEpisodeConverter x:Key="FirstEpisodeConverter" />
         <ValueConverter:FirstDownloadedItemOfLastDownloadDay x:Key="FirstDownloadedItemOfLastDownloadDay" />
+        <ValueConverter:AutoDownloadOnConverter x:Key="AutoDownloadOnConverter" />
     </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding
@@ -466,6 +467,9 @@
                                 <DataTemplate.Triggers>
                                     <DataTrigger Binding="{Binding EpisodeNumber, Mode=OneWay, Converter={StaticResource FirstEpisodeConverter}}" Value="true">
                                         <Setter TargetName="txtBlock" Property="TextBlock.Foreground" Value="#00c853" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Name, Mode=OneWay, Converter={StaticResource AutoDownloadOnConverter}}" Value="true">
+                                        <Setter TargetName="txtBlock" Property="TextBlock.Foreground" Value="#ff7f27" />
                                     </DataTrigger>
                                 </DataTemplate.Triggers>
                             </DataTemplate>

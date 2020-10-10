@@ -31,11 +31,6 @@ namespace HS_Feed_Manager.ViewModels
         public string RegexNumberFront { get; set; }
         public string RegexNumberBack { get; set; }
 
-        public string RegexFileNameFront { get; set; }
-        public string RegexFileNameBack { get; set; }
-        public string RegexFileNumberFront { get; set; }
-        public string RegexFileNumberBack { get; set; }
-
         public string RegexTorrentName { get; set; }
 
         private ICommand _logRefresh;
@@ -63,11 +58,6 @@ namespace HS_Feed_Manager.ViewModels
             RegexNumberFront = "";
             RegexNumberBack = "";
 
-            RegexFileNameFront = "";
-            RegexFileNameBack = "";
-            RegexFileNumberFront = "";
-            RegexFileNumberBack = "";
-
             RegexTorrentName = "";
 
             FileEndings = Logic.LocalConfig.FileEndings;
@@ -82,11 +72,6 @@ namespace HS_Feed_Manager.ViewModels
             RegexNameBack = Logic.LocalConfig.NameBackRegex;
             RegexNumberFront = Logic.LocalConfig.NumberFrontRegex;
             RegexNumberBack = Logic.LocalConfig.NumberBackRegex;
-
-            RegexFileNameFront = Logic.LocalConfig.FileNameFrontRegex;
-            RegexFileNameBack = Logic.LocalConfig.FileNameBackRegex;
-            RegexFileNumberFront = Logic.LocalConfig.FileNumberFrontRegex;
-            RegexFileNumberBack = Logic.LocalConfig.FileNumberBackRegex;
 
             RegexTorrentName = Logic.LocalConfig.TorrentNameRegex;
 

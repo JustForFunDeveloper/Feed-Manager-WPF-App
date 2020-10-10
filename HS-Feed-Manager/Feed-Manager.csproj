@@ -240,6 +240,7 @@
       <DependentUpon>20190417190210_AddNewStatusUndefined.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\ApplicationDbContextModelSnapshot.cs" />
+    <Compile Include="ValueConverter\AutoDownloadOnConverter.cs" />
     <Compile Include="ValueConverter\FirstDownloadedItemOfLastDownloadDay.cs" />
     <Compile Include="ValueConverter\FirstEpisodeConverter.cs" />
     <Compile Include="ViewModels\AboutViewModel.cs" />

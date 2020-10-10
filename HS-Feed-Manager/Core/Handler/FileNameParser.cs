@@ -6,25 +6,32 @@ namespace HS_Feed_Manager.Core.Handler
 {
     public static class FileNameParser
     {
-        public static string GetNameFromFeedItem(string feedTitle)
+        public static string GetNameFromItem(string fileTitle)
         {
             try
             {
-                string temp = Regex.Replace(feedTitle, Logic.LocalConfig.NameFrontRegex, "");
-                return Regex.Replace(temp, Logic.LocalConfig.NameBackRegex, "");
+                string temp = Regex.Replace(fileTitle, Logic.LocalConfig.NameFrontRegex, "");
+                string value = Regex.Replace(temp, Logic.LocalConfig.NameBackRegex, "");
+
+                if (value.Length <= 0)
+                {
+                    new InvalidDataException("Empty File string.");
+                }
+
+                return value;
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("GetNameFromFeedItem: " + ex, LogLevel.Error);
-                return null;
+                LogHandler.WriteSystemLog("GetNameFromItem: " + ex, LogLevel.Error);
+                return "";
             }
         }
 
-        public static double GetEpisodeNumberFromFeedItem(string feedTitle)
+        public static double GetEpisodeNumberFromItem(string fileTitle)
         {
             try
             {
-                string temp = Regex.Replace(feedTitle, Logic.LocalConfig.NumberFrontRegex, "");
+                string temp = Regex.Replace(fileTitle, Logic.LocalConfig.NumberFrontRegex, "");
                 string value = Regex.Replace(temp, Logic.LocalConfig.NumberBackRegex, "");
 
                 if (value.Contains("v"))
@@ -42,48 +49,7 @@ namespace HS_Feed_Manager.Core.Handler
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("GetEpisodeNumberFromFeedItem: " + ex, LogLevel.Error);
-                return -1;
-            }
-        }
-
-        public static string GetNameFromFileItem(string fileTitle)
-        {
-            try
-            {
-                string temp = Regex.Replace(fileTitle, Logic.LocalConfig.FileNameFrontRegex, "");
-                return Regex.Replace(temp, Logic.LocalConfig.FileNameBackRegex, "");
-            }
-            catch (Exception ex)
-            {
-                LogHandler.WriteSystemLog("GetNameFromFileItem: " + ex, LogLevel.Error);
-                return null;
-            }
-        }
-
-        public static double GetEpisodeNumberFromFileItem(string fileTitle)
-        {
-            try
-            {
-                string temp = Regex.Replace(fileTitle, Logic.LocalConfig.FileNumberFrontRegex, "");
-                string value = Regex.Replace(temp, Logic.LocalConfig.FileNumberBackRegex, "");
-
-                if (value.Contains("v"))
-                {
-                    value = value.Replace("v", ".");
-                }
-                if (value.Contains("."))
-                {
-                    value = value.Replace(".", ",");
-                }
-                if (double.TryParse(value, out double returnValue))
-                    return returnValue;
-                else
-                    return -1;
-            }
-            catch (Exception ex)
-            {
-                LogHandler.WriteSystemLog("GetEpisodeNumberFromFileItem: " + ex, LogLevel.Error);
+                LogHandler.WriteSystemLog("GetEpisodeNumberFromItem: " + ex, LogLevel.Error);
                 return -1;
             }
         }

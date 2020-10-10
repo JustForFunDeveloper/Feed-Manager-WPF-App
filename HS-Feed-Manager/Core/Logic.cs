@@ -354,11 +354,6 @@ namespace HS_Feed_Manager.Core
                 _config.NumberFrontRegex = standardConfig.NumberFrontRegex;
                 _config.NumberBackRegex = standardConfig.NumberBackRegex;
 
-                _config.FileNameFrontRegex = standardConfig.FileNameFrontRegex;
-                _config.FileNameBackRegex = standardConfig.FileNameBackRegex;
-                _config.FileNumberFrontRegex = standardConfig.FileNumberFrontRegex;
-                _config.FileNumberBackRegex = standardConfig.FileNumberBackRegex;
-
                 _config.TorrentNameRegex = standardConfig.TorrentNameRegex;
 
                 OnSaveConfig(null, null);

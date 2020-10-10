@@ -226,19 +226,19 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="6*" />
+                        <ColumnDefinition Width="97*"/>
+                        <ColumnDefinition Width="75*"/>
+                        <ColumnDefinition Width="413*"/>
+                        <ColumnDefinition Width="590*" />
                     </Grid.ColumnDefinitions>
                     <StackPanel
-                        Grid.Column="0"
+                        Grid.Column="1"
                         HorizontalAlignment="Center"
-                        Orientation="Vertical">
+                        Orientation="Vertical" Grid.ColumnSpan="3" Margin="89,0,95,0">
                         <TextBlock
                             VerticalAlignment="Center"
                             Foreground="{DynamicResource AccentColorBrush}"
@@ -249,9 +249,9 @@
                             Text="{Binding FeedLink}" />
                     </StackPanel>
                     <StackPanel
-                        Grid.Column="1"
+                        Grid.Column="4"
                         HorizontalAlignment="Center"
-                        Orientation="Vertical">
+                        Orientation="Vertical" Margin="95,0">
                         <TextBlock
                             VerticalAlignment="Center"
                             Foreground="{DynamicResource AccentColorBrush}"
@@ -358,100 +358,11 @@
                     Margin="0,5,0,5"
                     Fill="White" />
                 <TextBlock Grid.Row="5" 
-                           Text="Regex File Name"
-                           FontSize="16"
-                           FontStyle="Italic"
-                           Foreground="{DynamicResource AccentColorBrush}"/>
-                <Grid Grid.Row="6">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="5" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0" Orientation="Vertical">
-                        <Grid HorizontalAlignment="Left">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock
-                                Grid.Column="0"
-                                VerticalAlignment="Center"
-                                Foreground="{DynamicResource AccentColorBrush}"
-                                Text="Regex Name Front" />
-                            <TextBox
-                                Grid.Column="1"
-                                MinWidth="400"
-                                Margin="5"
-                                Text="{Binding RegexFileNameFront}" />
-                        </Grid>
-                        <Grid HorizontalAlignment="Left">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock
-                                Grid.Column="0"
-                                VerticalAlignment="Center"
-                                Foreground="{DynamicResource AccentColorBrush}"
-                                Text="Regex Name Back " />
-                            <TextBox
-                                Grid.Column="1"
-                                MinWidth="400"
-                                Margin="5"
-                                Text="{Binding RegexFileNameBack}" />
-                        </Grid>
-                    </StackPanel>
-                    <Rectangle
-                        Grid.Column="1"
-                        Width="2"
-                        Fill="White" />
-                    <StackPanel Grid.Column="2" Orientation="Vertical">
-                        <Grid Margin="5,0,0,0" HorizontalAlignment="Left">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock
-                                Grid.Column="0"
-                                VerticalAlignment="Center"
-                                Foreground="{DynamicResource AccentColorBrush}"
-                                Text="Regex Number Front" />
-                            <TextBox
-                                Grid.Column="1"
-                                MinWidth="400"
-                                Margin="5,5,0,5"
-                                Text="{Binding RegexFileNumberFront}" />
-                        </Grid>
-                        <Grid Margin="5,0,0,0" HorizontalAlignment="Left">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock
-                                Grid.Column="0"
-                                VerticalAlignment="Center"
-                                Foreground="{DynamicResource AccentColorBrush}"
-                                Text="Regex Number Back " />
-                            <TextBox
-                                Grid.Column="1"
-                                MinWidth="400"
-                                Margin="5,5,0,5"
-                                Text="{Binding RegexFileNumberBack}" />
-                        </Grid>
-                    </StackPanel>
-                </Grid>
-                <Rectangle
-                    Grid.Row="7"
-                    Height="2"
-                    Margin="0,5,0,5"
-                    Fill="White" />
-                <TextBlock Grid.Row="8" 
                            Text="Torrent Regex"
                            FontSize="16"
                            FontStyle="Italic"
                            Foreground="{DynamicResource AccentColorBrush}"/>
-                <Grid Grid.Row="9">
+                <Grid Grid.Row="6">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="5" />
