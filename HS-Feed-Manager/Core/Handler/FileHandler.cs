@@ -23,17 +23,6 @@ namespace HS_Feed_Manager.Core.Handler
 
         #endregion
 
-        #region Private Properties
-
-        private FileNameParser _fileNameParser;
-
-        #endregion
-
-        public FileHandler(FileNameParser fileNameParser)
-        {
-            _fileNameParser = fileNameParser;
-        }
-
         #region Public Methods
 
         public List<TvShow> ScanLocalTvShows()
@@ -112,6 +101,28 @@ namespace HS_Feed_Manager.Core.Handler
                     File.WriteAllLines(path + fileName, lines);
                 else
                     File.WriteAllText(path + fileName, "");
+            }
+            catch (Exception e)
+            {
+                OnExceptionEvent(e);
+                return -1;
+            }
+            return 0;
+        }
+
+        /// <summary>
+        /// This methods creates a folder if it doesn't exist.
+        /// </summary>
+        /// <param name="path">The file name.</param>
+        /// <returns>Returns -1 if something went wrong and returns 1 if file did exist.</returns>
+        public short CreateFolderNotExist(string path)
+        {
+            try
+            {
+                DirectoryInfo directoryInfo = new DirectoryInfo(path);
+                if (directoryInfo.Exists)
+                    return 1;
+                Directory.CreateDirectory(path);
             }
             catch (Exception e)
             {
@@ -215,11 +226,11 @@ namespace HS_Feed_Manager.Core.Handler
                 {
                     Episode episode = new Episode()
                     {
-                        Name = _fileNameParser.GetNameFromFeedItem(fileInfo.Name),
+                        Name = FileNameParser.GetNameFromFileItem(fileInfo.Name),
                         LocalPath = fileInfo.FullName
                     };
 
-                    double episodeNumber = _fileNameParser.GetEpisodeNumberFromFeedItem(fileInfo.Name);
+                    double episodeNumber = FileNameParser.GetEpisodeNumberFromFileItem(fileInfo.Name);
                     if (episodeNumber.Equals(-1))
                     {
                         OnExceptionEvent(new FileFormatException("Can't parse Local Episode-number from: " + fileInfo.Name));

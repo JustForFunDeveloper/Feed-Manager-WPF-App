@@ -14,17 +14,6 @@ namespace HS_Feed_Manager.Core.Handler
 
         #endregion
 
-        #region Private Properties
-
-        private FileNameParser _fileNameParser;
-
-        #endregion
-
-        public FeedHandler(FileNameParser fileNameParser)
-        {
-            _fileNameParser = fileNameParser;
-        }
-
         public List<Episode> DownloadFeedList()
         {
             try
@@ -40,14 +29,14 @@ namespace HS_Feed_Manager.Core.Handler
                 {
                     Episode episode = new Episode()
                     {
-                        Name = _fileNameParser.GetNameFromFeedItem(syndicationItem.Title.Text),
+                        Name = FileNameParser.GetNameFromFeedItem(syndicationItem.Title.Text),
                         Link = syndicationItem.Links[0].Uri.ToString()
                     };
 
-                    double episodeNumber = _fileNameParser.GetEpisodeNumberFromFeedItem(syndicationItem.Title.Text);
+                    double episodeNumber = FileNameParser.GetEpisodeNumberFromFeedItem(syndicationItem.Title.Text);
                     if (episodeNumber.Equals(-1))
                     {
-                        throw new FormatException("Can't parse Feed Episode-number from: " + syndicationItem.Title.Text);
+                        LogHandler.WriteSystemLog("Can't parse Feed Episode-number from: " + syndicationItem.Title.Text, LogLevel.Error);
                     }
                     else
                     {

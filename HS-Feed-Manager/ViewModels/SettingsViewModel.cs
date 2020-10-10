@@ -16,27 +16,27 @@ namespace HS_Feed_Manager.ViewModels
         private ICommand _saveLocalPaths;
 
         public string FileEndings { get; set; }
-        public string FileEndingsWaterMark { get; set; }
         public string LocalPath1 { get; set; }
-        public string LocalPath1WaterMark { get; set; }
         public string LocalPath2 { get; set; }
-        public string LocalPath2WaterMark { get; set; }
         public string LocalPath3 { get; set; }
-        public string LocalPath3WaterMark { get; set; }
 
         private ICommand _defaultFeedLink;
         private ICommand _saveFeedLink;
 
         public string FeedLink { get; set; }
-        public string FeedLinkWaterMark { get; set; }
+        public string DownloadFolder { get; set; }
+
         public string RegexNameFront { get; set; }
-        public string RegexNameFrontWaterMark { get; set; }
         public string RegexNameBack { get; set; }
-        public string RegexNameBackWaterMark { get; set; }
         public string RegexNumberFront { get; set; }
-        public string RegexNumberFrontWaterMark { get; set; }
         public string RegexNumberBack { get; set; }
-        public string RegexNumberBackWaterMark { get; set; }
+
+        public string RegexFileNameFront { get; set; }
+        public string RegexFileNameBack { get; set; }
+        public string RegexFileNumberFront { get; set; }
+        public string RegexFileNumberBack { get; set; }
+
+        public string RegexTorrentName { get; set; }
 
         private ICommand _logRefresh;
 
@@ -54,21 +54,41 @@ namespace HS_Feed_Manager.ViewModels
             LocalPath1 = "";
             LocalPath2 = "";
             LocalPath3 = "";
+
             FeedLink = "";
+            DownloadFolder = "";
+
             RegexNameFront = "";
             RegexNameBack = "";
             RegexNumberFront = "";
             RegexNumberBack = "";
 
-            FileEndingsWaterMark = Logic.LocalConfig.FileEndings;
-            LocalPath1WaterMark = Logic.LocalConfig.LocalPath1;
-            LocalPath2WaterMark = Logic.LocalConfig.LocalPath2;
-            LocalPath3WaterMark = Logic.LocalConfig.LocalPath3;
-            FeedLinkWaterMark = Logic.LocalConfig.FeedUrl;
-            RegexNameFrontWaterMark = Logic.LocalConfig.NameFrontRegex;
-            RegexNameBackWaterMark = Logic.LocalConfig.NameBackRegex;
-            RegexNumberFrontWaterMark = Logic.LocalConfig.NumberFrontRegex;
-            RegexNumberBackWaterMark = Logic.LocalConfig.NumberBackRegex;
+            RegexFileNameFront = "";
+            RegexFileNameBack = "";
+            RegexFileNumberFront = "";
+            RegexFileNumberBack = "";
+
+            RegexTorrentName = "";
+
+            FileEndings = Logic.LocalConfig.FileEndings;
+            LocalPath1 = Logic.LocalConfig.LocalPath1;
+            LocalPath2 = Logic.LocalConfig.LocalPath2;
+            LocalPath3 = Logic.LocalConfig.LocalPath3;
+
+            FeedLink = Logic.LocalConfig.FeedUrl;
+            DownloadFolder = Logic.LocalConfig.DownloadFolder;
+
+            RegexNameFront = Logic.LocalConfig.NameFrontRegex;
+            RegexNameBack = Logic.LocalConfig.NameBackRegex;
+            RegexNumberFront = Logic.LocalConfig.NumberFrontRegex;
+            RegexNumberBack = Logic.LocalConfig.NumberBackRegex;
+
+            RegexFileNameFront = Logic.LocalConfig.FileNameFrontRegex;
+            RegexFileNameBack = Logic.LocalConfig.FileNameBackRegex;
+            RegexFileNumberFront = Logic.LocalConfig.FileNumberFrontRegex;
+            RegexFileNumberBack = Logic.LocalConfig.FileNumberBackRegex;
+
+            RegexTorrentName = Logic.LocalConfig.TorrentNameRegex;
 
             LogText = Logic.Log;
         }

@@ -25,7 +25,7 @@ namespace HS_Feed_Manager.ViewModels
             try
             {
                 string version = Assembly.GetEntryAssembly()?.GetName().Version.ToString();
-                if (version != null) Version = "v" + version.Remove(version.Length - 2) + "-beta";
+                if (version != null) Version = "v" + version.Remove(version.Length - 2);
             }
             catch (Exception ex)
             {

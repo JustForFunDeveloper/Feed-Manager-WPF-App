@@ -2,8 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using BencodeNET.Objects;
+using BencodeNET.Parsing;
+using BencodeNET.Torrents;
 using HS_Feed_Manager.Control;
 using HS_Feed_Manager.Core.GlobalValues;
 using HS_Feed_Manager.Core.Handler;
@@ -32,7 +37,6 @@ namespace HS_Feed_Manager.Core
         private Controller _controller;
         private FeedHandler _feedHandler;
         private FileHandler _fileHandler;
-        private FileNameParser _fileNameParser;
         private static Config _config;
         private static string _log;
 
@@ -42,9 +46,8 @@ namespace HS_Feed_Manager.Core
         {
             _dbHandler = new DbHandler();
             _controller = new Controller();
-            _fileNameParser = new FileNameParser();
-            _feedHandler = new FeedHandler(_fileNameParser);
-            _fileHandler = new FileHandler(_fileNameParser);
+            _feedHandler = new FeedHandler();
+            _fileHandler = new FileHandler();
             var unused = new LogHandler(LogLevel.Debug, _fileHandler);
 
             _fileHandler.ExceptionEvent += OnExceptionEvent;
@@ -123,7 +126,13 @@ namespace HS_Feed_Manager.Core
                 {
                     if (episode != null)
                     {
+                        //Download Torrent
                         _fileHandler.OpenStandardProgram(episode.Link, false);
+                        // Wait for successful download
+                        Thread.Sleep(1000);
+                        //Change into magnet link and start downloading
+                        _fileHandler.OpenStandardProgram(GetMagnetLink(LocalConfig.DownloadFolder + FileNameParser.TorrentNameParser(episode.Link)), false);
+
                         episode.DownloadDate = DateTime.Now;
                         if (LocalTvShows.Any(tvShow => tvShow.Name.Equals(episode.Name)))
                         {
@@ -167,6 +176,18 @@ namespace HS_Feed_Manager.Core
             {
                 LogHandler.WriteSystemLog("OnStartDownloadEpisodes: " + ex, LogLevel.Error);
             }
+        }
+
+        private string GetMagnetLink(string path)
+        {
+            var parser = new BencodeParser();
+            Torrent torrent = parser.Parse<Torrent>(path);
+
+            // Calculate the info hash
+            //string infoHash = torrent.GetInfoHash();
+            //byte[] infoHashBytes = torrent.GetInfoHashBytes();
+            string magnetLink = torrent.GetMagnetLink();
+            return magnetLink;
         }
 
         private void OnPlayEpisode(object sender, object e)
@@ -280,10 +301,6 @@ namespace HS_Feed_Manager.Core
                 _fileHandler.LocalPath3 = _config.LocalPath3;
 
                 _feedHandler.FeedUrl = _config.FeedUrl;
-                _fileNameParser.NameFrontRegex = _config.NameFrontRegex;
-                _fileNameParser.NameBackRegex = _config.NameBackRegex;
-                _fileNameParser.NumberFrontRegex = _config.NumberFrontRegex;
-                _fileNameParser.NumberBackRegex = _config.NumberBackRegex;
                 _controller.RefreshSettingsView();
             }
             catch (Exception ex)
@@ -310,10 +327,11 @@ namespace HS_Feed_Manager.Core
         {
             try
             {
-                _config.FileEndings = LogicConstants.FileEndings;
-                _config.LocalPath1 = LogicConstants.LocalPath1;
-                _config.LocalPath2 = LogicConstants.LocalPath2;
-                _config.LocalPath3 = LogicConstants.LocalPath3;
+                var standardConfig = new Config();
+                _config.FileEndings = standardConfig.FileEndings;
+                _config.LocalPath1 = standardConfig.LocalPath1;
+                _config.LocalPath2 = standardConfig.LocalPath2;
+                _config.LocalPath3 = standardConfig.LocalPath3;
                 OnSaveConfig(null, null);
                 RefreshLocalConfig();
             }
@@ -327,11 +345,22 @@ namespace HS_Feed_Manager.Core
         {
             try
             {
-                _config.FeedUrl = LogicConstants.FeedUrl;
-                _config.NameFrontRegex = LogicConstants.NameFrontRegex;
-                _config.NameBackRegex = LogicConstants.NameBackRegex;
-                _config.NumberFrontRegex = LogicConstants.NumberFrontRegex;
-                _config.NumberBackRegex = LogicConstants.NumberBackRegex;
+                var standardConfig = new Config();
+                _config.FeedUrl = standardConfig.FeedUrl;
+                _config.DownloadFolder = standardConfig.DownloadFolder;
+
+                _config.NameFrontRegex = standardConfig.NameFrontRegex;
+                _config.NameBackRegex = standardConfig.NameBackRegex;
+                _config.NumberFrontRegex = standardConfig.NumberFrontRegex;
+                _config.NumberBackRegex = standardConfig.NumberBackRegex;
+
+                _config.FileNameFrontRegex = standardConfig.FileNameFrontRegex;
+                _config.FileNameBackRegex = standardConfig.FileNameBackRegex;
+                _config.FileNumberFrontRegex = standardConfig.FileNumberFrontRegex;
+                _config.FileNumberBackRegex = standardConfig.FileNumberBackRegex;
+
+                _config.TorrentNameRegex = standardConfig.TorrentNameRegex;
+
                 OnSaveConfig(null, null);
                 RefreshLocalConfig();
             }

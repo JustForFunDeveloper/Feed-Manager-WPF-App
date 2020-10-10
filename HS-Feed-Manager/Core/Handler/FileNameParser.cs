@@ -1,25 +1,17 @@
 ﻿using System;
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace HS_Feed_Manager.Core.Handler
 {
-    public class FileNameParser
+    public static class FileNameParser
     {
-        #region Public Properties
-
-        public string NameFrontRegex { get; set; }
-        public string NameBackRegex { get; set; }
-        public string NumberFrontRegex { get; set; }
-        public string NumberBackRegex { get; set; }
-
-        #endregion
-
-        public string GetNameFromFeedItem(string feedTitle)
+        public static string GetNameFromFeedItem(string feedTitle)
         {
             try
             {
-                string temp = Regex.Replace(feedTitle, NameFrontRegex, "");
-                return Regex.Replace(temp, NameBackRegex, "");
+                string temp = Regex.Replace(feedTitle, Logic.LocalConfig.NameFrontRegex, "");
+                return Regex.Replace(temp, Logic.LocalConfig.NameBackRegex, "");
             }
             catch (Exception ex)
             {
@@ -28,12 +20,12 @@ namespace HS_Feed_Manager.Core.Handler
             }
         }
 
-        public double GetEpisodeNumberFromFeedItem(string feedTitle)
+        public static double GetEpisodeNumberFromFeedItem(string feedTitle)
         {
             try
             {
-                string temp = Regex.Replace(feedTitle, NumberFrontRegex, "");
-                string value = Regex.Replace(temp, NumberBackRegex, "");
+                string temp = Regex.Replace(feedTitle, Logic.LocalConfig.NumberFrontRegex, "");
+                string value = Regex.Replace(temp, Logic.LocalConfig.NumberBackRegex, "");
 
                 if (value.Contains("v"))
                 {
@@ -52,6 +44,73 @@ namespace HS_Feed_Manager.Core.Handler
             {
                 LogHandler.WriteSystemLog("GetEpisodeNumberFromFeedItem: " + ex, LogLevel.Error);
                 return -1;
+            }
+        }
+
+        public static string GetNameFromFileItem(string fileTitle)
+        {
+            try
+            {
+                string temp = Regex.Replace(fileTitle, Logic.LocalConfig.FileNameFrontRegex, "");
+                return Regex.Replace(temp, Logic.LocalConfig.FileNameBackRegex, "");
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("GetNameFromFileItem: " + ex, LogLevel.Error);
+                return null;
+            }
+        }
+
+        public static double GetEpisodeNumberFromFileItem(string fileTitle)
+        {
+            try
+            {
+                string temp = Regex.Replace(fileTitle, Logic.LocalConfig.FileNumberFrontRegex, "");
+                string value = Regex.Replace(temp, Logic.LocalConfig.FileNumberBackRegex, "");
+
+                if (value.Contains("v"))
+                {
+                    value = value.Replace("v", ".");
+                }
+                if (value.Contains("."))
+                {
+                    value = value.Replace(".", ",");
+                }
+                if (double.TryParse(value, out double returnValue))
+                    return returnValue;
+                else
+                    return -1;
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("GetEpisodeNumberFromFileItem: " + ex, LogLevel.Error);
+                return -1;
+            }
+        }
+
+        public static string TorrentNameParser(string fileTitle)
+        {
+            try
+            {
+                string name = Regex.Match(fileTitle, Logic.LocalConfig.TorrentNameRegex).Value;
+
+                if (name.Length <= 0)
+                {
+                    new InvalidDataException("Empty torrent string.");
+                }
+
+                Regex rgx = new Regex(@"[/]");
+                if (rgx.IsMatch(name))
+                {
+                    new InvalidDataException($"Invalid torrent name {name}");
+                }
+
+                return name;
+            }
+            catch (Exception ex)
+            {
+                LogHandler.WriteSystemLog("TorrentNameRegex: " + ex, LogLevel.Error);
+                return null;
             }
         }
     }

@@ -10,6 +10,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:HS_Feed_Manager.DataModels.DbModels"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:viewModels="clr-namespace:HS_Feed_Manager.ViewModels"
+    d:DataContext="{d:DesignInstance viewModels:HomeViewModel}"
     d:DesignHeight="700"
     d:DesignWidth="1200"
     mc:Ignorable="d">
@@ -561,17 +563,25 @@
                         </Style>
                     </StackPanel.Resources>
                     <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
                         <TextBlock
+                            Grid.Column="0"
                             VerticalAlignment="Center"
                             FontSize="20"
                             FontWeight="UltraLight"
                             Foreground="{DynamicResource AccentColorBrush}"
                             Text="Name:" />
                         <TextBlock
+                            Grid.Column="1"
+                            Margin="10,0,0,0"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             FontSize="15"
                             FontWeight="Normal"
+                            TextWrapping="Wrap"
                             Text="{Binding FeedInfoName}" />
                     </Grid>
                     <Grid>
@@ -675,17 +685,25 @@
                         </Style>
                     </StackPanel.Resources>
                     <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
                         <TextBlock
+                            Grid.Column="0"
                             VerticalAlignment="Center"
                             FontSize="20"
                             FontWeight="UltraLight"
                             Foreground="{DynamicResource AccentColorBrush}"
                             Text="Name:" />
                         <TextBlock
+                            Grid.Column="1"
+                            Margin="10,0,0,0"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             FontSize="15"
                             FontWeight="Normal"
+                            TextWrapping="Wrap"
                             Text="{Binding LocalInfoName}" />
                     </Grid>
                     <Grid>
@@ -803,18 +821,52 @@
                         </Style>
                     </StackPanel.Resources>
                     <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
                         <TextBlock
+                            Grid.Column="0"
                             VerticalAlignment="Center"
                             FontSize="20"
                             FontWeight="UltraLight"
                             Foreground="{DynamicResource AccentColorBrush}"
                             Text="Filename:" />
                         <TextBlock
+                            Grid.Column="1"
+                            Margin="10,0,0,0"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             FontSize="15"
                             FontWeight="Normal"
+                            TextWrapping="Wrap"
                             Text="{Binding EpisodeInfoName}" />
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="20"
+                            FontWeight="UltraLight"
+                            Foreground="{DynamicResource AccentColorBrush}"
+                            Text="Path:" />
+                        <TextBlock
+                            Grid.Column="1"
+                            Margin="10,0,0,0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            FontSize="15"
+                            FontWeight="Normal"
+                            TextWrapping="Wrap">
+                            <Hyperlink
+                                Command="{Binding PlayEpisode}">
+                                <Run Text="{Binding EpisodeInfoPath}" />
+                            </Hyperlink>
+                        </TextBlock>
                     </Grid>
                     <Grid>
                         <TextBlock

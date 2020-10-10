@@ -154,7 +154,8 @@ namespace HS_Feed_Manager.Core.Handler
             {
                 if (logLevel >= _logLevel)
                 {
-                    _fileHandler.CreateFileIfNotExist(GetCurrentLogName());
+                    _fileHandler.CreateFolderNotExist(LogicConstants.LogFilePath);
+                    _fileHandler.CreateFileIfNotExist(GetCurrentLogName(), LogicConstants.LogFilePath);
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.Append(DateTime.Now).Append(";").Append(LogLevel.Error).Append(";").Append(text);
                     _fileHandler.AppendText(GetCurrentLogName(), stringBuilder.ToString(),

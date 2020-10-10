@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using HS_Feed_Manager.Core;
 using HS_Feed_Manager.Core.Handler;
@@ -157,6 +158,7 @@ namespace HS_Feed_Manager.ViewModels
         public Visibility EpisodeInfoVisibility { get; set; }
 
         public string EpisodeInfoName { get; set; }
+        public string EpisodeInfoPath { get; set; }
         public string EpisodeInfoStatus { get; set; }
         public string EpisodeInfoEpisode { get; set; }
         public string EpisodeInfoAutoDownload { get; set; }
@@ -822,6 +824,7 @@ namespace HS_Feed_Manager.ViewModels
 
 
                 EpisodeInfoName = listEpisode.Name;
+                EpisodeInfoPath = listEpisode.LocalPath;
                 EpisodeInfoEpisode = listEpisode.EpisodeNumber.ToString();
                 EpisodeInfoDownloadDate = listEpisode.DownloadDate.ToString("dd.MM.yyyy HH:mm:ss");
 
