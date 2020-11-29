@@ -36,7 +36,7 @@ namespace HS_Feed_Manager.Core.Handler
                     double episodeNumber = FileNameParser.GetEpisodeNumberFromItem(FileNameParser.TorrentNameParser(syndicationItem.Links[0].Uri.ToString()));
                     if (episodeNumber.Equals(-1))
                     {
-                        LogHandler.WriteSystemLog("Can't parse Feed Episode-number from: " + syndicationItem.Title.Text, LogLevel.Error);
+                        LogHandler.WriteSystemLog("Can't parse Feed Episode-number from: " + syndicationItem.Links[0].Uri, LogLevel.Error);
                     }
                     else
                     {
