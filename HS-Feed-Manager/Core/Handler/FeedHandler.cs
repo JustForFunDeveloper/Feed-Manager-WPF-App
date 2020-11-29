@@ -29,11 +29,13 @@ namespace HS_Feed_Manager.Core.Handler
                 {
                     Episode episode = new Episode()
                     {
-                        Name = FileNameParser.GetNameFromItem(FileNameParser.TorrentNameParser(syndicationItem.Links[0].Uri.ToString())),
+                        // Name = FileNameParser.GetNameFromItem(FileNameParser.TorrentNameParser(syndicationItem.Links[0].Uri.ToString())),
+                        Name = FileNameParser.GetNameFromItem(syndicationItem.Title.Text),
                         Link = syndicationItem.Links[0].Uri.ToString()
                     };
 
-                    double episodeNumber = FileNameParser.GetEpisodeNumberFromItem(FileNameParser.TorrentNameParser(syndicationItem.Links[0].Uri.ToString()));
+                    // double episodeNumber = FileNameParser.GetEpisodeNumberFromItem(FileNameParser.TorrentNameParser(syndicationItem.Links[0].Uri.ToString()));
+                    double episodeNumber = FileNameParser.GetEpisodeNumberFromItem(syndicationItem.Title.Text);
                     if (episodeNumber.Equals(-1))
                     {
                         LogHandler.WriteSystemLog("Can't parse Feed Episode-number from: " + syndicationItem.Links[0].Uri, LogLevel.Error);

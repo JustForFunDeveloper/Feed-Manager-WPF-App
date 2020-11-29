@@ -128,10 +128,11 @@ namespace HS_Feed_Manager.Core
                     {
                         //Download Torrent
                         _fileHandler.OpenStandardProgram(episode.Link, false);
+                        
                         // Wait for successful download
-                        Thread.Sleep(1000);
+                        // Thread.Sleep(1000);
                         //Change into magnet link and start downloading
-                        _fileHandler.OpenStandardProgram(GetMagnetLink(LocalConfig.DownloadFolder + FileNameParser.TorrentNameParser(episode.Link)), false);
+                        // _fileHandler.OpenStandardProgram(GetMagnetLink(LocalConfig.DownloadFolder + FileNameParser.TorrentNameParser(episode.Link)), false);
 
                         episode.DownloadDate = DateTime.Now;
                         if (LocalTvShows.Any(tvShow => tvShow.Name.Equals(episode.Name)))
