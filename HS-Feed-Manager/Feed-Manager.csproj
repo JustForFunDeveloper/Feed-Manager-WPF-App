@@ -239,6 +239,10 @@
     <Compile Include="Migrations\20190417190210_AddNewStatusUndefined.designer.cs">
       <DependentUpon>20190417190210_AddNewStatusUndefined.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\20201207212923_AddImagePath.cs" />
+    <Compile Include="Migrations\20201207212923_AddImagePath.designer.cs">
+      <DependentUpon>20201207212923_AddImagePath.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\ApplicationDbContextModelSnapshot.cs" />
     <Compile Include="ValueConverter\AutoDownloadOnConverter.cs" />
     <Compile Include="ValueConverter\FirstDownloadedItemOfLastDownloadDay.cs" />

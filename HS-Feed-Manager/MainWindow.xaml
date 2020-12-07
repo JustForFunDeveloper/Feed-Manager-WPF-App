@@ -98,6 +98,16 @@
                                 FontSize="20"
                                 FontWeight="UltraLight"
                                 Foreground="{DynamicResource AccentColorBrush}"
+                                Text="Image Path:" />
+                            <TextBox
+                                Margin="0,5,0,0"
+                                mah:TextBoxHelper.Watermark="{Binding ImagePath}"
+                                Text="{Binding ImagePath}" />
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                FontSize="20"
+                                FontWeight="UltraLight"
+                                Foreground="{DynamicResource AccentColorBrush}"
                                 Text="Rating:" />
                             <StackPanel
                                 HorizontalAlignment="Right"

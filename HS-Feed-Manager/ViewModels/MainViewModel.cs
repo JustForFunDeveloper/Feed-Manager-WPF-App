@@ -44,6 +44,7 @@ namespace HS_Feed_Manager.ViewModels
         public string SelectedValueStatus { get; set; }
         public string Episodes { get; set; }
         public string EpisodesValue { get; set; }
+        public string ImagePath { get; set; }
         public int SelectedAutoDownload { get; set; }
         public string SelectedValueAutoDownload { get; set; }
         public double RatingValue { get; set; }
@@ -251,6 +252,7 @@ namespace HS_Feed_Manager.ViewModels
                     int autoDownloadIndex = Array.IndexOf(Enum.GetValues(localSeries.AutoDownloadStatus.GetType()),
                         localSeries.AutoDownloadStatus);
                     SelectedAutoDownload = autoDownloadIndex;
+                    ImagePath = localSeries.ImagePath;
                     RatingValue = localSeries.Rating;
                 }
 
@@ -325,6 +327,7 @@ namespace HS_Feed_Manager.ViewModels
                 localTvShow.AutoDownloadStatus =
                     (AutoDownload) Enum.Parse(typeof(AutoDownload), SelectedValueAutoDownload);
                 localTvShow.Rating = (int) RatingValue;
+                localTvShow.ImagePath = ImagePath;
                 Mediator.NotifyColleagues(MediatorGlobal.SaveEditInfo, localTvShow);
 
                 IsFlyoutOpen = false;

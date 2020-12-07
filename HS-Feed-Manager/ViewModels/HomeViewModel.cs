@@ -8,8 +8,9 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using HS_Feed_Manager.Core;
 using HS_Feed_Manager.Core.Handler;
 using HS_Feed_Manager.DataModels;
@@ -174,6 +175,8 @@ namespace HS_Feed_Manager.ViewModels
             PackIconMaterialDesignKind.StarBorder.ToString(),
             PackIconMaterialDesignKind.StarBorder.ToString()
         };
+
+        private ImageSource _imageSource;
 
         #endregion
 
@@ -786,6 +789,14 @@ namespace HS_Feed_Manager.ViewModels
                     LocalInfoEpisodes = localSeries.EpisodeCount.ToString();
                     LocalInfoAutoDownload = localSeries.AutoDownloadStatus.ToString();
                     LocalInfoLocalEpisodeCount = localSeries.LocalEpisodesCount.ToString();
+                    if (localSeries.ImagePath == null)
+                    {
+                        ImageSource = null;
+                    }
+                    else
+                    {
+                        ImageSource = new BitmapImage(new Uri(localSeries.ImagePath));
+                    }
 
                     for (var i = 0; i < localSeries.Rating; i++)
                         LocalIcons[i] = PackIconMaterialDesignKind.Star.ToString();
@@ -1632,6 +1643,12 @@ namespace HS_Feed_Manager.ViewModels
                 SortEpisodeList(value);
                 OnCustomPropertyChanged();
             }
+        }
+
+        public ImageSource ImageSource
+        {
+            get => _imageSource;
+            set => _imageSource = value;
         }
 
         private void SortEpisodeList(int value)

@@ -10,6 +10,7 @@ namespace HS_Feed_Manager.DataModels.DbModels
         public Status Status { get; set; }
         public int EpisodeCount { get; set; }
         public AutoDownload AutoDownloadStatus { get; set; }
+        public string ImagePath { get; set; }
         public int LocalEpisodesCount { get; set; }
         public int Rating { get; set; }
         public DateTime LatestDownload { get; set; }
