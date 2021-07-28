@@ -1,7 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.ServiceModel.Syndication;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
+using CloudflareSolverRe;
 using HS_Feed_Manager.DataModels.DbModels;
 
 namespace HS_Feed_Manager.Core.Handler
@@ -20,8 +27,19 @@ namespace HS_Feed_Manager.Core.Handler
             {
                 List<Episode> episodes = new List<Episode>();
 
+                // Cloudflare solver
+                var handler = new ClearanceHandler
+                {
+                    MaxTries = 3,
+                    ClearanceDelay = 3000
+                };
+
+                var client = new HttpClient(handler);
+
+                var content = client.GetStringAsync(FeedUrl).Result;
+                
                 // Create reader and get items
-                XmlTextReader reader = new XmlTextReader(FeedUrl);
+                XmlTextReader reader = new XmlTextReader(new StringReader(content));
                 SyndicationFeed syndicationFeed = SyndicationFeed.Load(reader);
                 List<SyndicationItem> feedList = new List<SyndicationItem>(syndicationFeed.Items);
 
