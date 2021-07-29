@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.ServiceModel.Syndication;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Xml;
 using CloudflareSolverRe;
 using HS_Feed_Manager.DataModels.DbModels;
@@ -21,7 +22,7 @@ namespace HS_Feed_Manager.Core.Handler
 
         #endregion
 
-        public List<Episode> DownloadFeedList()
+        public async Task<List<Episode>> DownloadFeedList()
         {
             try
             {
@@ -35,8 +36,9 @@ namespace HS_Feed_Manager.Core.Handler
                 };
 
                 var client = new HttpClient(handler);
+                client.Timeout = TimeSpan.FromSeconds(5);
 
-                var content = client.GetStringAsync(FeedUrl).Result;
+                var content = await client.GetStringAsync(FeedUrl);
                 
                 // Create reader and get items
                 XmlTextReader reader = new XmlTextReader(new StringReader(content));

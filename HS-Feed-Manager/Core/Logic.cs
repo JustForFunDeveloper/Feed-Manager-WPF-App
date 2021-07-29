@@ -79,12 +79,12 @@ namespace HS_Feed_Manager.Core
             }
         }
 
-        private void OnDownloadFeed(object sender, EventArgs e)
+        private async void OnDownloadFeed(object sender, EventArgs e)
         {
             try
             {
                 FeedEpisodes.Clear();
-                FeedEpisodes?.AddRange(_feedHandler.DownloadFeedList());
+                FeedEpisodes?.AddRange(await _feedHandler.DownloadFeedList());
                 List<object> autoEpisodes = new List<object>();
                 foreach (var feedEpisode in FeedEpisodes)
                 {
