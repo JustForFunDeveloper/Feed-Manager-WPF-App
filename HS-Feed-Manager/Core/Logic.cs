@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using BencodeNET.Objects;
 using BencodeNET.Parsing;
 using BencodeNET.Torrents;
 using HS_Feed_Manager.Control;
@@ -15,6 +12,8 @@ using HS_Feed_Manager.Core.Handler;
 using HS_Feed_Manager.DataModels;
 using HS_Feed_Manager.DataModels.DbModels;
 using HS_Feed_Manager.DataModels.XmlModels;
+using HS_Feed_Manager.ViewModels.Handler;
+using Serilog;
 
 namespace HS_Feed_Manager.Core
 {
@@ -27,8 +26,8 @@ namespace HS_Feed_Manager.Core
         public static List<TvShow> LocalTvShows => DbHandler.LocalTvShows;
 
         public static Config LocalConfig => _config;
-
-        public static string Log => _log;
+        public static string SqLiteSqLiteLog => _sqLiteLog;
+        
         #endregion
 
         #region Private Properties
@@ -37,8 +36,11 @@ namespace HS_Feed_Manager.Core
         private Controller _controller;
         private FeedHandler _feedHandler;
         private FileHandler _fileHandler;
+        private CancellationTokenSource _copyDownloadTokenSource;
+        private Task _copyDownloadTask;
+        
         private static Config _config;
-        private static string _log;
+        private static string _sqLiteLog;
 
         #endregion
 
@@ -48,13 +50,13 @@ namespace HS_Feed_Manager.Core
             _controller = new Controller();
             _feedHandler = new FeedHandler();
             _fileHandler = new FileHandler();
-            var unused = new LogHandler(LogLevel.Debug, _fileHandler);
 
             _fileHandler.ExceptionEvent += OnExceptionEvent;
 
             _controller.DownloadFeed += OnDownloadFeed;
             _controller.SearchLocalFolder += OnSearchLocalFolder;
             _controller.StartDownloadEpisodes += OnStartDownloadEpisodes;
+            _controller.CopyFromDownload += OnCopyFromDownload;
             _controller.PlayEpisode += OnPlayEpisode;
             _controller.DeleteEpisode += OnDeleteEpisode;
             _controller.DeleteTvShow += OnDeleteTvShow;
@@ -75,7 +77,7 @@ namespace HS_Feed_Manager.Core
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("Logic: " + ex, LogLevel.Error);
+                Log.Error(ex,"Logic Error!");
             }
         }
 
@@ -100,7 +102,7 @@ namespace HS_Feed_Manager.Core
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("OnDownloadFeed: " + ex, LogLevel.Error);
+                Log.Error(ex,"OnDownloadFeed Error!");
             }
         }
 
@@ -114,7 +116,7 @@ namespace HS_Feed_Manager.Core
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("OnSearchLocalFolder: " + ex, LogLevel.Error);
+                Log.Error(ex,"OnSearchLocalFolder Error!");
             }
         }
 
@@ -175,7 +177,45 @@ namespace HS_Feed_Manager.Core
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("OnStartDownloadEpisodes: " + ex, LogLevel.Error);
+                Log.Error(ex,"OnStartDownloadEpisodes Error!");
+            }
+        }
+
+        private void OnCopyFromDownload(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_copyDownloadTask != null && !_copyDownloadTask.IsCompleted)
+                {
+                    _copyDownloadTokenSource.Cancel();
+                    _copyDownloadTask = null;
+                    return;
+                }
+                
+                _copyDownloadTokenSource = new CancellationTokenSource();
+                CancellationToken ct = _copyDownloadTokenSource.Token;
+                _copyDownloadTask = Task.Run(() =>
+                {
+                    // Get and copy shows from DownloadFolder to the CopyToFolder
+                    var tvShows = _fileHandler.GetAndCopyDownloadedShows(ct);
+                    
+                    // Sync to database
+                    if (tvShows != null)
+                    {
+                        _dbHandler.SyncLocalTvShows(tvShows);
+                        var sum = tvShows?.Sum(tv => tv.Episodes.Count);
+                        Log.Information($"Finished Copy {sum} Downloaded Shows");
+                    }
+                    else
+                    {
+                        Log.Information("Nothing to copy. Folder is empty.");
+                    }
+                    Mediator.NotifyColleagues(MediatorGlobal.FinishedCopyDownload, null);
+                }, ct);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex,"OnCopyFromDownload Error!");
             }
         }
 
@@ -201,7 +241,7 @@ namespace HS_Feed_Manager.Core
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("OnPlayEpisode: " + ex, LogLevel.Error);
+                Log.Error(ex,"OnPlayEpisode Error!");
             }
         }
 
@@ -216,7 +256,7 @@ namespace HS_Feed_Manager.Core
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("OnDeleteEpisode: " + ex, LogLevel.Error);
+                Log.Error(ex,"OnDeleteEpisode Error!");
             }
         }
 
@@ -230,7 +270,7 @@ namespace HS_Feed_Manager.Core
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("OnDeleteEpisode: " + ex, LogLevel.Error);
+                Log.Error(ex,"OnDeleteEpisode Error!");
             }
         }
 
@@ -244,7 +284,7 @@ namespace HS_Feed_Manager.Core
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("OnDeleteTvShow: " + ex, LogLevel.Error);
+                Log.Error(ex,"OnDeleteTvShow Error!");
             }
         }
 
@@ -260,7 +300,7 @@ namespace HS_Feed_Manager.Core
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("OnToggleAutoDownload: " + ex, LogLevel.Error);
+                Log.Error(ex,"OnToggleAutoDownload Error!");
             }
         }
 
@@ -288,7 +328,7 @@ namespace HS_Feed_Manager.Core
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("LoadOrCreateConfig: " + ex, LogLevel.Error);
+                Log.Error(ex,"LoadOrCreateConfig Error!");
             }
         }
 
@@ -300,13 +340,16 @@ namespace HS_Feed_Manager.Core
                 _fileHandler.LocalPath1 = _config.LocalPath1;
                 _fileHandler.LocalPath2 = _config.LocalPath2;
                 _fileHandler.LocalPath3 = _config.LocalPath3;
+                _fileHandler.IsRecursive = _config.IsRecursive;
+                _fileHandler.DownloadFolder = _config.DownloadFolder;
+                _fileHandler.CopyToPath = _config.CopyToPath;
 
                 _feedHandler.FeedUrl = _config.FeedUrl;
                 _controller.RefreshSettingsView();
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("RefreshLocalConfig: " + ex, LogLevel.Error);
+                Log.Error(ex,"RefreshLocalConfig Error!");
             }
         }
 
@@ -320,7 +363,7 @@ namespace HS_Feed_Manager.Core
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("RefreshLocalConfig: " + ex, LogLevel.Error);
+                Log.Error(ex,"RefreshLocalConfig Error!");
             }
         }
 
@@ -330,6 +373,8 @@ namespace HS_Feed_Manager.Core
             {
                 var standardConfig = new Config();
                 _config.FileEndings = standardConfig.FileEndings;
+                _config.DownloadFolder = standardConfig.DownloadFolder;
+                _config.CopyToPath = standardConfig.CopyToPath;
                 _config.LocalPath1 = standardConfig.LocalPath1;
                 _config.LocalPath2 = standardConfig.LocalPath2;
                 _config.LocalPath3 = standardConfig.LocalPath3;
@@ -338,7 +383,7 @@ namespace HS_Feed_Manager.Core
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("OnRestoreLocalPathSettings: " + ex, LogLevel.Error);
+                Log.Error(ex,"OnRestoreLocalPathSettings Error!");
             }
         }
 
@@ -362,7 +407,7 @@ namespace HS_Feed_Manager.Core
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("OnRestoreFeedLinkSettings: " + ex, LogLevel.Error);
+                Log.Error(ex,"OnRestoreFeedLinkSettings Error!");
             }
         }
 
@@ -370,18 +415,18 @@ namespace HS_Feed_Manager.Core
         {
             try
             {
-                _log = _fileHandler?.ReadAllText(LogHandler.CurrentLogName, LogicConstants.LogFilePath);
+                _sqLiteLog = _dbHandler?.GetLogFileData();
                 _controller.RefreshSettingsView();
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("OnLogRefresh: " + ex, LogLevel.Error);
+                Log.Error(ex,"OnLogRefresh Error!");
             }
         }
 
         private void OnExceptionEvent(object sender, Exception e)
         {
-            LogHandler.WriteSystemLog("OnExceptionEvent:" + e, LogLevel.Debug);
+            Log.Error(e,"OnExceptionEvent Error!");
         }
     }
 }

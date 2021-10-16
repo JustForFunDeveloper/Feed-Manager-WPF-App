@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using HS_Feed_Manager.DataModels.DbModels;
+using HS_Feed_Manager.ViewModels.Handler;
+using Serilog;
+using Path = System.IO.Path;
 
 namespace HS_Feed_Manager.Core.Handler
 {
@@ -14,6 +18,9 @@ namespace HS_Feed_Manager.Core.Handler
         public string LocalPath1 { get; set; }
         public string LocalPath2 { get; set; }
         public string LocalPath3 { get; set; }
+        public bool IsRecursive { get; set; }
+        public string DownloadFolder { get; set; }
+        public string CopyToPath { get; set; }
         public List<string> FileEndings { get; set; }
         /// <summary>
         /// An event which is invoked as soon a exception occured.<para/>
@@ -33,13 +40,13 @@ namespace HS_Feed_Manager.Core.Handler
                 List<FileInfo> fileInfos = new List<FileInfo>();
 
                 if (LocalPath1.Length > 0)
-                    fileInfos.AddRange(GetLocalFileNames(LocalPath1));
+                    fileInfos.AddRange(SearchDirectory(LocalPath1));
 
                 if (LocalPath2.Length > 0)
-                    fileInfos.AddRange(GetLocalFileNames(LocalPath2));
+                    fileInfos.AddRange(SearchDirectory(LocalPath2));
 
                 if (LocalPath3.Length > 0)
-                    fileInfos.AddRange(GetLocalFileNames(LocalPath3));
+                    fileInfos.AddRange(SearchDirectory(LocalPath3));
 
                 if (fileInfos.Count > 0)
                 {
@@ -212,6 +219,63 @@ namespace HS_Feed_Manager.Core.Handler
             return 0;
         }
 
+        /// <summary>
+        /// This method gets all shows from the download folder.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns>A list of <see cref="TvShow"/></returns>
+        public List<TvShow> GetAndCopyDownloadedShows(CancellationToken ct)
+        {
+            List<TvShow> tvShows = null;
+            List<FileInfo> fileInfos = new List<FileInfo>();
+
+            if (DownloadFolder.Length > 0)
+                fileInfos.AddRange(SearchDirectory(DownloadFolder));
+            else
+            {
+                return null;
+            }
+
+            if (fileInfos.Count > 0)
+            {
+                tvShows = GetEpisodesFromFileList(fileInfos);
+            }
+
+            if (tvShows == null || tvShows.Count <= 0)
+            {
+                return null;
+            }
+
+            Log.Information($"Started to Copy {fileInfos.Count} Episodes");
+            
+            int counter = 0;
+            foreach (var fileInfo in fileInfos)
+            {
+                if (ct.IsCancellationRequested)
+                {
+                    Log.Information("Canceled Copy Downloaded Shows");
+                    return tvShows;
+                }
+                
+                var tvShow = tvShows.Single(tv => tv.Episodes.Any(e => e.LocalPath == fileInfo.FullName));
+                var episode = tvShow.Episodes.Single(ep => ep.LocalPath == fileInfo.FullName);
+                var directoryPath = Path.Combine(CopyToPath, tvShow.Name);
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+
+                var destPath = Path.Combine(directoryPath, fileInfo.Name);
+                fileInfo.MoveTo(destPath);
+                episode.LocalPath = destPath;
+                counter++;
+                var progressMessage = $"Finished {counter} of {fileInfos.Count}";
+                Mediator.NotifyColleagues(MediatorGlobal.ProgressMessage, progressMessage);
+            }
+
+            return tvShows;
+        }
+
         #endregion
 
         #region Private Methods
@@ -236,10 +300,8 @@ namespace HS_Feed_Manager.Core.Handler
                         OnExceptionEvent(new FileFormatException("Can't parse Local Episode-number from: " + fileInfo.Name));
                         continue;
                     }
-                    else
-                    {
-                        episode.EpisodeNumber = episodeNumber;
-                    }
+
+                    episode.EpisodeNumber = episodeNumber;
 
                     TvShow tvShow = tvShows.SingleOrDefault(item => item.Name.Equals(episode.Name));
                     if (tvShow == null)
@@ -265,22 +327,18 @@ namespace HS_Feed_Manager.Core.Handler
             }
         }
 
-        private IEnumerable<FileInfo> GetLocalFileNames(string localPath1)
+        private IEnumerable<FileInfo> SearchDirectory(string path)
         {
             try
             {
-                List<FileInfo> fileInfos = new List<FileInfo>();
-                foreach (var fileEnding in FileEndings)
+                var searchOption = SearchOption.TopDirectoryOnly;
+                if (IsRecursive)
                 {
-                    DirectoryInfo d = new DirectoryInfo(localPath1);
-                    FileInfo[] files = d.GetFiles(fileEnding);
-                    foreach (var fileInfo in files)
-                    {
-                        fileInfos.Add(fileInfo);
-                    }
+                    searchOption = SearchOption.AllDirectories;
                 }
-
-                return fileInfos;
+                
+                var strings = Directory.GetFiles(path, "*", searchOption);
+                return strings.Select(s => new FileInfo(s)).ToList();
             }
             catch (Exception e)
             {

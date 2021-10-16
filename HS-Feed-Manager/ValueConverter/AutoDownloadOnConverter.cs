@@ -7,6 +7,7 @@ using HS_Feed_Manager.Core;
 using HS_Feed_Manager.Core.Handler;
 using HS_Feed_Manager.DataModels;
 using HS_Feed_Manager.DataModels.DbModels;
+using Serilog;
 
 namespace HS_Feed_Manager.ValueConverter
 {
@@ -34,7 +35,7 @@ namespace HS_Feed_Manager.ValueConverter
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("Convert: " + ex, LogLevel.Error);
+                Log.Error(ex,"Convert Error! ");
                 return false;
             }
         }

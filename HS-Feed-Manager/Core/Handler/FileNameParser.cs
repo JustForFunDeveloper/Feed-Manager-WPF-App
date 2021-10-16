@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text.RegularExpressions;
+using Serilog;
 
 namespace HS_Feed_Manager.Core.Handler
 {
@@ -22,7 +23,7 @@ namespace HS_Feed_Manager.Core.Handler
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("GetNameFromItem: " + ex, LogLevel.Error);
+                Log.Error(ex,"GetNameFromItem Error!");
                 return "";
             }
         }
@@ -49,7 +50,7 @@ namespace HS_Feed_Manager.Core.Handler
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("GetEpisodeNumberFromItem: " + ex, LogLevel.Error);
+                Log.Error(ex,"GetEpisodeNumberFromItem Error!");
                 return -1;
             }
         }
@@ -75,7 +76,7 @@ namespace HS_Feed_Manager.Core.Handler
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("TorrentNameRegex: " + ex, LogLevel.Error);
+                Log.Error(ex,"TorrentNameRegex Error!");
                 return null;
             }
         }

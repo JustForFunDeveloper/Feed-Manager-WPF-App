@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.ServiceModel.Syndication;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 using CloudflareSolverRe;
 using HS_Feed_Manager.DataModels.DbModels;
+using Serilog;
 
 namespace HS_Feed_Manager.Core.Handler
 {
@@ -58,7 +55,7 @@ namespace HS_Feed_Manager.Core.Handler
                     double episodeNumber = FileNameParser.GetEpisodeNumberFromItem(syndicationItem.Title.Text);
                     if (episodeNumber.Equals(-1))
                     {
-                        LogHandler.WriteSystemLog("Can't parse Feed Episode-number from: " + syndicationItem.Links[0].Uri, LogLevel.Error);
+                        Log.Warning("Can't parse Feed Episode-number from: " + syndicationItem.Links[0].Uri);
                     }
                     else
                     {
@@ -72,7 +69,7 @@ namespace HS_Feed_Manager.Core.Handler
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("DownloadFeedList: " + ex, LogLevel.Error);
+                Log.Error(ex,"DownloadFeedList Error!");
                 return null;
             }
         }

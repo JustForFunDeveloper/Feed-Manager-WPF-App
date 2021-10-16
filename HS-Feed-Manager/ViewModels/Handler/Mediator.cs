@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using HS_Feed_Manager.Core.Handler;
+using Serilog;
 
 namespace HS_Feed_Manager.ViewModels.Handler
 {
@@ -28,7 +28,7 @@ namespace HS_Feed_Manager.ViewModels.Handler
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("Register: " + ex, LogLevel.Error);
+                Log.Error(ex,"Register Error!");
             }
         }
 
@@ -41,7 +41,7 @@ namespace HS_Feed_Manager.ViewModels.Handler
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("Unregister: " + ex, LogLevel.Error);
+                Log.Error(ex,"Unregister Error!");
             }
         }
 
@@ -55,7 +55,7 @@ namespace HS_Feed_Manager.ViewModels.Handler
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("NotifyColleagues: " + ex, LogLevel.Error);
+                Log.Error(ex,"NotifyColleagues Error!");
             }
         }
     }

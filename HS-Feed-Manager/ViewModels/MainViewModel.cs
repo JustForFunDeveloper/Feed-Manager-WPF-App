@@ -10,9 +10,9 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using HS_Feed_Manager.DataModels.DbModels;
-using HS_Feed_Manager.Core.Handler;
 using JetBrains.Annotations;
 using PropertyChanged;
+using Serilog;
 
 namespace HS_Feed_Manager.ViewModels
 {
@@ -103,7 +103,7 @@ namespace HS_Feed_Manager.ViewModels
                 },
                 new HamburgerMenuIconItem()
                 {
-                    Icon = new PackIconMaterial() {Kind = PackIconMaterialKind.Settings},
+                    Icon = new PackIconMaterial() {Kind = PackIconMaterialKind.AccountSettings},
                     Label = "Settings",
                     ToolTip = "The Application settings.",
                     Tag = new SettingsViewModel()
@@ -260,7 +260,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("UpdateFlyoutValues: " + ex, LogLevel.Error);
+                Log.Error(ex,"UpdateFlyoutValues Error!");
             }
         }
 
@@ -291,7 +291,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("SliderRateValueChanged: " + ex, LogLevel.Error);
+                Log.Error(ex,"SliderRateValueChanged Error!");
             }
         }
 
@@ -335,7 +335,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("SaveOkEditCommand: " + ex, LogLevel.Error);
+                Log.Error(ex,"SaveOkEditCommand Error!");
             }
         }
 

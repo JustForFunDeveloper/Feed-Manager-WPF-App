@@ -14,6 +14,7 @@
         public static readonly string OnRefreshListView = "OnRefreshListView";
         public static readonly string SearchLocalFolder = "SearchLocalFolder";
         public static readonly string StartDownloadEpisodes = "StartDownloadEpisodes";
+        public static readonly string CopyFromDownload = "CopyFromDownload";
         public static readonly string PlayEpisode = "PlayEpisode";
         public static readonly string DeleteEpisode = "DeleteEpisode";
         public static readonly string DeleteTvShow = "DeleteTvShow";
@@ -29,5 +30,7 @@
         public static readonly string RestoreFeedLinkSettings = "RestoreFeedLinkSettings";
         public static readonly string LogRefresh = "LogRefresh";
         public static readonly string RefreshSettingsView = "RefreshSettingsView";
+        public static readonly string ProgressMessage = "ProgressMessage";
+        public static readonly string FinishedCopyDownload = "FinishedCopyDownload";
     }
 }

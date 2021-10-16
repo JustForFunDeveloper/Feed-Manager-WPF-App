@@ -1,7 +1,7 @@
-﻿using HS_Feed_Manager.Core.Handler;
-using HS_Feed_Manager.DataModels.DbModels;
+﻿using HS_Feed_Manager.DataModels.DbModels;
 using Microsoft.EntityFrameworkCore;
 using System;
+using Serilog;
 
 namespace HS_Feed_Manager.Core.Data
 {
@@ -9,6 +9,7 @@ namespace HS_Feed_Manager.Core.Data
     {
         public DbSet<Episode> Episodes { get; set; }
         public DbSet<TvShow> TvShows { get; set; }
+        public DbSet<SqLiteLog> Logs { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -19,7 +20,7 @@ namespace HS_Feed_Manager.Core.Data
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("UpdateLocalTvShows: " + ex, LogLevel.Error);
+                Log.Error(ex,"UpdateLocalTvShows Error!");
             }
         }
     }

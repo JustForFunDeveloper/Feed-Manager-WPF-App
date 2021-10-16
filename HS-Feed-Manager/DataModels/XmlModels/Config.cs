@@ -1,5 +1,4 @@
 ﻿using System.Xml.Serialization;
-using HS_Feed_Manager.Core.Handler;
 
 namespace HS_Feed_Manager.DataModels.XmlModels
 {
@@ -7,7 +6,9 @@ namespace HS_Feed_Manager.DataModels.XmlModels
     public class Config
     {
         public string FileEndings = "*.mkv;";
+        public bool IsRecursive = true;
         public string DownloadFolder = "";
+        public string CopyToPath = "";
         public string LocalPath1 = "Z:\\Anime";
         public string LocalPath2 = "";
         public string LocalPath3 = "";
@@ -20,7 +21,5 @@ namespace HS_Feed_Manager.DataModels.XmlModels
         public string NumberBackRegex = @"([END]*[\(Special Preview\)]* [\[(VRV)\]]*[\[(v0|v1|v2)\]]*(\[480p\]|\[720p\]|\[1080p\]|\(480p\)|\(720p\)|\(1080p\)))(\[Multiple Subtitle\]*|( \[.*\])|)(\.mkv)*(\.torrent)*";
 
         public string TorrentNameRegex = @"[!\(\)a-z0-9A-Z-\[\] ]*\.mkv\.torrent";
-
-        public LogLevel Level = LogLevel.Debug;
     }
 }

@@ -42,7 +42,7 @@
         <Expander
             Grid.Row="0"
             Margin="5"
-            mah:ControlsHelper.HeaderFontSize="20"
+            FontSize="20"
             BorderBrush="Transparent"
             Header="{Binding}"
             IsExpanded="True">
@@ -97,6 +97,10 @@
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <StackPanel
                         Grid.Column="0"
@@ -107,33 +111,9 @@
                             Foreground="{DynamicResource AccentColorBrush}"
                             Text="File Endings" />
                         <TextBox
-                            MinWidth="400"
+                            MinWidth="350"
                             Margin="0,5,0,5"
                             Text="{Binding FileEndings}" />
-                    </StackPanel>
-                </Grid>
-                <Rectangle
-                    Grid.Row="1"
-                    Height="2"
-                    Margin="0,5,0,5"
-                    Fill="White" />
-                <Grid Grid.Row="2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="5" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="5" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <StackPanel
-                        Grid.Column="0"
-                        HorizontalAlignment="Left"
-                        Orientation="Vertical">
-                        <TextBlock Foreground="{DynamicResource AccentColorBrush}" Text="Local Path 1" />
-                        <TextBox
-                            MinWidth="350"
-                            Margin="0,5,0,0"
-                            Text="{Binding LocalPath1}" />
                     </StackPanel>
                     <Rectangle
                         Grid.Column="1"
@@ -144,11 +124,11 @@
                         Margin="5,0,0,0"
                         HorizontalAlignment="Left"
                         Orientation="Vertical">
-                        <TextBlock Foreground="{DynamicResource AccentColorBrush}" Text="Local Path 2" />
+                        <TextBlock Foreground="{DynamicResource AccentColorBrush}" Text="Download Path" />
                         <TextBox
                             MinWidth="350"
                             Margin="0,5,0,0"
-                            Text="{Binding LocalPath2}" />
+                            Text="{Binding DownloadFolder}" />
                     </StackPanel>
                     <Rectangle
                         Grid.Column="3"
@@ -159,6 +139,67 @@
                         Margin="5,0,0,0"
                         HorizontalAlignment="Left"
                         Orientation="Vertical">
+                        <TextBlock Foreground="{DynamicResource AccentColorBrush}" Text="Copy to Path" />
+                        <TextBox
+                            MinWidth="350"
+                            Margin="0,5,0,0"
+                            Text="{Binding CopyToPath}" />
+                    </StackPanel>
+                </Grid>
+                <Rectangle
+                    Grid.Row="1"
+                    Height="2"
+                    Margin="0,5,0,5"
+                    Fill="White" />
+                <Grid Grid.Row="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4"
+                                HorizontalAlignment="Left"
+                                Orientation="Vertical">
+                        <TextBlock Foreground="{DynamicResource AccentColorBrush}" Text="Search Recursive" />
+                        <CheckBox IsChecked="{Binding IsRecursive}" 
+                                  IsEnabled="True" 
+                                  Margin="0,5,0,0"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Grid.Column="0"
+                        HorizontalAlignment="Left"
+                        Orientation="Vertical">
+                        <TextBlock Foreground="{DynamicResource AccentColorBrush}" Text="Local Path 1" />
+                        <TextBox
+                            MinWidth="350"
+                            Margin="0,5,0,0"
+                            Text="{Binding LocalPath1}" />
+                    </StackPanel>
+                    <Rectangle Grid.Row="1" Grid.Column="1"
+                               Width="2"
+                               Fill="White" />
+                    <StackPanel Grid.Row="1" Grid.Column="2"
+                                Margin="5,0,0,0"
+                                HorizontalAlignment="Left"
+                                Orientation="Vertical">
+                        <TextBlock Foreground="{DynamicResource AccentColorBrush}" Text="Local Path 2" />
+                        <TextBox
+                            MinWidth="350"
+                            Margin="0,5,0,0"
+                            Text="{Binding LocalPath2}" />
+                    </StackPanel>
+                    <Rectangle Grid.Row="1" Grid.Column="3"
+                               Width="2"
+                               Fill="White" />
+                    <StackPanel Grid.Row="1" Grid.Column="4"
+                                Margin="5,0,0,0"
+                                HorizontalAlignment="Left"
+                                Orientation="Vertical">
                         <TextBlock Foreground="{DynamicResource AccentColorBrush}" Text="Local Path 3" />
                         <TextBox
                             MinWidth="350"
@@ -171,7 +212,7 @@
         <Expander
             Grid.Row="1"
             Margin="5"
-            mah:ControlsHelper.HeaderFontSize="20"
+            FontSize="20"
             BorderBrush="Transparent"
             Header="{Binding}"
             IsExpanded="False">
@@ -392,7 +433,7 @@
         <Expander
             Grid.Row="2"
             Margin="5"
-            mah:ControlsHelper.HeaderFontSize="20"
+            FontSize="20"
             BorderBrush="{DynamicResource AccentColorBrush}"
             Header="{Binding}"
             IsExpanded="True">
@@ -424,7 +465,7 @@
                 </ItemContainerTemplate>
             </Expander.HeaderTemplate>
             <ScrollViewer>
-                <TextBlock Text="{Binding LogText}" />
+                <TextBlock FontSize="12" Text="{Binding LogText}" />
             </ScrollViewer>
         </Expander>
     </Grid>

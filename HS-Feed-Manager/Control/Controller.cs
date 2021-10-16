@@ -15,6 +15,7 @@ namespace HS_Feed_Manager.Control
 
         public event EventHandler DownloadFeed;
         public event EventHandler SearchLocalFolder;
+        public event EventHandler CopyFromDownload;
         public event EventHandler<List<object>> StartDownloadEpisodes;
         public event EventHandler<object> PlayEpisode;
         public event EventHandler<object> DeleteEpisode;
@@ -36,6 +37,7 @@ namespace HS_Feed_Manager.Control
             Mediator.Register(MediatorGlobal.DownloadFeed, OnDownloadFeed);
             Mediator.Register(MediatorGlobal.SearchLocalFolder, OnSearchLocalFolder);
             Mediator.Register(MediatorGlobal.StartDownloadEpisodes, OnStartDownloadEpisodes);
+            Mediator.Register(MediatorGlobal.CopyFromDownload, OnCopyFromDownload);
             Mediator.Register(MediatorGlobal.PlayEpisode, OnPlayEpisode);
             Mediator.Register(MediatorGlobal.DeleteEpisode, OnDeleteEpisode);
             Mediator.Register(MediatorGlobal.DeleteTvShow, OnDeleteTvShow);
@@ -85,7 +87,12 @@ namespace HS_Feed_Manager.Control
         {
             StartDownloadEpisodes?.Invoke(this, (List<object>) e);
         }
-
+        
+        protected virtual void OnCopyFromDownload(object e)
+        {
+            CopyFromDownload?.Invoke(this, null);
+        }
+        
         protected virtual void OnPlayEpisode(object e)
         {
             PlayEpisode?.Invoke(this, e);

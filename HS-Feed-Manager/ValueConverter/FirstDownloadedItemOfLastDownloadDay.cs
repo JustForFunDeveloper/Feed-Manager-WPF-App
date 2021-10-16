@@ -1,11 +1,11 @@
-﻿using HS_Feed_Manager.Core.Handler;
-using System;
+﻿using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using HS_Feed_Manager.Core;
 using HS_Feed_Manager.DataModels.DbModels;
 using HS_Feed_Manager.ViewModels.Handler;
+using Serilog;
 
 namespace HS_Feed_Manager.ValueConverter
 {
@@ -38,7 +38,7 @@ namespace HS_Feed_Manager.ValueConverter
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("Convert: " + ex, LogLevel.Error);
+                Log.Error(ex,"Convert Error!");
                 return false;
             }
         }
@@ -72,7 +72,7 @@ namespace HS_Feed_Manager.ValueConverter
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("GetFirstTvShowFromLatestDownloadDate: " + ex, LogLevel.Error);
+                Log.Error(ex,"GetFirstTvShowFromLatestDownloadDate Error!");
                 _tvShow = null;
             }
         }

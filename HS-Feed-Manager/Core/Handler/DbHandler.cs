@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using HS_Feed_Manager.Core.Data;
 using HS_Feed_Manager.DataModels.DbModels;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace HS_Feed_Manager.Core.Handler
 {
@@ -27,7 +29,7 @@ namespace HS_Feed_Manager.Core.Handler
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("DbHandler: " + ex, LogLevel.Error);
+                Log.Error(ex,"DbHandler Error!");
             }
         }
 
@@ -49,7 +51,7 @@ namespace HS_Feed_Manager.Core.Handler
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("UpdateTvShow: " + ex, LogLevel.Error);
+                Log.Error(ex,"UpdateTvShow Error!");
             }
         }
 
@@ -69,7 +71,7 @@ namespace HS_Feed_Manager.Core.Handler
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("UpdateEpisode: " + ex, LogLevel.Error);
+                Log.Error(ex,"UpdateEpisode Error!");
             }
         }
 
@@ -143,7 +145,7 @@ namespace HS_Feed_Manager.Core.Handler
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("SyncLocalTvShows: " + ex, LogLevel.Error);
+                Log.Error(ex,"SyncLocalTvShows Error!");
             }
         }
 
@@ -161,7 +163,7 @@ namespace HS_Feed_Manager.Core.Handler
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("AddTvShow: " + ex, LogLevel.Error);
+                Log.Error(ex,"AddTvShow Error!");
             }
         }
 
@@ -187,7 +189,7 @@ namespace HS_Feed_Manager.Core.Handler
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("DeleteEpisode: " + ex, LogLevel.Error);
+                Log.Error(ex,"DeleteEpisode Error!");
             }
         }
 
@@ -213,10 +215,37 @@ namespace HS_Feed_Manager.Core.Handler
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("DeleteTvShow: " + ex, LogLevel.Error);
+                Log.Error(ex,"DeleteTvShow Error!");
             }
         }
 
+        public string GetLogFileData()
+        {
+            try
+            {
+                using (var db = new ApplicationDbContext())
+                {
+                    var sqLiteLogs = db.Logs.OrderByDescending(l => l.TimeStamp).Take(100).ToList();
+                    StringBuilder builder = new StringBuilder();
+                    foreach (var sqLiteLog in sqLiteLogs)
+                    {
+                        builder
+                            .Append(sqLiteLog.TimeStamp).Append("\t")
+                            .Append(sqLiteLog.Level).Append("\t")
+                            .Append(sqLiteLog.RenderedMessage).Append("\t")
+                            .Append(sqLiteLog.Exception).Append("\n");
+                    }
+
+                    return builder.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex,"DeleteTvShow Error!");
+                return "";
+            }
+        }
+        
         #endregion
 
         #region Private Methods
@@ -235,7 +264,7 @@ namespace HS_Feed_Manager.Core.Handler
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("UpdateLocalTvShows: " + ex, LogLevel.Error);
+                Log.Error(ex,"UpdateLocalTvShows Error!");
             }
         }
 

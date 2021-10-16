@@ -55,6 +55,43 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        
+        <Style
+            x:Key="IconRedStyle"
+            BasedOn="{StaticResource AccentedSquareButtonStyle}"
+            TargetType="Button">
+            <Setter Property="Foreground" Value="{DynamicResource BlackBrush}" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Margin" Value="0,0,20,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid Background="Transparent">
+                            <ContentPresenter
+                                x:Name="MyContentPresenter"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Content="{TemplateBinding Content}" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="DarkRed" />
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Foreground" Value="Red" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Foreground" Value="DarkRed" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
 
         <Style
             x:Key="DownloadFeedIcon"
@@ -130,6 +167,36 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        
+        <Style
+            x:Key="CopyFromDownload"
+            BasedOn="{StaticResource IconStyle}"
+            TargetType="Button">
+            <Setter Property="Content" Value="{iconPacks:FontAwesome Kind=CopySolid, Width={StaticResource IconSize}, Height={StaticResource IconSize}}" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Content" Value="{iconPacks:FontAwesome Kind=CopySolid, Width={StaticResource IconSize}, Height={StaticResource IconSize}}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Content" Value="{iconPacks:FontAwesome Kind=CopySolid, Width={StaticResource IconSize}, Height={StaticResource IconSize}}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        
+        <Style
+            x:Key="StopCopyFromDownload"
+            BasedOn="{StaticResource IconRedStyle}"
+            TargetType="Button">
+            <Setter Property="Content" Value="{iconPacks:FontAwesome Kind=BanSolid, Width={StaticResource IconSize}, Height={StaticResource IconSize}}" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Content" Value="{iconPacks:FontAwesome Kind=BanSolid, Width={StaticResource IconSize}, Height={StaticResource IconSize}}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Content" Value="{iconPacks:FontAwesome Kind=BanSolid, Width={StaticResource IconSize}, Height={StaticResource IconSize}}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
 
         <ValueConverter:FirstEpisodeConverter x:Key="FirstEpisodeConverter" />
         <ValueConverter:FirstDownloadedItemOfLastDownloadDay x:Key="FirstDownloadedItemOfLastDownloadDay" />
@@ -189,6 +256,16 @@
                 Command="{Binding DownloadAll}"
                 Style="{DynamicResource StartDownload}"
                 ToolTip="Start Episode Download" />
+            <Button
+                Command="{Binding CopyFromDownload}"
+                Style="{DynamicResource CopyFromDownload}"
+                Visibility="{Binding ShowCopyFromDownloadStart, Converter={StaticResource BooleanToVisibilityConverter}}"
+                ToolTip="Copy From Download" />
+            <Button
+                Command="{Binding CopyFromDownload}"
+                Visibility="{Binding ShowCopyFromDownloadStop, Converter={StaticResource BooleanToVisibilityConverter}}"
+                Style="{DynamicResource StopCopyFromDownload}"
+                ToolTip="Stop Copy From Download" />
 
         </StackPanel>
         <mah:ProgressRing
@@ -214,7 +291,7 @@
             <GroupBox
                 Grid.Column="0"
                 Margin="0,5,0,0"
-                mah:ControlsHelper.HeaderFontSize="30"
+                FontSize="30"
                 BorderBrush="Transparent"
                 Header="Current Downloads"
                 Visibility="{Binding DownloadListVisibility}">
@@ -229,7 +306,7 @@
                     Visibility="Visible">
                     <ListBox.ItemTemplate>
                         <DataTemplate DataType="{x:Type dbModels:Episode}">
-                            <TextBlock>
+                            <TextBlock FontSize="12">
                                 <TextBlock.Text>
                                     <MultiBinding StringFormat="{}{0}&#x9;-    {1}">
                                         <Binding Mode="OneWay" Path="EpisodeNumber" />
@@ -293,7 +370,7 @@
             <GroupBox
                 Grid.Column="0"
                 Margin="0,5,0,0"
-                mah:ControlsHelper.HeaderFontSize="30"
+                FontSize="30"
                 BorderBrush="Transparent"
                 Header="Episode List"
                 Visibility="{Binding EpisodeListVisibility}">
@@ -354,7 +431,7 @@
                         Style="{DynamicResource VirtualisedMetroListBox}">
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="{x:Type dbModels:Episode}">
-                                <TextBlock>
+                                <TextBlock FontSize="12">
                                     <TextBlock.Text>
                                         <MultiBinding StringFormat="{}{0}&#x9;-    {1}">
                                             <Binding Mode="OneWay" Path="EpisodeNumber" />
@@ -456,7 +533,7 @@
                         Style="{DynamicResource VirtualisedMetroListBox}">
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="{x:Type dbModels:Episode}">
-                                <TextBlock x:Name="txtBlock">
+                                <TextBlock FontSize="12" x:Name="txtBlock">
                                     <TextBlock.Text>
                                         <MultiBinding StringFormat="{}{0}&#x9;-    {1}">
                                             <Binding Mode="OneWay" Path="EpisodeNumber" />
@@ -506,7 +583,7 @@
                         Style="{DynamicResource VirtualisedMetroListBox}">
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="{x:Type models:TvShow}">
-                                <TextBlock x:Name="LocalTextBlock">
+                                <TextBlock FontSize="12" x:Name="LocalTextBlock">
                                     <TextBlock.Text>
                                         <MultiBinding StringFormat="{}{0}">
                                             <Binding Mode="OneWay" Path="Name" />
@@ -556,7 +633,7 @@
             <GroupBox
                 Grid.Column="4"
                 Margin="0,5,0,0"
-                mah:ControlsHelper.HeaderFontSize="30"
+                FontSize="30"
                 BorderBrush="Transparent"
                 Header="Feed Information"
                 Visibility="{Binding FeedInfoVisibility}">
@@ -683,7 +760,7 @@
                 <GroupBox
                 Grid.Row="0"
                 Margin="0,5,0,0"
-                mah:ControlsHelper.HeaderFontSize="30"
+                FontSize="30"
                 BorderBrush="Transparent"
                 Header="Local Information"
                 Visibility="{Binding LocalInfoVisibility}">
@@ -831,7 +908,7 @@
                 <GroupBox
                     Grid.Row="0"
                     Margin="0,5,0,0"
-                    mah:ControlsHelper.HeaderFontSize="30"
+                    FontSize="30"
                     BorderBrush="Transparent"
                     Header="Episode Information"
                     Visibility="{Binding EpisodeInfoVisibility}">

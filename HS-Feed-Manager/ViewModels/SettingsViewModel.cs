@@ -23,8 +23,10 @@ namespace HS_Feed_Manager.ViewModels
         private ICommand _defaultFeedLink;
         private ICommand _saveFeedLink;
 
+        public bool IsRecursive { get; set; }
         public string FeedLink { get; set; }
         public string DownloadFolder { get; set; }
+        public string CopyToPath { get; set; }
 
         public string RegexNameFront { get; set; }
         public string RegexNameBack { get; set; }
@@ -65,8 +67,10 @@ namespace HS_Feed_Manager.ViewModels
             LocalPath2 = Logic.LocalConfig.LocalPath2;
             LocalPath3 = Logic.LocalConfig.LocalPath3;
 
+            IsRecursive = Logic.LocalConfig.IsRecursive;
             FeedLink = Logic.LocalConfig.FeedUrl;
             DownloadFolder = Logic.LocalConfig.DownloadFolder;
+            CopyToPath = Logic.LocalConfig.CopyToPath;
 
             RegexNameFront = Logic.LocalConfig.NameFrontRegex;
             RegexNameBack = Logic.LocalConfig.NameBackRegex;
@@ -74,8 +78,8 @@ namespace HS_Feed_Manager.ViewModels
             RegexNumberBack = Logic.LocalConfig.NumberBackRegex;
 
             RegexTorrentName = Logic.LocalConfig.TorrentNameRegex;
-
-            LogText = Logic.Log;
+            
+            LogText = Logic.SqLiteSqLiteLog;
         }
 
         #region Local Path Settings
@@ -125,12 +129,13 @@ namespace HS_Feed_Manager.ViewModels
         {
             if (!FileEndings.Equals(""))
                 Logic.LocalConfig.FileEndings = FileEndings;
+            Logic.LocalConfig.IsRecursive = IsRecursive;
+            Logic.LocalConfig.DownloadFolder = DownloadFolder;
+            Logic.LocalConfig.CopyToPath = CopyToPath;
             if (!LocalPath1.Equals(""))
                 Logic.LocalConfig.LocalPath1 = LocalPath1;
-            if (!LocalPath2.Equals(""))
-                Logic.LocalConfig.LocalPath2 = LocalPath2;
-            if (!LocalPath3.Equals(""))
-                Logic.LocalConfig.LocalPath3 = LocalPath3;
+            Logic.LocalConfig.LocalPath2 = LocalPath2;
+            Logic.LocalConfig.LocalPath3 = LocalPath3;
 
             Mediator.NotifyColleagues(MediatorGlobal.SaveConfig, null);
         }

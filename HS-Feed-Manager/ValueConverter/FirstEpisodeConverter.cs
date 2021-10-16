@@ -1,8 +1,8 @@
-﻿using HS_Feed_Manager.Core.Handler;
-using System;
+﻿using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
+using Serilog;
 
 namespace HS_Feed_Manager.ValueConverter
 {
@@ -20,7 +20,7 @@ namespace HS_Feed_Manager.ValueConverter
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("Convert: " + ex, LogLevel.Error);
+                Log.Error(ex, "Convert Error!");
                 return false;
             }
         }

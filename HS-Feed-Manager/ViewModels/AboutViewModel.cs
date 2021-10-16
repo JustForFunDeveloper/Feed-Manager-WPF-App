@@ -3,8 +3,8 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Windows.Input;
-using HS_Feed_Manager.Core.Handler;
 using HS_Feed_Manager.ViewModels.Handler;
+using Serilog;
 
 namespace HS_Feed_Manager.ViewModels
 {
@@ -29,7 +29,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("AboutViewModel: " + ex, LogLevel.Error);
+                Log.Error(ex,"AboutViewModel Error!");
             }
         }
 
@@ -59,7 +59,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("NewReleasesCommand: " + ex, LogLevel.Error);
+                Log.Error(ex,"NewReleasesCommand Error!");
             }
         }
 
@@ -89,7 +89,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("HomepageCommand: " + ex, LogLevel.Error);
+                Log.Error(ex,"HomepageCommand Error!");
             }
         }
 
@@ -119,7 +119,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("GitHubProjectCommand: " + ex, LogLevel.Error);
+                Log.Error(ex,"GitHubProjectCommand Error!");
             }
         }
 
@@ -149,7 +149,7 @@ namespace HS_Feed_Manager.ViewModels
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("GitHubProjectCommand: " + ex, LogLevel.Error);
+                Log.Error(ex,"GitHubProjectCommand Error!");
             }
         }
     }

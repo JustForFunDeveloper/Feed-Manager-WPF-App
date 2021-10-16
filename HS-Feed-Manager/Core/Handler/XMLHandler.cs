@@ -2,6 +2,7 @@
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+using Serilog;
 
 namespace HS_Feed_Manager.Core.Handler
 {
@@ -34,7 +35,7 @@ namespace HS_Feed_Manager.Core.Handler
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("GetSerializedConfigXml: " + ex, LogLevel.Error);
+                Log.Error(ex,"GetSerializedConfigXml Error!");
                 return null;
             }
         }
@@ -51,7 +52,7 @@ namespace HS_Feed_Manager.Core.Handler
             }
             catch (Exception ex)
             {
-                LogHandler.WriteSystemLog("GetDeserializedConfigObject: " + ex, LogLevel.Error);
+                Log.Error(ex,"GetDeserializedConfigObject Error!");
                 return null;
             }
         }
