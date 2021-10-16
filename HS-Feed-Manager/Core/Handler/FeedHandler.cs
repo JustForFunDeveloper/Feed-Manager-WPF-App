@@ -48,7 +48,8 @@ namespace HS_Feed_Manager.Core.Handler
                     {
                         // Name = FileNameParser.GetNameFromItem(FileNameParser.TorrentNameParser(syndicationItem.Links[0].Uri.ToString())),
                         Name = FileNameParser.GetNameFromItem(syndicationItem.Title.Text),
-                        Link = syndicationItem.Links[0].Uri.ToString()
+                        Link = syndicationItem.Links[0].Uri.ToString(),
+                        LocalPath = Path.Combine(Logic.LocalConfig.DownloadFolder, syndicationItem.Title.Text)
                     };
 
                     // double episodeNumber = FileNameParser.GetEpisodeNumberFromItem(FileNameParser.TorrentNameParser(syndicationItem.Links[0].Uri.ToString()));
