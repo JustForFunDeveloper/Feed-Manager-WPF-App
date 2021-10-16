@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using HS_Feed_Manager.ViewModels.Handler;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
+using Serilog;
 
 namespace HS_Feed_Manager
 {
@@ -57,7 +59,13 @@ namespace HS_Feed_Manager
 
             _closeMe = result == MessageDialogResult.Affirmative;
 
-            if (_closeMe) Close();
+            if (_closeMe)
+            {
+                Log.Information("Closing application");
+                Log.CloseAndFlush();
+                Thread.Sleep(1000);
+                Close();
+            }
         }
 
         public static MetroWindow GetInstance

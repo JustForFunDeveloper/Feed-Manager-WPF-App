@@ -13,40 +13,32 @@ namespace HS_Feed_Manager
     /// Interaction logic for App.xaml
     /// </summary>
     // ReSharper disable once RedundantExtendsListEntry
-    public partial class App
+    public partial class App : Application
     {
-        private MainWindow _mainWindow;
         private Logic _logic;
         
         public App()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            SetupUnhandledExceptionHandling();
-            _logic = new Logic();
-        }
-        
-        protected override void OnStartup(StartupEventArgs e)
-        {
             try
             {
+                SetupUnhandledExceptionHandling();
                 Log.Logger = new LoggerConfiguration()
                     .MinimumLevel.Information()
                     .WriteTo.Console()
                     .WriteTo.SQLite("local.db")
                     .CreateLogger();
-
-                _mainWindow = new MainWindow();
+        
                 Log.Information("Started Application!");
+                _logic = new Logic();
             }
             catch (Exception exception)
             {
                 Log.Error(exception, "OnStartup");
                 OnContextClose(null, null);
             }
-
-            base.OnStartup(e);
         }
-        
+
         private void OnContextClose(object sender, EventArgs e)
         {
             Log.Information("Closing application");
@@ -60,11 +52,11 @@ namespace HS_Feed_Manager
             // Catch exceptions from all threads in the AppDomain.
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
                 ShowUnhandledException(args.ExceptionObject as Exception, "AppDomain.CurrentDomain.UnhandledException");
-
+        
             // Catch exceptions from each AppDomain that uses a task scheduler for async operations.
             TaskScheduler.UnobservedTaskException += (sender, args) =>
                 ShowUnhandledException(args.Exception, "TaskScheduler.UnobservedTaskException");
-
+        
             // Catch exceptions from a single specific UI dispatcher thread.
             Dispatcher.UnhandledException += (sender, args) =>
             {
@@ -76,7 +68,7 @@ namespace HS_Feed_Manager
                 }
             };
         }
-
+        
         void ShowUnhandledException(Exception e, string unhandledExceptionType)
         {
             Log.Logger.Error(e, "Unexpected Error Occurred!");

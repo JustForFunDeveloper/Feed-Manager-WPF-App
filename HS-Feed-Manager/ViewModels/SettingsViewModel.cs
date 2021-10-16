@@ -62,6 +62,11 @@ namespace HS_Feed_Manager.ViewModels
 
             RegexTorrentName = "";
 
+            if (Logic.LocalConfig == null)
+            {
+                return;
+            }
+            
             FileEndings = Logic.LocalConfig.FileEndings;
             LocalPath1 = Logic.LocalConfig.LocalPath1;
             LocalPath2 = Logic.LocalConfig.LocalPath2;
