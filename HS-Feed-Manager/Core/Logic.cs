@@ -57,6 +57,7 @@ namespace HS_Feed_Manager.Core
             _controller.SearchLocalFolder += OnSearchLocalFolder;
             _controller.StartDownloadEpisodes += OnStartDownloadEpisodes;
             _controller.CopyFromDownload += OnCopyFromDownload;
+            _controller.StopCopyFromDownload += OnStopCopyFromDownload;
             _controller.PlayEpisode += OnPlayEpisode;
             _controller.DeleteEpisode += OnDeleteEpisode;
             _controller.DeleteTvShow += OnDeleteTvShow;
@@ -181,36 +182,45 @@ namespace HS_Feed_Manager.Core
             }
         }
 
+        private void OnStopCopyFromDownload(object sender, EventArgs e)
+        {
+            if (_copyDownloadTask == null) return;
+            Log.Information("Stop Copy Downloaded Shows");
+            _copyDownloadTokenSource.Cancel();
+            _copyDownloadTask = null;
+        }
+
         private void OnCopyFromDownload(object sender, EventArgs e)
         {
             try
             {
-                if (_copyDownloadTask != null && !_copyDownloadTask.IsCompleted)
-                {
-                    _copyDownloadTokenSource.Cancel();
-                    _copyDownloadTask = null;
-                    return;
-                }
-                
                 _copyDownloadTokenSource = new CancellationTokenSource();
                 CancellationToken ct = _copyDownloadTokenSource.Token;
                 _copyDownloadTask = Task.Run(() =>
                 {
-                    // Get and copy shows from DownloadFolder to the CopyToFolder
-                    var tvShows = _fileHandler.GetAndCopyDownloadedShows(ct);
+                    try
+                    {
+                        // Get and copy shows from DownloadFolder to the CopyToFolder
+                        var tvShows = _fileHandler.GetAndCopyDownloadedShows(ct);
                     
-                    // Sync to database
-                    if (tvShows != null)
-                    {
-                        _dbHandler.SyncLocalTvShows(tvShows);
-                        var sum = tvShows?.Sum(tv => tv.Episodes.Count);
-                        Log.Information($"Finished Copy {sum} Downloaded Shows");
+                        // Sync to database
+                        if (tvShows != null)
+                        {
+                            _dbHandler.SyncLocalTvShows(tvShows);
+                            var sum = tvShows?.Sum(tv => tv.Episodes.Count);
+                            Log.Information($"Finished Copy {sum} Downloaded Shows");
+                        }
+                        else
+                        {
+                            Log.Information("Nothing to copy. Folder is empty.");
+                        }
+                        Mediator.NotifyColleagues(MediatorGlobal.FinishedCopyDownload, null);
                     }
-                    else
+                    catch (Exception exception)
                     {
-                        Log.Information("Nothing to copy. Folder is empty.");
+                        Log.Error(exception,"Task OnCopyFromDownload Error!");
+                        Mediator.NotifyColleagues(MediatorGlobal.FinishedCopyDownload, null);
                     }
-                    Mediator.NotifyColleagues(MediatorGlobal.FinishedCopyDownload, null);
                 }, ct);
             }
             catch (Exception ex)

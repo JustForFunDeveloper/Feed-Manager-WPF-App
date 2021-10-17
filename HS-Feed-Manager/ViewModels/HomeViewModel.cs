@@ -76,6 +76,7 @@ namespace HS_Feed_Manager.ViewModels
         private ICommand _downloadFeed;
         private ICommand _searchLocalFolder;
         private ICommand _copyFromDownload;
+        private ICommand _stopcopyFromDownload;
 
         private ICommand _copyTvShowName;
         private ICommand _textBoxButtonCmd;
@@ -350,6 +351,36 @@ namespace HS_Feed_Manager.ViewModels
             catch (Exception ex)
             {
                 Log.Error(ex,"CopyFromDownloadCommand Error!");
+            }
+        }
+        
+        public ICommand StopCopyFromDownload
+        {
+            get
+            {
+                if (_stopcopyFromDownload == null)
+                    _stopcopyFromDownload = new RelayCommand(
+                        param => StopCopyFromDownloadCommand(),
+                        param => CanStopCopyFromDownload()
+                    );
+                return _stopcopyFromDownload;
+            }
+        }
+
+        private bool CanStopCopyFromDownload()
+        {
+            return true;
+        }
+
+        private void StopCopyFromDownloadCommand()
+        {
+            try
+            {
+                Mediator.NotifyColleagues(MediatorGlobal.StopCopyFromDownload, null);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex,"StopCopyFromDownloadCommand Error!");
             }
         }
 

@@ -222,7 +222,7 @@ namespace HS_Feed_Manager.Core.Handler
         /// <summary>
         /// This method gets all shows from the download folder.
         /// </summary>
-        /// <param name="cancellationToken"></param>
+        /// <param name="ct"></param>
         /// <returns>A list of <see cref="TvShow"/></returns>
         public List<TvShow> GetAndCopyDownloadedShows(CancellationToken ct)
         {
@@ -266,11 +266,20 @@ namespace HS_Feed_Manager.Core.Handler
                 }
 
                 var destPath = Path.Combine(directoryPath, fileInfo.Name);
+                // If an old file exists ignore it.
+                var oldFile = new FileInfo(destPath);
+                if (oldFile.Exists)
+                {
+                    Log.Information($"File {oldFile.FullName} does already exist. File will be ignored.");
+                    counter++;
+                    Mediator.NotifyColleagues(MediatorGlobal.ProgressMessage, $"Finished {counter} of {fileInfos.Count}");
+                    continue;
+                }
+                
                 fileInfo.MoveTo(destPath);
                 episode.LocalPath = destPath;
                 counter++;
-                var progressMessage = $"Finished {counter} of {fileInfos.Count}";
-                Mediator.NotifyColleagues(MediatorGlobal.ProgressMessage, progressMessage);
+                Mediator.NotifyColleagues(MediatorGlobal.ProgressMessage, $"Finished {counter} of {fileInfos.Count}");
             }
 
             return tvShows;

@@ -15,6 +15,7 @@
         public static readonly string SearchLocalFolder = "SearchLocalFolder";
         public static readonly string StartDownloadEpisodes = "StartDownloadEpisodes";
         public static readonly string CopyFromDownload = "CopyFromDownload";
+        public static readonly string StopCopyFromDownload = "StopCopyFromDownload";
         public static readonly string PlayEpisode = "PlayEpisode";
         public static readonly string DeleteEpisode = "DeleteEpisode";
         public static readonly string DeleteTvShow = "DeleteTvShow";

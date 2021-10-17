@@ -262,7 +262,7 @@
                 Visibility="{Binding ShowCopyFromDownloadStart, Converter={StaticResource BooleanToVisibilityConverter}}"
                 ToolTip="Copy From Download" />
             <Button
-                Command="{Binding CopyFromDownload}"
+                Command="{Binding StopCopyFromDownload}"
                 Visibility="{Binding ShowCopyFromDownloadStop, Converter={StaticResource BooleanToVisibilityConverter}}"
                 Style="{DynamicResource StopCopyFromDownload}"
                 ToolTip="Stop Copy From Download" />
